@@ -15,7 +15,7 @@ using UnityEngine.EventSystems;
 /// <summary>
 /// coder by shlifedev(zero is black)
 /// </summary>
-public class Board : MonoBehaviour
+public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public enum State
     {
@@ -44,6 +44,8 @@ public class Board : MonoBehaviour
     public RectTransform emptyNodeRect;
     public RectTransform realNodeRect;
 
+    public DataManager.ScoreData scoreManager = new DataManager.ScoreData();
+
     //------------ Created By J.H ------------//
     public Vector2 vectorS = new Vector2();
     public Vector2 vectorE = new Vector2();
@@ -58,7 +60,9 @@ public class Board : MonoBehaviour
     }
     private void CreateBoard()
     {
-        GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = "0";
+        DataManager.Score score = scoreManager.GetScore();
+        GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = score.currScore.ToString();
+        GameObject.Find("MaxScore").GetComponent<TextMeshProUGUI>().text = score.maxScore.ToString();
 
         /* first initialize empty Node rect*/
         realNodeList.Clear();
@@ -134,8 +138,9 @@ public class Board : MonoBehaviour
     {
         to.value = to.value * 2;
 
-        TextMeshProUGUI currScore = GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>();
-        currScore.text = (int.Parse(currScore.text) + to.value).ToString();
+        DataManager.Score score = scoreManager.Update(to.value);
+        GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = score.currScore.ToString();
+        GameObject.Find("MaxScore").GetComponent<TextMeshProUGUI>().text = score.maxScore.ToString();
 
         from.value = null;
         if (from.realNodeObj != null)
@@ -422,6 +427,19 @@ public class Board : MonoBehaviour
             if (Input.GetKey(KeyCode.Escape)) SceneManager.LoadScene("SinglePlayPage");
     }
 
+
+    public bool TouchGameBoard = false;
+
+    public void OnPointerDown(PointerEventData data)
+    {
+        TouchGameBoard = true;
+    }
+
+    public void OnPointerUp(PointerEventData data)
+    {
+        TouchGameBoard = true;
+    }
+
     private void UpdateByKeyboard()
     {
         if (state == State.WAIT)
@@ -439,7 +457,7 @@ public class Board : MonoBehaviour
     {
         if (state == State.WAIT)
         {
-            if (Input.touchCount > 0)
+            if (Input.touchCount > 0 && TouchGameBoard == true)
             {
                 Touch touch = Input.GetTouch(0);
 
@@ -465,6 +483,8 @@ public class Board : MonoBehaviour
 
                     Show();
                 }
+
+                TouchGameBoard = false;
             }
         }
     }
