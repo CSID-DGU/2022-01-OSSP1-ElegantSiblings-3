@@ -1,7 +1,4 @@
-# 2048-Master
-2048-Master source code written in Unity 2022.05-05 (c#) 
+# 2048-Master Update
 
-# How to Play
- - Touch Drag  
- 
- 
+ver 1.02 
+1) 더이상 블록 영역 밖의 터치가 게임에 영향을 주지 않습니다
