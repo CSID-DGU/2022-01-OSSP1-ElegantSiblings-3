@@ -11,6 +11,7 @@ using Random = System.Random;
 using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.EventSystems;
+using System.IO;
 
 /// <summary>
 /// coder by shlifedev(zero is black)
@@ -44,48 +45,106 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public RectTransform emptyNodeRect;
     public RectTransform realNodeRect;
 
-    public DataManager.ScoreData scoreManager = new DataManager.ScoreData();
+    // GameData Load, Save, Reset
+    public GameData gameData;
+    public string path;
+    public bool loadCheck = true;
+    public bool resetCheck = false;
 
-    //------------ Created By J.H ------------//
+    // Touch Event
     public Vector2 vectorS = new Vector2();
     public Vector2 vectorE = new Vector2();
     public Vector2 vectorM = new Vector2();
     public bool touchCheck = false;
-    //----------------------------------------//
 
 
-    public void OnGameOver()
+    private void Awake()
     {
-       Debug.Log("Game Over!!!!");
+        LoadGameData();
+        LoadSaveBoard();
     }
-    private void CreateBoard()
-    {
-        DataManager.Score score = scoreManager.GetScore();
-        GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = score.currScore.ToString();
-        GameObject.Find("MaxScore").GetComponent<TextMeshProUGUI>().text = score.maxScore.ToString();
 
-        /* first initialize empty Node rect*/
+    public void OnApplicationQuit()
+    {
+        print("12412414");
+        SaveGameData();
+    }
+
+    private void Start() { }
+
+
+
+    public void ReturnPrevPage()
+    {
+        SaveGameData();
+        SceneManager.LoadScene("SinglePlayPage");
+    }
+
+    public void ResetButton()
+    {
+        resetCheck = true;
+        ResetGameData();
+        SceneManager.LoadScene(gameObject.scene.name);
+    }
+
+    private void LoadGameData()
+    {
+        gameData = new GameData();
+        path = Path.Combine(Application.persistentDataPath, "GameData.json");
+
+        if (File.Exists(path))
+        {
+            string loadJson = File.ReadAllText(path);
+            gameData = JsonUtility.FromJson<GameData>(loadJson);
+            if (gameData == null) gameData = new GameData();
+        }
+    }
+
+    private void SaveGameData()
+    {
+        gameData.clear();
+        gameData.currScore = int.Parse(GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text);
+        gameData.maxScore = int.Parse(GameObject.Find("MaxScore").GetComponent<TextMeshProUGUI>().text);
+        foreach (var node in nodeData) gameData.nodeData.Add(new NodeClone(node));
+
+        File.WriteAllText(path, gameData.GetJson());
+    }
+
+    private void ResetGameData()
+    {
+        gameData.clear();
+        gameData.maxScore = int.Parse(GameObject.Find("MaxScore").GetComponent<TextMeshProUGUI>().text);
+        File.WriteAllText(path, gameData.GetJson());
+    }
+
+
+
+    private void CreateNewBoard()
+    {
+        /* first initialize Score Board */
+        GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = "0";
+        GameObject.Find("MaxScore").GetComponent<TextMeshProUGUI>().text = gameData.maxScore.ToString();
+
+        /* first initialize empty Node rect */
         realNodeList.Clear();
         nodeMap.Clear();
         nodeData.Clear();
+
         var emptyChildCount = emptyNodeRect.transform.childCount;
-        for (int i = 0; i < emptyChildCount; i++)
-        {
-            var child = emptyNodeRect.GetChild(i);
-        }
+        for (int i = 0; i < emptyChildCount; i++) { var child = emptyNodeRect.GetChild(i); }
 
         /* and, empty node create for get grid point*/
         for (int i = 0; i < col; i++)
         {
             for (int j = 0; j < row; j++)
             {
-                var instantiatePrefab = GameObject.Instantiate(emptyNodePrefab, emptyNodeRect.transform, false);  
+                var instantiatePrefab = GameObject.Instantiate(emptyNodePrefab, emptyNodeRect.transform, false);
                 var point = new Vector2Int(j, i);
                 //r-d-l-u
-                Vector2Int left = point - new Vector2Int(1, 0); 
-                Vector2Int down = point - new Vector2Int(0, 1); 
+                Vector2Int left = point - new Vector2Int(1, 0);
+                Vector2Int down = point - new Vector2Int(0, 1);
                 Vector2Int right = point + new Vector2Int(1, 0);
-                Vector2Int up = point + new Vector2Int(0, 1); 
+                Vector2Int up = point + new Vector2Int(0, 1);
                 Vector2Int?[] v = new Vector2Int?[4];
                 if (IsValid(right)) v[0] = right;
                 if (IsValid(down)) v[1] = down;
@@ -94,16 +153,79 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
                 Node node = new Node(v);
                 node.point = point;
-                node.nodeRectObj = instantiatePrefab; 
+                node.nodeRectObj = instantiatePrefab;
                 nodeData.Add(node);
                 instantiatePrefab.name = node.point.ToString();
                 this.nodeMap.Add(point, node);
             }
         }
-        /* grid 정렬 */
+
         LayoutRebuilder.ForceRebuildLayoutImmediate(emptyNodeRect);
         foreach (var data in nodeData)
             data.position = data.nodeRectObj.GetComponent<RectTransform>().localPosition;
+
+        CreateRandom();
+    }
+   
+    private void LoadSaveBoard()
+    {
+        bool exsitSaveFile = gameData.nodeData.Count == 0 ? false : true;
+        resetCheck = false;
+
+        if (exsitSaveFile == false) CreateNewBoard();
+        else
+        {
+            /* first initialize Score Board */
+            GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = gameData.currScore.ToString();
+            GameObject.Find("MaxScore").GetComponent<TextMeshProUGUI>().text = gameData.maxScore.ToString();
+
+            /* first initialize empty Node rect */
+            realNodeList.Clear();
+            nodeMap.Clear();
+            nodeData.Clear();
+
+            var emptyChildCount = emptyNodeRect.transform.childCount;
+            for (int i = 0; i < emptyChildCount; i++) { var child = emptyNodeRect.GetChild(i); }
+
+            /* and, empty node create for get grid point*/
+            for (int i = 0; i < col; i++)
+            {
+                for (int j = 0; j < row; j++)
+                {
+                    var instantiatePrefab = GameObject.Instantiate(emptyNodePrefab, emptyNodeRect.transform, false);
+                    var point = new Vector2Int(j, i);
+                    //r-d-l-u
+                    Vector2Int left = point - new Vector2Int(1, 0);
+                    Vector2Int down = point - new Vector2Int(0, 1);
+                    Vector2Int right = point + new Vector2Int(1, 0);
+                    Vector2Int up = point + new Vector2Int(0, 1);
+                    Vector2Int?[] v = new Vector2Int?[4];
+                    if (IsValid(right)) v[0] = right;
+                    if (IsValid(down)) v[1] = down;
+                    if (IsValid(left)) v[2] = left;
+                    if (IsValid(up)) v[3] = up;
+
+                    Node node = new Node(v);
+                    node.point = point;
+                    node.nodeRectObj = instantiatePrefab;
+
+                    NodeClone nodeClone = gameData.nodeData[i * 4 + j];
+                    node.value = nodeClone.value == 0 ? null : nodeClone.value;
+                    node.combined = nodeClone.combined;
+
+                    nodeData.Add(node);
+                    instantiatePrefab.name = node.point.ToString();
+                    this.nodeMap.Add(point, node);
+                }
+            }
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(emptyNodeRect);
+            foreach (var data in nodeData)
+                data.position = data.nodeRectObj.GetComponent<RectTransform>().localPosition;
+
+            foreach (var data in gameData.nodeData)
+                if (data.value >= 2) CreateBlock(data.point.x, data.point.y, data.value);
+        } 
     }
 
     private bool IsValid(Vector2Int point)
@@ -112,35 +234,29 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             return false;
 
         return true;
-    } 
-    private void CreateBlock(int x, int y)
+    }
+    private void CreateBlock(int x, int y, int? blockNum = null)
     {
         if (nodeMap[new Vector2Int(x, y)].realNodeObj != null) return;
 
-      //  currScore += 2
-
-        
         GameObject realNodeObj = Instantiate(nodePrefab, realNodeRect.transform, false);
         var node = nodeMap[new Vector2Int(x, y)];
-        var pos = node.position; 
-        realNodeObj.GetComponent<RectTransform>().localPosition = pos; 
+        var pos = node.position;
+        realNodeObj.GetComponent<RectTransform>().localPosition = pos;
         realNodeObj.transform.DOPunchScale(new Vector3(.32f, .32f, .32f), 0.15f, 3);
         var nodeObj = realNodeObj.GetComponent<NodeObject>();
         this.realNodeList.Add(nodeObj);
-        nodeObj.InitializeFirstValue();
+
+        if (blockNum == null) nodeObj.InitializeFirstValue();
+        else nodeObj.InitializeSavedValue(blockNum.GetValueOrDefault());
+
         node.value = nodeObj.value;
-        node.realNodeObj = nodeObj; 
+        node.realNodeObj = nodeObj;
     }
 
-
-    //------------ Modified By J.H ------------//
     public void Combine(Node from, Node to)
     {
         to.value = to.value * 2;
-
-        DataManager.Score score = scoreManager.Update(to.value);
-        GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = score.currScore.ToString();
-        GameObject.Find("MaxScore").GetComponent<TextMeshProUGUI>().text = score.maxScore.ToString();
 
         from.value = null;
         if (from.realNodeObj != null)
@@ -149,6 +265,11 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             from.realNodeObj = null;
             to.combined = true;
         }
+
+        gameData.currScore += to.value.GetValueOrDefault();
+        gameData.maxScore = Mathf.Max(gameData.maxScore, gameData.currScore);
+        GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = gameData.currScore.ToString();
+        GameObject.Find("MaxScore").GetComponent<TextMeshProUGUI>().text = gameData.maxScore.ToString();
     }
 
     public void Move(Node from, Node to)
@@ -163,7 +284,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             {
                 to.realNodeObj = from.realNodeObj;
                 from.realNodeObj = null;
-                Debug.Log(to.realNodeObj != null);
+                //Debug.Log(to.realNodeObj != null);
             }
         }
     }
@@ -337,7 +458,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         {
             if (IsGameOver())
             {
-                OnGameOver();;
+                OnGameOver();
             }
         }
         else
@@ -347,9 +468,10 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             CreateBlock(pt.x, pt.y);
         }
     }
-    private void Awake()
+
+    public void OnGameOver()
     {
-        CreateBoard();  
+        Debug.Log("Game Over!!!!");
     }
 
     public void UpdateState()
@@ -410,7 +532,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             } 
             v += "\n";
         } 
-        Debug.Log(v);
+       // Debug.Log(v);
     }
 
 
@@ -423,8 +545,22 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         //UpdateByKeyboard();
         UpdateByTouchscreen();
 
+
+
         if (Application.platform == RuntimePlatform.Android)
+        {
             if (Input.GetKey(KeyCode.Escape)) SceneManager.LoadScene("SinglePlayPage");
+
+            /*string tempA = "[";
+            foreach (NodeObject node in this.realNodeList)
+            {
+                tempA += node.value.ToString() + ",  ";
+            }
+            tempA += "]";
+
+            Debug.Log(tempA);
+            //Debug.Log(nodeMap);*/
+        }
     }
 
 
@@ -489,12 +625,6 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         }
     }
     //----------------------------------------//
-
-
-    private void Start()
-    {
-        CreateRandom();
-    }
 }
  
 

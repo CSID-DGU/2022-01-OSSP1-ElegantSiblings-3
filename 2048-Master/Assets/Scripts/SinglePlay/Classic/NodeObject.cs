@@ -8,6 +8,7 @@ using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
+[System.Serializable]
 public class NodeObject : MonoBehaviour
 {
     [NonSerialized] public Node from = null;
@@ -86,7 +87,13 @@ public class NodeObject : MonoBehaviour
     {
         int[] v = new int[] { 2 }; // Only 2
         this.value = v[Random.Range(0, v.Length)];
-    }  
+    }
+
+    public void InitializeSavedValue(int valueNum)
+    {
+        this.value = valueNum;
+    }
+
     public void MoveToNode(Node from, Node to)
     {
         combine = false;
