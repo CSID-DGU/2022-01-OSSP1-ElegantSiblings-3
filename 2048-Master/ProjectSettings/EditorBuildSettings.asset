@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Game.unity
     guid: db56e3fe50b715d46be1c8e8bb4bceff
+  - enabled: 1
+    path: Assets/PracticeGame.unity
+    guid: f5d349678d2780e48a287797936eac63
   m_configObjects: {}
