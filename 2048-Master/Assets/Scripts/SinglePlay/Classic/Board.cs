@@ -43,7 +43,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public int currScore = 0;
     public int highScore = 0;
     public int stateCount = 0;
-    public bool stateChange = false;
+   // public bool stateChange = false;
 
     public GameObject emptyNodePrefab;
     public GameObject nodePrefab;
@@ -289,6 +289,9 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         node.realNodeObj = nodeObj;
     }
 
+
+
+    //============================== Game Rule ==============================//
     public void Combine(Node from, Node to)
     {
         to.value = to.value * 2;
@@ -328,8 +331,10 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     /// Move Blocks by User Input.
     /// </summary>
     /// <param name="dir"></param>
-    public void MoveTo(Node.Direction dir)
+    public bool MoveTo(Node.Direction dir)
     {
+        bool stateChange = false;
+
         if (dir == Node.Direction.RIGHT)
         {
             for (int j = 0; j < col; j++)
@@ -342,6 +347,8 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                     var right = node.FindTarget(node, Node.Direction.RIGHT);
                     if (right != null)
                     {
+                        stateChange = true;
+
                         if (node.value.HasValue && right.value.HasValue)
                         {
                             if (node.value == right.value)
@@ -353,8 +360,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                         {
                              Move(node, right);
                         } 
-                        else if (right == null)
-                            return;
+                       // else if (right == null) return;
                     } 
                 }
             }
@@ -373,6 +379,8 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                     var left = node.FindTarget(node, Node.Direction.LEFT);
                     if (left != null)
                     {
+                        stateChange = true;
+
                         if (node.value.HasValue && left.value.HasValue)
                         {
                             if (node.value == left.value)
@@ -401,6 +409,8 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                     var up = node.FindTarget(node, Node.Direction.UP);
                     if (up != null)
                     {
+                        stateChange = true;
+
                         if (node.value.HasValue && up.value.HasValue)
                         {
                             if (node.value == up.value)
@@ -428,6 +438,8 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                     var down = node.FindTarget(node, Node.Direction.DOWN);
                     if (down != null)
                     {
+                        stateChange = true;
+
                         if (node.value.HasValue && down.value.HasValue)
                         {
                             if (node.value == down.value)
@@ -458,6 +470,8 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         {
            OnGameOver();
         }
+
+        return stateChange;
     }
 
     /// <summary>
@@ -609,12 +623,16 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         {
             if (Input.anyKeyDown == true)
             {
-                if (Input.GetKeyDown(KeyCode.RightArrow)) MoveTo(Node.Direction.RIGHT);
-                if (Input.GetKeyDown(KeyCode.LeftArrow)) MoveTo(Node.Direction.LEFT);
-                if (Input.GetKeyDown(KeyCode.UpArrow)) MoveTo(Node.Direction.UP);
-                if (Input.GetKeyDown(KeyCode.DownArrow)) MoveTo(Node.Direction.DOWN);
+                bool stateChange = false;
+
+                if (Input.GetKeyDown(KeyCode.RightArrow)) stateChange = MoveTo(Node.Direction.RIGHT);
+                if (Input.GetKeyDown(KeyCode.LeftArrow)) stateChange = MoveTo(Node.Direction.LEFT);
+                if (Input.GetKeyDown(KeyCode.UpArrow)) stateChange = MoveTo(Node.Direction.UP);
+                if (Input.GetKeyDown(KeyCode.DownArrow)) stateChange = MoveTo(Node.Direction.DOWN);
 
                 SaveGameData();
+
+                print("stateChange : " + stateChange);
             }
         }
 
