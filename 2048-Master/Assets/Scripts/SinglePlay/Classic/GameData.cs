@@ -7,6 +7,7 @@ public class GameData
 {
     public int currScore = 0;
     public int highScore = 0;
+    public int stateCount = 0;
     public List<NodeClone> nodeData = new List<NodeClone>();
 
     public string GetJson() => JsonUtility.ToJson(this, true);  
@@ -15,6 +16,7 @@ public class GameData
     {
         currScore = 0;
         highScore = 0;
+        stateCount = 0;
         nodeData = new List<NodeClone>();
     }
 }

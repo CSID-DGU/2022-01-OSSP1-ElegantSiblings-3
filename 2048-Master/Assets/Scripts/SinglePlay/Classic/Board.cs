@@ -42,14 +42,28 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     public int currScore = 0;
     public int highScore = 0;
+    public int stateCount = 0;
+    public bool stateChange = false;
 
     public GameObject emptyNodePrefab;
     public GameObject nodePrefab;
     public RectTransform emptyNodeRect;
     public RectTransform realNodeRect;
 
-    // GameData Load, Save, NewGame
+    // GameData Load, Save, NewGame, Undo, Redo
     public GameData gameData;
+
+    public class Undo_Redo
+    {
+        private int maxCount = 1;
+
+        private int moveCount = 0;
+        private List<GameData> undoData = new List<GameData>();
+        private List<GameData> redoData = new List<GameData>();
+
+
+    }
+
     public string path;
     public bool loadCheck = true;
     public bool newGameCheck = false;
@@ -61,20 +75,28 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public bool touchCheck = false;
 
 
+
+
+
     private void Awake()
     {
         LoadGameData();
         LoadSaveBoard();
+        newGameCheck = false;
     }
 
     public void OnApplicationQuit()
     {
-        print("12412414");
         SaveGameData();
     }
 
     private void Start() { }
 
+
+
+
+
+    //============================== Button Object Event ==============================//
     public void ReturnPrevPageButton()
     {
         SaveGameData();
@@ -88,6 +110,11 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         SceneManager.LoadScene(gameObject.scene.name);
     }
 
+
+
+
+
+    //============================== Game Data Method ==============================//
     private void LoadGameData()
     {
         gameData = new GameData();
@@ -100,12 +127,12 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             if (gameData == null) gameData = new GameData();
         }
     }
-
     private void SaveGameData()
     {
         gameData.clear();
-        gameData.currScore = currScore; //int.Parse(GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text);
-        gameData.highScore = highScore; //int.Parse(GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text);
+        gameData.currScore = currScore;
+        gameData.highScore = highScore;
+        gameData.stateCount = stateCount;
         foreach (var node in nodeData) gameData.nodeData.Add(new NodeClone(node));
         File.WriteAllText(path, gameData.GetJson());
     }
@@ -113,17 +140,21 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private void ClearGameData()
     {
         gameData.clear();
-        gameData.highScore = highScore; //int.Parse(GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text);
+        gameData.highScore = highScore;
         File.WriteAllText(path, gameData.GetJson());
     }
 
 
 
+
+
+    //============================== Make Game Board ==============================//
     private void CreateNewBoard()
     {
         /* first initialize Score Board */
         currScore = 0;
         highScore = gameData.highScore;
+        stateCount = 0;
         GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = currScore.ToString();
         GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text = highScore.ToString();
 
@@ -172,14 +203,14 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private void LoadSaveBoard()
     {
         bool exsitSaveFile = gameData.nodeData.Count == 0 ? false : true;
-        newGameCheck = false;
 
-        if (exsitSaveFile == false) CreateNewBoard();
+        if (exsitSaveFile == false || newGameCheck == true) CreateNewBoard();      
         else
         {
             /* first initialize Score Board */
             currScore = gameData.currScore;
             highScore = gameData.highScore;
+            stateCount = gameData.stateCount;
             GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = currScore.ToString();
             GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text = highScore.ToString();
 
@@ -536,39 +567,31 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             } 
             v += "\n";
         } 
-       // Debug.Log(v);
+
     }
 
 
+    //---------------------------------------------------------------------//
+    //---------------------------- Touch Event ----------------------------//
+    //---------------------------------------------------------------------//
 
-    //------------ Created By J.H ------------//
     private void Update()
     {
         UpdateState();
 
         UpdateByKeyboard();
+        if (Input.GetKeyUp(KeyCode.Backspace)) ReturnPrevPageButton();
+
         //UpdateByTouchscreen();
-
-
-
         if (Application.platform == RuntimePlatform.Android)
-        {
-            if (Input.GetKey(KeyCode.Escape))
-            {
-                ReturnPrevPageButton();
-            }
-        }
-
-        if (Input.GetKeyUp(KeyCode.Backspace))
-        {
-            ReturnPrevPageButton();
-        }
+            if (Input.GetKey(KeyCode.Escape)) ReturnPrevPageButton();
     }
 
 
+    //--------------- 터치 영역 제한 ----------------//
     public bool TouchGameBoard = false;
 
-    public void OnPointerDown(PointerEventData data)
+    public void OnPointerDown(PointerEventData data)  
     {
         TouchGameBoard = true;
     }
@@ -577,18 +600,25 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         TouchGameBoard = true;
     }
+    //-----------------------------------------------//
+
 
     private void UpdateByKeyboard()
     {
         if (state == State.WAIT)
         {
-            if (Input.GetKeyUp(KeyCode.RightArrow)) MoveTo(Node.Direction.RIGHT);
-            if (Input.GetKeyUp(KeyCode.LeftArrow)) MoveTo(Node.Direction.LEFT);
-            if (Input.GetKeyUp(KeyCode.UpArrow)) MoveTo(Node.Direction.UP);
-            if (Input.GetKeyUp(KeyCode.DownArrow)) MoveTo(Node.Direction.DOWN);
+            if (Input.anyKeyDown == true)
+            {
+                if (Input.GetKeyDown(KeyCode.RightArrow)) MoveTo(Node.Direction.RIGHT);
+                if (Input.GetKeyDown(KeyCode.LeftArrow)) MoveTo(Node.Direction.LEFT);
+                if (Input.GetKeyDown(KeyCode.UpArrow)) MoveTo(Node.Direction.UP);
+                if (Input.GetKeyDown(KeyCode.DownArrow)) MoveTo(Node.Direction.DOWN);
+
+                SaveGameData();
+            }
         }
 
-        if (Input.GetKeyUp(KeyCode.Space)) Show();      
+        if (Input.GetKeyUp(KeyCode.Space)) Show();
     }
  
     private void UpdateByTouchscreen()
@@ -619,14 +649,14 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                         else MoveTo(Node.Direction.DOWN);
                     }
 
-                    Show();
+                    SaveGameData();
+                    Show();            
                 }
 
                 TouchGameBoard = false;
             }
         }
     }
-    //----------------------------------------//
 }
  
 
