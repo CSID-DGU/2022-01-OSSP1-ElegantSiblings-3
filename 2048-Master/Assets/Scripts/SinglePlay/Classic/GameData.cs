@@ -6,7 +6,7 @@ using UnityEngine;
 public class GameData
 {
     public int currScore = 0;
-    public int maxScore = 0;
+    public int highScore = 0;
     public List<NodeClone> nodeData = new List<NodeClone>();
 
     public string GetJson() => JsonUtility.ToJson(this, true);  
@@ -14,7 +14,7 @@ public class GameData
     public void clear()
     {
         currScore = 0;
-        maxScore = 0;
+        highScore = 0;
         nodeData = new List<NodeClone>();
     }
 }

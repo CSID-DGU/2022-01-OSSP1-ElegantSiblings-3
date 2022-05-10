@@ -92,7 +92,7 @@ public class DataManager : MonoBehaviour
         // 올바르게 저장됐는지 확인 (자유롭게 변형)
         print("저장완료");
         print("1) " + gameData.currScore);
-        print("2) " + gameData.maxScore);
+        print("2) " + gameData.highScore);
     }
 
     // 게임을 종료하면 자동저장되도록

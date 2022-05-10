@@ -40,16 +40,19 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public int col = 4;
     public int row = 4;
 
+    public int currScore = 0;
+    public int highScore = 0;
+
     public GameObject emptyNodePrefab;
     public GameObject nodePrefab;
     public RectTransform emptyNodeRect;
     public RectTransform realNodeRect;
 
-    // GameData Load, Save, Reset
+    // GameData Load, Save, NewGame
     public GameData gameData;
     public string path;
     public bool loadCheck = true;
-    public bool resetCheck = false;
+    public bool newGameCheck = false;
 
     // Touch Event
     public Vector2 vectorS = new Vector2();
@@ -72,18 +75,16 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     private void Start() { }
 
-
-
-    public void ReturnPrevPage()
+    public void ReturnPrevPageButton()
     {
         SaveGameData();
         SceneManager.LoadScene("SinglePlayPage");
     }
 
-    public void ResetButton()
+    public void NewGameButton()
     {
-        resetCheck = true;
-        ResetGameData();
+        newGameCheck = true;
+        ClearGameData();
         SceneManager.LoadScene(gameObject.scene.name);
     }
 
@@ -103,17 +104,16 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private void SaveGameData()
     {
         gameData.clear();
-        gameData.currScore = int.Parse(GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text);
-        gameData.maxScore = int.Parse(GameObject.Find("MaxScore").GetComponent<TextMeshProUGUI>().text);
+        gameData.currScore = currScore; //int.Parse(GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text);
+        gameData.highScore = highScore; //int.Parse(GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text);
         foreach (var node in nodeData) gameData.nodeData.Add(new NodeClone(node));
-
         File.WriteAllText(path, gameData.GetJson());
     }
 
-    private void ResetGameData()
+    private void ClearGameData()
     {
         gameData.clear();
-        gameData.maxScore = int.Parse(GameObject.Find("MaxScore").GetComponent<TextMeshProUGUI>().text);
+        gameData.highScore = highScore; //int.Parse(GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text);
         File.WriteAllText(path, gameData.GetJson());
     }
 
@@ -122,8 +122,10 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private void CreateNewBoard()
     {
         /* first initialize Score Board */
-        GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = "0";
-        GameObject.Find("MaxScore").GetComponent<TextMeshProUGUI>().text = gameData.maxScore.ToString();
+        currScore = 0;
+        highScore = gameData.highScore;
+        GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = currScore.ToString();
+        GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text = highScore.ToString();
 
         /* first initialize empty Node rect */
         realNodeList.Clear();
@@ -170,14 +172,16 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private void LoadSaveBoard()
     {
         bool exsitSaveFile = gameData.nodeData.Count == 0 ? false : true;
-        resetCheck = false;
+        newGameCheck = false;
 
         if (exsitSaveFile == false) CreateNewBoard();
         else
         {
             /* first initialize Score Board */
-            GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = gameData.currScore.ToString();
-            GameObject.Find("MaxScore").GetComponent<TextMeshProUGUI>().text = gameData.maxScore.ToString();
+            currScore = gameData.currScore;
+            highScore = gameData.highScore;
+            GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = currScore.ToString();
+            GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text = highScore.ToString();
 
             /* first initialize empty Node rect */
             realNodeList.Clear();
@@ -266,10 +270,10 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             to.combined = true;
         }
 
-        gameData.currScore += to.value.GetValueOrDefault();
-        gameData.maxScore = Mathf.Max(gameData.maxScore, gameData.currScore);
-        GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = gameData.currScore.ToString();
-        GameObject.Find("MaxScore").GetComponent<TextMeshProUGUI>().text = gameData.maxScore.ToString();
+        currScore += to.value.GetValueOrDefault();
+        highScore = Mathf.Max(highScore, currScore);
+        GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = currScore.ToString();
+        GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text = highScore.ToString();
     }
 
     public void Move(Node from, Node to)
@@ -542,24 +546,22 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         UpdateState();
 
-        //UpdateByKeyboard();
-        UpdateByTouchscreen();
+        UpdateByKeyboard();
+        //UpdateByTouchscreen();
 
 
 
         if (Application.platform == RuntimePlatform.Android)
         {
-            if (Input.GetKey(KeyCode.Escape)) SceneManager.LoadScene("SinglePlayPage");
-
-            /*string tempA = "[";
-            foreach (NodeObject node in this.realNodeList)
+            if (Input.GetKey(KeyCode.Escape))
             {
-                tempA += node.value.ToString() + ",  ";
+                ReturnPrevPageButton();
             }
-            tempA += "]";
+        }
 
-            Debug.Log(tempA);
-            //Debug.Log(nodeMap);*/
+        if (Input.GetKeyUp(KeyCode.Backspace))
+        {
+            ReturnPrevPageButton();
         }
     }
 
