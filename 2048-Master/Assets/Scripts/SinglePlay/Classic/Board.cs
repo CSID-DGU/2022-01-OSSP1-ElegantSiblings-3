@@ -40,39 +40,26 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public int col = 4;
     public int row = 4;
 
-    public int currScore = 0;
-    public int highScore = 0;
-    public int stateCount = 0;
-   // public bool stateChange = false;
 
     public GameObject emptyNodePrefab;
     public GameObject nodePrefab;
     public RectTransform emptyNodeRect;
     public RectTransform realNodeRect;
 
+
     // GameData Load, Save, NewGame, Undo, Redo
     public GameData gameData;
+    public StateData stateData;
+    public string path_gameData;
+    public string path_stateData;
+    public bool isReloading;
 
-    public class Undo_Redo
-    {
-        private int maxCount = 1;
-
-        private int moveCount = 0;
-        private List<GameData> undoData = new List<GameData>();
-        private List<GameData> redoData = new List<GameData>();
-
-
-    }
-
-    public string path;
-    public bool loadCheck = true;
-    public bool newGameCheck = false;
 
     // Touch Event
     public Vector2 vectorS = new Vector2();
     public Vector2 vectorE = new Vector2();
     public Vector2 vectorM = new Vector2();
-    public bool touchCheck = false;
+
 
 
 
@@ -80,14 +67,13 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     private void Awake()
     {
-        LoadGameData();
-        LoadSaveBoard();
-        newGameCheck = false;
+        LoadGame();
+        CreateGameBoard();
     }
 
     public void OnApplicationQuit()
     {
-        SaveGameData();
+        SaveGame();
     }
 
     private void Start() { }
@@ -99,49 +85,77 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     //============================== Button Object Event ==============================//
     public void ReturnPrevPageButton()
     {
-        SaveGameData();
+        SaveGame();
+        DataToJson();
+        isReloading = true;
         SceneManager.LoadScene("SinglePlayPage");
     }
-
     public void NewGameButton()
     {
-        newGameCheck = true;
-        ClearGameData();
-        SceneManager.LoadScene(gameObject.scene.name);
+        ClearGame();
+        DataToJson();
+        isReloading = true;
+        Invoke("ReloadScene", 0.05f);
     }
-
-
-
+    public void UndoButton()
+    {
+        UndoGame();
+        DataToJson();
+        isReloading = true;
+        Invoke("ReloadScene", 0.05f);
+   
+    }
+    public void ReloadScene() { SceneManager.LoadScene("Game"); }
 
 
     //============================== Game Data Method ==============================//
-    private void LoadGameData()
+    private void LoadGame()
     {
-        gameData = new GameData();
-        path = Path.Combine(Application.persistentDataPath, "GameData.json");
+        isReloading = false;
 
-        if (File.Exists(path))
+        gameData = new GameData();
+        path_gameData = Path.Combine(Application.persistentDataPath, "GameData.json");
+        if (File.Exists(path_gameData))
         {
-            string loadJson = File.ReadAllText(path);
+            string loadJson = File.ReadAllText(path_gameData);
             gameData = JsonUtility.FromJson<GameData>(loadJson);
             if (gameData == null) gameData = new GameData();
         }
+
+        stateData = new StateData() { maxStateNum = 3 };
+        path_stateData = Path.Combine(Application.persistentDataPath, "StateData.json");
+        if (File.Exists(path_stateData))
+        {
+            string loadJson = File.ReadAllText(path_stateData);
+            stateData = JsonUtility.FromJson<StateData>(loadJson);
+            if (stateData == null) stateData = new StateData() { maxStateNum = 3 };
+        }
     }
-    private void SaveGameData()
+    private void SaveGame()
+    {
+        gameData.nodeData.Clear();
+        foreach (var node in nodeData) gameData.nodeData.Add(new NodeClone(node));
+        
+    }
+    private void ClearGame()
     {
         gameData.clear();
-        gameData.currScore = currScore;
-        gameData.highScore = highScore;
-        gameData.stateCount = stateCount;
-        foreach (var node in nodeData) gameData.nodeData.Add(new NodeClone(node));
-        File.WriteAllText(path, gameData.GetJson());
+        stateData.clear();
+    }
+    private void UndoGame()
+    {
+        gameData = stateData.Undo();
     }
 
-    private void ClearGameData()
+    private void DataToJson()
     {
-        gameData.clear();
-        gameData.highScore = highScore;
-        File.WriteAllText(path, gameData.GetJson());
+        File.WriteAllText(path_gameData, gameData.GetJson());
+        File.WriteAllText(path_stateData, stateData.GetJson());
+    }
+    private void ClearJson()
+    {
+        File.WriteAllText(path_gameData, null);
+        File.WriteAllText(path_stateData, null);
     }
 
 
@@ -149,14 +163,17 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
 
     //============================== Make Game Board ==============================//
-    private void CreateNewBoard()
+    private void ClearGameBoard()
+    {
+        //foreach (var emptyNodeObj in emptyNodeObjList) GameObject.Destroy(emptyNodeObj);
+        //foreach (var realNodeobj in realNodeObjList) GameObject.Destroy(realNodeobj);
+    }
+
+    private void NewBoard()
     {
         /* first initialize Score Board */
-        currScore = 0;
-        highScore = gameData.highScore;
-        stateCount = 0;
-        GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = currScore.ToString();
-        GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text = highScore.ToString();
+        GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = gameData.currScore.ToString();
+        GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text = gameData.highScore.ToString();
 
         /* first initialize empty Node rect */
         realNodeList.Clear();
@@ -200,19 +217,16 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         CreateRandom();
     }
    
-    private void LoadSaveBoard()
+    private void CreateGameBoard()
     {
         bool exsitSaveFile = gameData.nodeData.Count == 0 ? false : true;
 
-        if (exsitSaveFile == false || newGameCheck == true) CreateNewBoard();      
+        if (exsitSaveFile == false) NewBoard();      
         else
         {
             /* first initialize Score Board */
-            currScore = gameData.currScore;
-            highScore = gameData.highScore;
-            stateCount = gameData.stateCount;
-            GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = currScore.ToString();
-            GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text = highScore.ToString();
+            GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = gameData.currScore.ToString();
+            GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text = gameData.highScore.ToString();
 
             /* first initialize empty Node rect */
             realNodeList.Clear();
@@ -254,13 +268,18 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                 }
             }
 
-            LayoutRebuilder.ForceRebuildLayoutImmediate(emptyNodeRect);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(emptyNodeRect);  
             foreach (var data in nodeData)
                 data.position = data.nodeRectObj.GetComponent<RectTransform>().localPosition;
 
             foreach (var data in gameData.nodeData)
                 if (data.value >= 2) CreateBlock(data.point.x, data.point.y, data.value);
-        } 
+        }
+
+        SaveGame();
+
+        if (gameData.fixedState) gameData.fixedState = false;
+        else stateData.AddState(gameData.Copy());
     }
 
     private bool IsValid(Vector2Int point)
@@ -304,10 +323,10 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             to.combined = true;
         }
 
-        currScore += to.value.GetValueOrDefault();
-        highScore = Mathf.Max(highScore, currScore);
-        GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = currScore.ToString();
-        GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text = highScore.ToString();
+        gameData.currScore += to.value.GetValueOrDefault();
+        gameData.highScore = Mathf.Max(gameData.highScore, gameData.currScore);
+        GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = gameData.currScore.ToString();
+        GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text = gameData.highScore.ToString();
     }
 
     public void Move(Node from, Node to)
@@ -358,9 +377,9 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                         }
                         else if (right != null && right.value.HasValue == false)
                         {
-                             Move(node, right);
-                        } 
-                       // else if (right == null) return;
+                            Move(node, right);
+                        }
+                        else if (right == null) return false;
                     } 
                 }
             }
@@ -596,9 +615,9 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         UpdateByKeyboard();
         if (Input.GetKeyUp(KeyCode.Backspace)) ReturnPrevPageButton();
 
-        //UpdateByTouchscreen();
+        /*UpdateByTouchscreen();
         if (Application.platform == RuntimePlatform.Android)
-            if (Input.GetKey(KeyCode.Escape)) ReturnPrevPageButton();
+            if (Input.GetKey(KeyCode.Escape)) ReturnPrevPageButton();*/
     }
 
 
@@ -619,6 +638,8 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     private void UpdateByKeyboard()
     {
+        if (isReloading) return;
+
         if (state == State.WAIT)
         {
             if (Input.anyKeyDown == true)
@@ -630,9 +651,11 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                 if (Input.GetKeyDown(KeyCode.UpArrow)) stateChange = MoveTo(Node.Direction.UP);
                 if (Input.GetKeyDown(KeyCode.DownArrow)) stateChange = MoveTo(Node.Direction.DOWN);
 
-                SaveGameData();
-
-                print("stateChange : " + stateChange);
+                if (stateChange == true)
+                {
+                    SaveGame();
+                    stateData.AddState(gameData);
+                }
             }
         }
 
@@ -641,6 +664,8 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
  
     private void UpdateByTouchscreen()
     {
+        if (isReloading) return;
+
         if (state == State.WAIT)
         {
             if (Input.touchCount > 0 && TouchGameBoard == true)
@@ -653,22 +678,29 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                 }
                 else if (touch.phase == TouchPhase.Ended)
                 {
+                    bool stateChange = false;
+
                     vectorE = touch.position;
                     vectorM = new Vector2(vectorE.x - vectorS.x, vectorE.y - vectorS.y);
 
                     if (Mathf.Abs(vectorM.x) > Mathf.Abs(vectorM.y))
                     {
-                        if (vectorM.x > 0) MoveTo(Node.Direction.RIGHT);
-                        else MoveTo(Node.Direction.LEFT);
+                        if (vectorM.x > 0) stateChange = MoveTo(Node.Direction.RIGHT);
+                        else stateChange = MoveTo(Node.Direction.LEFT);
                     }
                     else if (Mathf.Abs(vectorM.x) < Mathf.Abs(vectorM.y))
                     {
-                        if (vectorM.y > 0) MoveTo(Node.Direction.UP);
-                        else MoveTo(Node.Direction.DOWN);
+                        if (vectorM.y > 0) stateChange = MoveTo(Node.Direction.UP);
+                        else stateChange = MoveTo(Node.Direction.DOWN);
                     }
 
-                    SaveGameData();
-                    Show();            
+                    if (stateChange == true)
+                    {
+                        SaveGame();
+                        stateData.AddState(gameData);
+                    }
+
+                    Show();
                 }
 
                 TouchGameBoard = false;

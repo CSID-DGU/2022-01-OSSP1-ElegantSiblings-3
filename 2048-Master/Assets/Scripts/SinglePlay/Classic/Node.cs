@@ -75,7 +75,20 @@ public class NodeClone
         
     }
 
-    public Node InputToNode(Node node)
+    public NodeClone Copy()
+    {
+        NodeClone temp = new NodeClone();
+
+        temp.value = this.value;
+        temp.point = new Vector2Int(this.point.x, this.point.y);
+        temp.position = new Vector2(this.position.x, this.position.y);
+        temp.combined = this.combined;
+        foreach (var linked in this.linkedNode) temp.linkedNode.Add(linked.Copy());
+
+        return temp;
+    }
+
+    /*public Node InputToNode(Node node)
     {
         node.value = this.value == 0 ? null : node.value;
         node.point = new Vector2Int(this.point.x, this.point.y);
@@ -87,7 +100,7 @@ public class NodeClone
         node.linkedNode=temp.ToArray();
 
         return node;
-    }
+    }*/
 }
 
 [System.Serializable]
@@ -95,4 +108,14 @@ public class LinkedNode
 {
     public bool IsNull = true;
     public Vector2Int link = new Vector2Int();
+
+    public LinkedNode Copy()
+    {
+        LinkedNode temp = new LinkedNode();
+
+        temp.IsNull = this.IsNull;
+        temp.link = new Vector2Int(this.link.x, this.link.y);
+
+        return temp;
+    }
 }

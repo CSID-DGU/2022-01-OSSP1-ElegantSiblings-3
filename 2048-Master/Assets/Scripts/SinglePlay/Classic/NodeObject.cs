@@ -20,7 +20,7 @@ public class NodeObject : MonoBehaviour
         get => m_value;
         set
         {
-            print(value);
+            //print(value);
             this.m_value = value;
             this.valueText.text = value.ToString();
             SetColor(value);   
