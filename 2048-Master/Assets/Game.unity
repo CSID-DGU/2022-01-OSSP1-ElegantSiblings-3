@@ -1147,9 +1147,6 @@ MonoBehaviour:
   nodeData: []
   col: 4
   row: 4
-  currScore: 0
-  highScore: 0
-  stateCount: 0
   emptyNodePrefab: {fileID: 1654187571721417778, guid: 20a1c4f0c1a2b0d4eb5e1e19e4cb3b76,
     type: 3}
   nodePrefab: {fileID: 490343179275367117, guid: 5bcee01cf3291c2498cf5bd7be2fd0af,
@@ -1157,20 +1154,20 @@ MonoBehaviour:
   emptyNodeRect: {fileID: 68728252}
   realNodeRect: {fileID: 1103381382}
   gameData:
+    fixedState: 0
     currScore: 0
     highScore: 0
-    stateCount: 0
     nodeData: []
-  stateData: {fileID: 0}
-  emptyNodeObjList: []
-  realNodeObjList: []
-  path: 
-  loadCheck: 0
-  newGameCheck: 0
+  stateData:
+    maxStateNum: 1
+    mainState: []
+    subState: []
+  path_gameData: 
+  path_stateData: 
+  isReloading: 0
   vectorS: {x: 0, y: 0}
   vectorE: {x: 0, y: 0}
   vectorM: {x: 0, y: 0}
-  touchCheck: 0
   TouchGameBoard: 0
 --- !u!1 &913224409
 GameObject:
@@ -1656,7 +1653,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1135748434}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 740392725}
+        m_TargetAssemblyTypeName: Board, Assembly-CSharp
+        m_MethodName: RedoButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1135748434
 MonoBehaviour:
   m_ObjectHideFlags: 0

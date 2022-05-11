@@ -24,6 +24,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     }
 
     public State state = State.WAIT;
+
     public static Board Instance
     {
         get
@@ -33,13 +34,14 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         }
     } 
 
+
+    // Create Board and Node
     private static Board _inst;
     public List<NodeObject> realNodeList = new List<NodeObject>(); 
     public List<Node> nodeData = new List<Node>();
     public Dictionary<Vector2Int, Node> nodeMap = new Dictionary<Vector2Int, Node>();
     public int col = 4;
     public int row = 4;
-
 
     public GameObject emptyNodePrefab;
     public GameObject nodePrefab;
@@ -74,6 +76,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public void OnApplicationQuit()
     {
         SaveGame();
+        SaveToJson();
     }
 
     private void Start() { }
@@ -86,26 +89,32 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public void ReturnPrevPageButton()
     {
         SaveGame();
-        DataToJson();
+        SaveToJson();
         isReloading = true;
         SceneManager.LoadScene("SinglePlayPage");
     }
     public void NewGameButton()
     {
         ClearGame();
-        DataToJson();
+        SaveToJson();
         isReloading = true;
-        Invoke("ReloadScene", 0.05f);
+        SceneManager.LoadScene("Game");
     }
     public void UndoButton()
     {
         UndoGame();
-        DataToJson();
+        SaveToJson();
         isReloading = true;
-        Invoke("ReloadScene", 0.05f);
-   
+        SceneManager.LoadScene("Game");
     }
-    public void ReloadScene() { SceneManager.LoadScene("Game"); }
+    public void RedoButton()
+    {
+        RedoGame();
+        SaveToJson();
+        isReloading = true;
+        SceneManager.LoadScene("Game");
+    }
+
 
 
     //============================== Game Data Method ==============================//
@@ -146,8 +155,11 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         gameData = stateData.Undo();
     }
-
-    private void DataToJson()
+    private void RedoGame()
+    {
+        gameData = stateData.Redo();
+    }
+    private void SaveToJson()
     {
         File.WriteAllText(path_gameData, gameData.GetJson());
         File.WriteAllText(path_stateData, stateData.GetJson());
@@ -163,12 +175,6 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
 
     //============================== Make Game Board ==============================//
-    private void ClearGameBoard()
-    {
-        //foreach (var emptyNodeObj in emptyNodeObjList) GameObject.Destroy(emptyNodeObj);
-        //foreach (var realNodeobj in realNodeObjList) GameObject.Destroy(realNodeobj);
-    }
-
     private void NewBoard()
     {
         /* first initialize Score Board */
@@ -259,8 +265,8 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                     node.nodeRectObj = instantiatePrefab;
 
                     NodeClone nodeClone = gameData.nodeData[i * 4 + j];
-                    node.value = nodeClone.value == 0 ? null : nodeClone.value;
-                    node.combined = nodeClone.combined;
+                    node.value = nodeClone.value == -1 ? null : nodeClone.value;
+                    //node.combined = nodeClone.combined;
 
                     nodeData.Add(node);
                     instantiatePrefab.name = node.point.ToString();
@@ -350,10 +356,8 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     /// Move Blocks by User Input.
     /// </summary>
     /// <param name="dir"></param>
-    public bool MoveTo(Node.Direction dir)
+    public void MoveTo(Node.Direction dir)
     {
-        bool stateChange = false;
-
         if (dir == Node.Direction.RIGHT)
         {
             for (int j = 0; j < col; j++)
@@ -366,8 +370,6 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                     var right = node.FindTarget(node, Node.Direction.RIGHT);
                     if (right != null)
                     {
-                        stateChange = true;
-
                         if (node.value.HasValue && right.value.HasValue)
                         {
                             if (node.value == right.value)
@@ -379,7 +381,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                         {
                             Move(node, right);
                         }
-                        else if (right == null) return false;
+                        else if (right == null) return;
                     } 
                 }
             }
@@ -398,8 +400,6 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                     var left = node.FindTarget(node, Node.Direction.LEFT);
                     if (left != null)
                     {
-                        stateChange = true;
-
                         if (node.value.HasValue && left.value.HasValue)
                         {
                             if (node.value == left.value)
@@ -428,8 +428,6 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                     var up = node.FindTarget(node, Node.Direction.UP);
                     if (up != null)
                     {
-                        stateChange = true;
-
                         if (node.value.HasValue && up.value.HasValue)
                         {
                             if (node.value == up.value)
@@ -457,8 +455,6 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                     var down = node.FindTarget(node, Node.Direction.DOWN);
                     if (down != null)
                     {
-                        stateChange = true;
-
                         if (node.value.HasValue && down.value.HasValue)
                         {
                             if (node.value == down.value)
@@ -485,12 +481,11 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         }
         
         Show();
+
         if (IsGameOver())
         {
            OnGameOver();
         }
-
-        return stateChange;
     }
 
     /// <summary>
@@ -578,6 +573,10 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             nodeData.ForEach(x => x.combined = false);
             state = State.WAIT;
             CreateRandom();
+
+            //--- State Save For UndoRedo ---//
+            SaveGame();
+            stateData.AddState(gameData);
         }
     }
 
@@ -600,7 +599,6 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             } 
             v += "\n";
         } 
-
     }
 
 
@@ -644,18 +642,10 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         {
             if (Input.anyKeyDown == true)
             {
-                bool stateChange = false;
-
-                if (Input.GetKeyDown(KeyCode.RightArrow)) stateChange = MoveTo(Node.Direction.RIGHT);
-                if (Input.GetKeyDown(KeyCode.LeftArrow)) stateChange = MoveTo(Node.Direction.LEFT);
-                if (Input.GetKeyDown(KeyCode.UpArrow)) stateChange = MoveTo(Node.Direction.UP);
-                if (Input.GetKeyDown(KeyCode.DownArrow)) stateChange = MoveTo(Node.Direction.DOWN);
-
-                if (stateChange == true)
-                {
-                    SaveGame();
-                    stateData.AddState(gameData);
-                }
+                if (Input.GetKeyDown(KeyCode.RightArrow)) MoveTo(Node.Direction.RIGHT);
+                if (Input.GetKeyDown(KeyCode.LeftArrow)) MoveTo(Node.Direction.LEFT);
+                if (Input.GetKeyDown(KeyCode.UpArrow)) MoveTo(Node.Direction.UP);
+                if (Input.GetKeyDown(KeyCode.DownArrow)) MoveTo(Node.Direction.DOWN);
             }
         }
 
@@ -678,26 +668,18 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                 }
                 else if (touch.phase == TouchPhase.Ended)
                 {
-                    bool stateChange = false;
-
                     vectorE = touch.position;
                     vectorM = new Vector2(vectorE.x - vectorS.x, vectorE.y - vectorS.y);
 
                     if (Mathf.Abs(vectorM.x) > Mathf.Abs(vectorM.y))
                     {
-                        if (vectorM.x > 0) stateChange = MoveTo(Node.Direction.RIGHT);
-                        else stateChange = MoveTo(Node.Direction.LEFT);
+                        if (vectorM.x > 0) MoveTo(Node.Direction.RIGHT);
+                        else MoveTo(Node.Direction.LEFT);
                     }
                     else if (Mathf.Abs(vectorM.x) < Mathf.Abs(vectorM.y))
                     {
-                        if (vectorM.y > 0) stateChange = MoveTo(Node.Direction.UP);
-                        else stateChange = MoveTo(Node.Direction.DOWN);
-                    }
-
-                    if (stateChange == true)
-                    {
-                        SaveGame();
-                        stateData.AddState(gameData);
+                        if (vectorM.y > 0) MoveTo(Node.Direction.UP);
+                        else MoveTo(Node.Direction.DOWN);
                     }
 
                     Show();

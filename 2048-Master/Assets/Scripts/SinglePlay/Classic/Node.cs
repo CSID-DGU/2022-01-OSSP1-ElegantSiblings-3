@@ -15,8 +15,8 @@ public class  Node
     {
         linkedNode = foundedLinkedNode;
     }
-    public GameObject nodeRectObj;
-    public NodeObject realNodeObj;
+    [NonSerialized] public GameObject nodeRectObj;
+    [NonSerialized] public NodeObject realNodeObj;
     public enum Direction
     {
         RIGHT = 0,
@@ -58,7 +58,7 @@ public class  Node
 [System.Serializable]
 public class NodeClone
 {
-    public int value = 0;
+    public int value = -1;
     public Vector2Int point;
     public Vector2 position;
     public bool combined = false;
@@ -67,7 +67,7 @@ public class NodeClone
     public NodeClone() { }
     public NodeClone(Node node)
     {
-        this.value = node.value.GetValueOrDefault();
+        this.value = node.value == null ? -1 : node.value.GetValueOrDefault();
         this.point = new Vector2Int(node.point.x, node.point.y);
         this.position = new Vector2(node.position.x, node.position.y);
         this.combined = node.combined;
@@ -87,20 +87,6 @@ public class NodeClone
 
         return temp;
     }
-
-    /*public Node InputToNode(Node node)
-    {
-        node.value = this.value == 0 ? null : node.value;
-        node.point = new Vector2Int(this.point.x, this.point.y);
-        node.position = new Vector2(this.position.x, this.position.y);
-        node.combined = this.combined;
-
-        List<Vector2Int?> temp = new List<Vector2Int?>();
-        foreach (var linked in this.linkedNode) temp.Add(linked.IsNull ? null : new Vector2Int(linked.link.x, linked.link.y));
-        node.linkedNode=temp.ToArray();
-
-        return node;
-    }*/
 }
 
 [System.Serializable]
