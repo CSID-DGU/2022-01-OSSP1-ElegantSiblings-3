@@ -32,13 +32,13 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             if (_inst == null) _inst = FindObjectOfType<Board>();
             return _inst;
         }
-    } 
+    }
 
 
 
     // Create Board and Node
     private static Board _inst;
-    public List<NodeObject> realNodeList = new List<NodeObject>(); 
+    public List<NodeObject> realNodeList = new List<NodeObject>();
     public List<Node> nodeData = new List<Node>();
     public Dictionary<Vector2Int, Node> nodeMap = new Dictionary<Vector2Int, Node>();
     public int col = 4;
@@ -58,7 +58,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public string path_gameMode;
     public string path_gameData;
     public string path_stateData;
-   
+
 
 
     // Touch Event
@@ -156,7 +156,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         gameData.nodeData.Clear();
         foreach (var node in nodeData) gameData.nodeData.Add(new NodeClone(node));
-        
+
     }
     private void ClearGame()
     {
@@ -225,12 +225,13 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
         CreateRandom();
     }
-   
+
     private void CreateGameBoard()
     {
         bool exsitSaveFile = gameData.nodeData.Count == 0 ? false : true;
 
         /* first initialize Score Board */
+        GameObject.Find("ModeName").GetComponent<TextMeshProUGUI>().text = new Dictionary<string, string> { { "ClassicMode", "Classic Mode" }, { "InfinityMode", "Infinity Mode" }, { "PracticeMode", "Practice Mode" } }[gameMode.modeName];
         GameObject.Find("TargetNumber").GetComponent<TextMeshProUGUI>().text = new Dictionary<int, string> { { 2048, "2048" }, { 1073741824, "Infinity" } }[gameData.targetBlockNumber];
         GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = gameData.currScore.ToString();
         GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text = gameData.highScore.ToString();
