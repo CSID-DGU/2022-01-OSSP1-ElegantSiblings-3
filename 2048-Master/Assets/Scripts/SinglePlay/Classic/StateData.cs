@@ -23,6 +23,8 @@ public class StateData
         clear();
     }
 
+    public bool Empty() => mainState.Count == 0 ? true : false;
+
     public GameData Undo()
     {
         int mainSize = mainState.Count;

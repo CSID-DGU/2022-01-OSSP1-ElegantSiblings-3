@@ -16,14 +16,14 @@ public class GameData
 
     public void clear()
     {
-        fixedState = false;
-        targetBlockNumber = 0;
+        fixedState = false;   
         highestBlockNumber = 0;
         currScore = 0;
         nodeData = new List<NodeClone>();
     }
     public void clearAll()
     {
+        targetBlockNumber = 0;
         highScore = 0;
         clear();
     }

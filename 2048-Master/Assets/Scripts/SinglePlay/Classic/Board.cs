@@ -94,12 +94,10 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         SaveGame();
         SaveToJson();
-        isReloading = true;
         SceneManager.LoadScene("SinglePlayPage");
     }
     public void NewGameButton()
     {
-        //ClearJson();
         ClearGame();
         SaveToJson();
         isReloading = true;
@@ -191,16 +189,6 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     //============================== Make Game Board ==============================//
     private void NewBoard()
     {
-        /* first initialize Score Board */
-        GameObject.Find("TargetNumber").GetComponent<TextMeshProUGUI>().text = new Dictionary<int, string> { { 2048, "2048" }, { 1073741824, "Infinity" } }[gameData.targetBlockNumber];
-        GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = gameData.currScore.ToString();
-        GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text = gameData.highScore.ToString();
-
-        /* first initialize empty Node rect */
-        realNodeList.Clear();
-        nodeMap.Clear();
-        nodeData.Clear();
-
         var emptyChildCount = emptyNodeRect.transform.childCount;
         for (int i = 0; i < emptyChildCount; i++) { var child = emptyNodeRect.GetChild(i); }
 
@@ -242,19 +230,19 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         bool exsitSaveFile = gameData.nodeData.Count == 0 ? false : true;
 
+        /* first initialize Score Board */
+        GameObject.Find("TargetNumber").GetComponent<TextMeshProUGUI>().text = new Dictionary<int, string> { { 2048, "2048" }, { 1073741824, "Infinity" } }[gameData.targetBlockNumber];
+        GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = gameData.currScore.ToString();
+        GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text = gameData.highScore.ToString();
+
+        /* first initialize empty Node rect */
+        realNodeList.Clear();
+        nodeMap.Clear();
+        nodeData.Clear();
+
         if (exsitSaveFile == false) NewBoard();      
         else
         {
-            /* first initialize Score Board */
-            GameObject.Find("TargetNumber").GetComponent<TextMeshProUGUI>().text = new Dictionary<int, string> { { 2048, "2048" }, { 1073741824, "Infinity" } }[gameData.targetBlockNumber];
-            GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = gameData.currScore.ToString();
-            GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text = gameData.highScore.ToString();
-
-            /* first initialize empty Node rect */
-            realNodeList.Clear();
-            nodeMap.Clear();
-            nodeData.Clear();
-
             var emptyChildCount = emptyNodeRect.transform.childCount;
             for (int i = 0; i < emptyChildCount; i++) { var child = emptyNodeRect.GetChild(i); }
 
@@ -300,8 +288,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
         SaveGame();
 
-        if (gameData.fixedState) gameData.fixedState = false;
-        else stateData.AddState(gameData.Copy());
+        if (stateData.Empty()) stateData.AddState(gameData.Copy());
     }
 
     private bool IsValid(Vector2Int point)

@@ -18,7 +18,7 @@ public class SinglePlayPage : MonoBehaviour
 {
     public void Awake()
     {
-     //   DataClear();
+        //DataClear();
     }
 
     public void ClassicModeButton()
