@@ -35,6 +35,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     } 
 
 
+
     // Create Board and Node
     private static Board _inst;
     public List<NodeObject> realNodeList = new List<NodeObject>(); 
@@ -50,11 +51,14 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
 
     // GameData Load, Save, NewGame, Undo, Redo
+    public bool isReloading;
+    public SinglePlayMode gameMode;
     public GameData gameData;
     public StateData stateData;
+    public string path_gameMode;
     public string path_gameData;
     public string path_stateData;
-    public bool isReloading;
+   
 
 
     // Touch Event
@@ -95,6 +99,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     }
     public void NewGameButton()
     {
+        //ClearJson();
         ClearGame();
         SaveToJson();
         isReloading = true;
@@ -122,22 +127,31 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         isReloading = false;
 
-        gameData = new GameData();
-        path_gameData = Path.Combine(Application.persistentDataPath, "GameData.json");
+        gameMode = new SinglePlayMode();
+        path_gameMode = Path.Combine(Application.persistentDataPath, "SinglePlayMode.json");
+        if (File.Exists(path_gameMode))
+        {
+            string loadJson = File.ReadAllText(path_gameMode);
+            gameMode = JsonUtility.FromJson<SinglePlayMode>(loadJson);
+            if (gameMode == null) gameMode = new SinglePlayMode();
+        }
+
+        gameData = new GameData() { targetBlockNumber = new Dictionary<string, int> { { "ClassicMode", 2048 }, { "InfinityMode", 1073741824 }, { "PracticeMode", 2048 } }[gameMode.modeName] };
+        path_gameData = Path.Combine(Application.persistentDataPath, gameMode.modeName + "GameData.json");
         if (File.Exists(path_gameData))
         {
             string loadJson = File.ReadAllText(path_gameData);
             gameData = JsonUtility.FromJson<GameData>(loadJson);
-            if (gameData == null) gameData = new GameData();
+            if (gameData == null) gameData = new GameData() { targetBlockNumber = new Dictionary<string, int> { { "ClassicMode", 2048 }, { "InfinityMode", 1073741824 }, { "PracticeMode", 2048 } }[gameMode.modeName] };
         }
 
-        stateData = new StateData() { maxStateNum = 3 };
-        path_stateData = Path.Combine(Application.persistentDataPath, "StateData.json");
+        stateData = new StateData() { stateDataCount = new Dictionary<string, int> { { "ClassicMode", 1 }, { "InfinityMode", 1 }, { "PracticeMode", 10 } }[gameMode.modeName] };
+        path_stateData = Path.Combine(Application.persistentDataPath, gameMode.modeName + "StateData.json");
         if (File.Exists(path_stateData))
         {
             string loadJson = File.ReadAllText(path_stateData);
             stateData = JsonUtility.FromJson<StateData>(loadJson);
-            if (stateData == null) stateData = new StateData() { maxStateNum = 3 };
+            if (stateData == null) stateData = new StateData() { stateDataCount = new Dictionary<string, int> { { "ClassicMode", 1 }, { "InfinityMode", 1 }, { "PracticeMode", 10 } }[gameMode.modeName] };
         }
     }
     private void SaveGame()
@@ -178,6 +192,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private void NewBoard()
     {
         /* first initialize Score Board */
+        GameObject.Find("TargetNumber").GetComponent<TextMeshProUGUI>().text = new Dictionary<int, string> { { 2048, "2048" }, { 1073741824, "Infinity" } }[gameData.targetBlockNumber];
         GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = gameData.currScore.ToString();
         GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text = gameData.highScore.ToString();
 
@@ -231,6 +246,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         else
         {
             /* first initialize Score Board */
+            GameObject.Find("TargetNumber").GetComponent<TextMeshProUGUI>().text = new Dictionary<int, string> { { 2048, "2048" }, { 1073741824, "Infinity" } }[gameData.targetBlockNumber];
             GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = gameData.currScore.ToString();
             GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text = gameData.highScore.ToString();
 
@@ -331,6 +347,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
         gameData.currScore += to.value.GetValueOrDefault();
         gameData.highScore = Mathf.Max(gameData.highScore, gameData.currScore);
+        gameData.highestBlockNumber = Mathf.Max(gameData.highestBlockNumber, to.value.GetValueOrDefault());
         GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = gameData.currScore.ToString();
         GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text = gameData.highScore.ToString();
     }
@@ -537,6 +554,11 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         Debug.Log("Game Over!!!!");
     }
 
+    public void OnGameEnd()
+    {
+        Debug.Log("Congratulations!!!!");
+    }
+
     public void UpdateState()
     {
         bool targetAllNull = true;
@@ -575,8 +597,9 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             CreateRandom();
 
             //--- State Save For UndoRedo ---//
-            SaveGame();
+            SaveGame();        
             stateData.AddState(gameData);
+            if (gameData.highestBlockNumber >= gameData.targetBlockNumber) { OnGameEnd(); }
         }
     }
 

@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class StateData
 {
-    public int maxStateNum = 1;
+    public int stateDataCount = 1;
     public List<GameData> mainState = new List<GameData>();
     public List<GameData> subState = new List<GameData>();
 
@@ -19,7 +19,7 @@ public class StateData
 
     public void clearAll()
     {
-        maxStateNum = 1;
+        stateDataCount = 1;
         clear();
     }
 
@@ -54,7 +54,7 @@ public class StateData
         mainState.Add(newState.Copy());
         mainState[mainState.Count - 1].fixedState = true;
 
-        if (mainState.Count > maxStateNum + 1) mainState.RemoveAt(0);
+        if (mainState.Count > stateDataCount + 1) mainState.RemoveAt(0);
         subState = new List<GameData>();
     }
 }

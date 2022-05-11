@@ -6,6 +6,8 @@ using UnityEngine;
 public class GameData
 {
     public bool fixedState = false;
+    public int targetBlockNumber = 0;
+    public int highestBlockNumber = 0;
     public int currScore = 0;
     public int highScore = 0;
     public List<NodeClone> nodeData = new List<NodeClone>();
@@ -15,6 +17,8 @@ public class GameData
     public void clear()
     {
         fixedState = false;
+        targetBlockNumber = 0;
+        highestBlockNumber = 0;
         currScore = 0;
         nodeData = new List<NodeClone>();
     }
@@ -29,6 +33,8 @@ public class GameData
         GameData temp = new GameData();
 
         temp.fixedState = fixedState;
+        temp.targetBlockNumber = targetBlockNumber;
+        temp.highestBlockNumber = highestBlockNumber;
         temp.currScore = currScore;
         temp.highScore = highScore;
         foreach (NodeClone e in nodeData) temp.nodeData.Add(e.Copy());
