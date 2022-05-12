@@ -74,6 +74,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private void Awake()
     {
         LoadGame();
+        ThemeRoad();
         CreateGameBoard();
     }
 
@@ -95,6 +96,12 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         SaveGame();
         SaveToJson();
         SceneManager.LoadScene("SinglePlayPage");
+    }
+    public void ReturnHomePageButton()
+    {
+        SaveGame();
+        SaveToJson();
+        SceneManager.LoadScene("HomePage");
     }
     public void NewGameButton()
     {
@@ -134,22 +141,22 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             if (gameMode == null) gameMode = new SinglePlayMode();
         }
 
-        gameData = new GameData() { targetBlockNumber = new Dictionary<string, int> { { "ClassicMode", 2048 }, { "InfinityMode", 1073741824 }, { "PracticeMode", 2048 } }[gameMode.modeName] };
+        gameData = new GameData() { targetBlockNumber = new Dictionary<string, int> { { "ClassicMode", 2048 }, { "ChallengeMode", 1073741824 }, { "PracticeMode", 2048 } }[gameMode.modeName] };
         path_gameData = Path.Combine(Application.persistentDataPath, gameMode.modeName + "GameData.json");
         if (File.Exists(path_gameData))
         {
             string loadJson = File.ReadAllText(path_gameData);
             gameData = JsonUtility.FromJson<GameData>(loadJson);
-            if (gameData == null) gameData = new GameData() { targetBlockNumber = new Dictionary<string, int> { { "ClassicMode", 2048 }, { "InfinityMode", 1073741824 }, { "PracticeMode", 2048 } }[gameMode.modeName] };
+            if (gameData == null) gameData = new GameData() { targetBlockNumber = new Dictionary<string, int> { { "ClassicMode", 2048 }, { "ChallengeMode", 1073741824 }, { "PracticeMode", 2048 } }[gameMode.modeName] };
         }
 
-        stateData = new StateData() { stateDataCount = new Dictionary<string, int> { { "ClassicMode", 1 }, { "InfinityMode", 1 }, { "PracticeMode", 10 } }[gameMode.modeName] };
+        stateData = new StateData() { stateDataCount = new Dictionary<string, int> { { "ClassicMode", 1 }, { "ChallengeMode", 1 }, { "PracticeMode", 10 } }[gameMode.modeName] };
         path_stateData = Path.Combine(Application.persistentDataPath, gameMode.modeName + "StateData.json");
         if (File.Exists(path_stateData))
         {
             string loadJson = File.ReadAllText(path_stateData);
             stateData = JsonUtility.FromJson<StateData>(loadJson);
-            if (stateData == null) stateData = new StateData() { stateDataCount = new Dictionary<string, int> { { "ClassicMode", 1 }, { "InfinityMode", 1 }, { "PracticeMode", 10 } }[gameMode.modeName] };
+            if (stateData == null) stateData = new StateData() { stateDataCount = new Dictionary<string, int> { { "ClassicMode", 1 }, { "ChallengeMode", 1 }, { "PracticeMode", 10 } }[gameMode.modeName] };
         }
     }
     private void SaveGame()
@@ -226,12 +233,25 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         CreateRandom();
     }
 
+    private void ThemeRoad()
+    {
+        GameObject.Find("ReturnPrevPage").GetComponent<Image>().sprite = Resources.Load<Sprite>("theme3/" + "BackArrow_Theme3");
+        GameObject.Find("ReturnHomePage").GetComponent<Image>().sprite = Resources.Load<Sprite>("theme3/" + "ReturnHome_Theme3");
+
+        GameObject.Find("BackGround").GetComponent<Image>().sprite = Resources.Load<Sprite>("theme3/" + gameMode.modeName + "GameBoard_theme3");
+        GameObject.Find("NewGame").GetComponent<Image>().sprite = Resources.Load<Sprite>("theme3/" + gameMode.modeName + "NewGame_theme3");
+        GameObject.Find("Undo").GetComponent<Image>().sprite = Resources.Load<Sprite>("theme3/" + gameMode.modeName + "Undo_theme3");
+        GameObject.Find("Redo").GetComponent<Image>().sprite = Resources.Load<Sprite>("theme3/" + gameMode.modeName + "Redo_theme3");
+
+
+    }
+
     private void CreateGameBoard()
     {
         bool exsitSaveFile = gameData.nodeData.Count == 0 ? false : true;
 
         /* first initialize Score Board */
-        GameObject.Find("ModeName").GetComponent<TextMeshProUGUI>().text = new Dictionary<string, string> { { "ClassicMode", "Classic Mode" }, { "InfinityMode", "Infinity Mode" }, { "PracticeMode", "Practice Mode" } }[gameMode.modeName];
+        //GameObject.Find("ModeName").GetComponent<TextMeshProUGUI>().text = new Dictionary<string, string> { { "ClassicMode", "Classic Mode" }, { "InfinityMode", "Infinity Mode" }, { "PracticeMode", "Practice Mode" } }[gameMode.modeName];
         GameObject.Find("TargetNumber").GetComponent<TextMeshProUGUI>().text = new Dictionary<int, string> { { 2048, "2048" }, { 1073741824, "Infinity" } }[gameData.targetBlockNumber];
         GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = gameData.currScore.ToString();
         GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text = gameData.highScore.ToString();
@@ -621,12 +641,12 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         UpdateState();
 
-       /* UpdateByKeyboard();
-        if (Input.GetKeyUp(KeyCode.Backspace)) ReturnPrevPageButton();*/
+        UpdateByKeyboard();
+        if (Input.GetKeyUp(KeyCode.Backspace)) ReturnPrevPageButton();
 
-        UpdateByTouchscreen();
+       /* UpdateByTouchscreen();
         if (Application.platform == RuntimePlatform.Android)
-            if (Input.GetKey(KeyCode.Escape)) ReturnPrevPageButton();
+            if (Input.GetKey(KeyCode.Escape)) ReturnPrevPageButton();*/
     }
 
 
