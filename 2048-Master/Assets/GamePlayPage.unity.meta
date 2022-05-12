@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:2048-Master/Assets/GamePlayPage.unity.meta
 guid: 127609fc862d20e41b0697bf3ed24f66
+========
+guid: dfe36c5e7d1a520438600364161b6ae0
+>>>>>>>> 26f514c6d21a4d18af85c099781f4ea47d865b6c:2048-Master/Assets/Home.unity.meta
 DefaultImporter:
   externalObjects: {}
   userData: 

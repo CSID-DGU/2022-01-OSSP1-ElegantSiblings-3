@@ -262,8 +262,13 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
 <<<<<<< HEAD
+<<<<<<< HEAD
   m_AnchoredPosition: {x: 0, y: -110}
   m_SizeDelta: {x: 650, y: 270}
+=======
+  m_AnchoredPosition: {x: 0, y: -120}
+  m_SizeDelta: {x: 960, y: 280}
+>>>>>>> 26f514c6d21a4d18af85c099781f4ea47d865b6c
 =======
   m_AnchoredPosition: {x: 0, y: -120}
   m_SizeDelta: {x: 960, y: 280}
@@ -346,7 +351,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
 <<<<<<< HEAD
+<<<<<<< HEAD
   m_Sprite: {fileID: 21300000, guid: b28326752b307ac4ca9dec12bb07b1fb, type: 3}
+=======
+  m_Sprite: {fileID: 21300000, guid: caa3b974dbd34ba4f88603cd187971ad, type: 3}
+>>>>>>> 26f514c6d21a4d18af85c099781f4ea47d865b6c
 =======
   m_Sprite: {fileID: 21300000, guid: caa3b974dbd34ba4f88603cd187971ad, type: 3}
 >>>>>>> 26f514c6d21a4d18af85c099781f4ea47d865b6c
@@ -405,7 +414,11 @@ RectTransform:
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 350}
 <<<<<<< HEAD
+<<<<<<< HEAD
   m_SizeDelta: {x: 650, y: 270}
+=======
+  m_SizeDelta: {x: 960, y: 280}
+>>>>>>> 26f514c6d21a4d18af85c099781f4ea47d865b6c
 =======
   m_SizeDelta: {x: 960, y: 280}
 >>>>>>> 26f514c6d21a4d18af85c099781f4ea47d865b6c
@@ -487,7 +500,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
 <<<<<<< HEAD
+<<<<<<< HEAD
   m_Sprite: {fileID: 21300000, guid: 5c0c447d0b4e3ea4eb5926671809dd6d, type: 3}
+=======
+  m_Sprite: {fileID: 21300000, guid: 810745bad88d9ff4aa2b460d3f14279f, type: 3}
+>>>>>>> 26f514c6d21a4d18af85c099781f4ea47d865b6c
 =======
   m_Sprite: {fileID: 21300000, guid: 810745bad88d9ff4aa2b460d3f14279f, type: 3}
 >>>>>>> 26f514c6d21a4d18af85c099781f4ea47d865b6c
@@ -539,6 +556,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+<<<<<<< HEAD
 <<<<<<< HEAD
 --- !u!1 &528155596
 GameObject:
@@ -1215,6 +1233,8 @@ CanvasRenderer:
   m_CullTransparentMesh: 1
 =======
 >>>>>>> 26f514c6d21a4d18af85c099781f4ea47d865b6c
+=======
+>>>>>>> 26f514c6d21a4d18af85c099781f4ea47d865b6c
 --- !u!1 &1012910989
 GameObject:
   m_ObjectHideFlags: 0
@@ -1291,6 +1311,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1012910989}
   m_CullTransparentMesh: 1
+<<<<<<< HEAD
 <<<<<<< HEAD
 --- !u!1 &1269996735
 GameObject:
@@ -1429,6 +1450,8 @@ CanvasRenderer:
   m_CullTransparentMesh: 1
 =======
 >>>>>>> 26f514c6d21a4d18af85c099781f4ea47d865b6c
+=======
+>>>>>>> 26f514c6d21a4d18af85c099781f4ea47d865b6c
 --- !u!1 &1559562646
 GameObject:
   m_ObjectHideFlags: 0
@@ -1494,7 +1517,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
 <<<<<<< HEAD
+<<<<<<< HEAD
   m_Sprite: {fileID: 21300000, guid: 76f3bbd70cc49b3479e1b6b6966cd67f, type: 3}
+=======
+  m_Sprite: {fileID: 21300000, guid: 86fab9a48296c914e990cb24907719b8, type: 3}
+>>>>>>> 26f514c6d21a4d18af85c099781f4ea47d865b6c
 =======
   m_Sprite: {fileID: 21300000, guid: 86fab9a48296c914e990cb24907719b8, type: 3}
 >>>>>>> 26f514c6d21a4d18af85c099781f4ea47d865b6c
@@ -1564,8 +1591,13 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
 <<<<<<< HEAD
+<<<<<<< HEAD
   m_AnchoredPosition: {x: 0, y: -556}
   m_SizeDelta: {x: 650, y: 270}
+=======
+  m_AnchoredPosition: {x: 0, y: -590}
+  m_SizeDelta: {x: 960, y: 280}
+>>>>>>> 26f514c6d21a4d18af85c099781f4ea47d865b6c
 =======
   m_AnchoredPosition: {x: 0, y: -590}
   m_SizeDelta: {x: 960, y: 280}
@@ -1648,7 +1680,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
 <<<<<<< HEAD
+<<<<<<< HEAD
   m_Sprite: {fileID: 21300000, guid: e4692866432ea524598a425a3d7c9197, type: 3}
+=======
+  m_Sprite: {fileID: 21300000, guid: b99b05ca4f9faa24aaacb6023a6cc11d, type: 3}
+>>>>>>> 26f514c6d21a4d18af85c099781f4ea47d865b6c
 =======
   m_Sprite: {fileID: 21300000, guid: b99b05ca4f9faa24aaacb6023a6cc11d, type: 3}
 >>>>>>> 26f514c6d21a4d18af85c099781f4ea47d865b6c
@@ -1821,6 +1857,7 @@ Transform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 <<<<<<< HEAD
+<<<<<<< HEAD
 --- !u!1 &2036053754
 GameObject:
   m_ObjectHideFlags: 0
@@ -1956,5 +1993,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2036053754}
   m_CullTransparentMesh: 1
+=======
+>>>>>>> 26f514c6d21a4d18af85c099781f4ea47d865b6c
 =======
 >>>>>>> 26f514c6d21a4d18af85c099781f4ea47d865b6c
