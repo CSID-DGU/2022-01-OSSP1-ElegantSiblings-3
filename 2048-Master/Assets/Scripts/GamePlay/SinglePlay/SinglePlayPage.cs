@@ -38,7 +38,7 @@ public class SinglePlayPage : MonoBehaviour
         SceneManager.LoadScene("Game");
     }
 
-    public void InfinityModeButton()
+    public void ChallengeModeButton()
     {
         string path = Path.Combine(Application.persistentDataPath, "SinglePlayMode.json");
         File.WriteAllText(path, new SinglePlayMode { modeName = "ChallengeMode" }.GetJson());
