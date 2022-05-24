@@ -14,3 +14,7 @@
 
 # How to Play
  - Touch Drag  
+
+# 기술 스택
+ - Unity
+ - C#
