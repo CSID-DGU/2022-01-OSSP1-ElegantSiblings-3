@@ -1,0 +1,15 @@
+E:\document\AspServer\TestServer\TestServer\bin\Debug\net6.0\TestServer.exe
+E:\document\AspServer\TestServer\TestServer\bin\Debug\net6.0\TestServer.deps.json
+E:\document\AspServer\TestServer\TestServer\bin\Debug\net6.0\TestServer.runtimeconfig.json
+E:\document\AspServer\TestServer\TestServer\bin\Debug\net6.0\TestServer.dll
+E:\document\AspServer\TestServer\TestServer\bin\Debug\net6.0\TestServer.pdb
+E:\document\AspServer\TestServer\TestServer\obj\Debug\net6.0\TestServer.csproj.AssemblyReference.cache
+E:\document\AspServer\TestServer\TestServer\obj\Debug\net6.0\TestServer.GeneratedMSBuildEditorConfig.editorconfig
+E:\document\AspServer\TestServer\TestServer\obj\Debug\net6.0\TestServer.AssemblyInfoInputs.cache
+E:\document\AspServer\TestServer\TestServer\obj\Debug\net6.0\TestServer.AssemblyInfo.cs
+E:\document\AspServer\TestServer\TestServer\obj\Debug\net6.0\TestServer.csproj.CoreCompileInputs.cache
+E:\document\AspServer\TestServer\TestServer\obj\Debug\net6.0\TestServer.dll
+E:\document\AspServer\TestServer\TestServer\obj\Debug\net6.0\refint\TestServer.dll
+E:\document\AspServer\TestServer\TestServer\obj\Debug\net6.0\TestServer.pdb
+E:\document\AspServer\TestServer\TestServer\obj\Debug\net6.0\TestServer.genruntimeconfig.cache
+E:\document\AspServer\TestServer\TestServer\obj\Debug\net6.0\ref\TestServer.dll
