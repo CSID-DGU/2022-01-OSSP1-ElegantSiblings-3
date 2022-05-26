@@ -1,0 +1,5 @@
+E:\document\Unity\2022-01-OSSP1-ElegantSiblings-3\Server\ServerNetworkModule\ServerNetworkModule\obj\Debug\net6.0\ServerNetworkModule.csproj.AssemblyReference.cache
+E:\document\Unity\2022-01-OSSP1-ElegantSiblings-3\Server\ServerNetworkModule\ServerNetworkModule\obj\Debug\net6.0\ServerNetworkModule.GeneratedMSBuildEditorConfig.editorconfig
+E:\document\Unity\2022-01-OSSP1-ElegantSiblings-3\Server\ServerNetworkModule\ServerNetworkModule\obj\Debug\net6.0\ServerNetworkModule.AssemblyInfoInputs.cache
+E:\document\Unity\2022-01-OSSP1-ElegantSiblings-3\Server\ServerNetworkModule\ServerNetworkModule\obj\Debug\net6.0\ServerNetworkModule.AssemblyInfo.cs
+E:\document\Unity\2022-01-OSSP1-ElegantSiblings-3\Server\ServerNetworkModule\ServerNetworkModule\obj\Debug\net6.0\ServerNetworkModule.csproj.CoreCompileInputs.cache
