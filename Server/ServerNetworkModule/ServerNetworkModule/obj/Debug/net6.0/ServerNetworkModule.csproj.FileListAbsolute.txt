@@ -3,3 +3,8 @@ E:\document\Unity\2022-01-OSSP1-ElegantSiblings-3\Server\ServerNetworkModule\Ser
 E:\document\Unity\2022-01-OSSP1-ElegantSiblings-3\Server\ServerNetworkModule\ServerNetworkModule\obj\Debug\net6.0\ServerNetworkModule.AssemblyInfoInputs.cache
 E:\document\Unity\2022-01-OSSP1-ElegantSiblings-3\Server\ServerNetworkModule\ServerNetworkModule\obj\Debug\net6.0\ServerNetworkModule.AssemblyInfo.cs
 E:\document\Unity\2022-01-OSSP1-ElegantSiblings-3\Server\ServerNetworkModule\ServerNetworkModule\obj\Debug\net6.0\ServerNetworkModule.csproj.CoreCompileInputs.cache
+C:\Users\97mjh\Downloads\2022-01-OSSP1-ElegantSiblings-3-main\2022-01-OSSP1-ElegantSiblings-3-main\Server\ServerNetworkModule\ServerNetworkModule\obj\Debug\net6.0\ServerNetworkModule.csproj.AssemblyReference.cache
+C:\Users\97mjh\Downloads\2022-01-OSSP1-ElegantSiblings-3-main\2022-01-OSSP1-ElegantSiblings-3-main\Server\ServerNetworkModule\ServerNetworkModule\obj\Debug\net6.0\ServerNetworkModule.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\97mjh\Downloads\2022-01-OSSP1-ElegantSiblings-3-main\2022-01-OSSP1-ElegantSiblings-3-main\Server\ServerNetworkModule\ServerNetworkModule\obj\Debug\net6.0\ServerNetworkModule.AssemblyInfoInputs.cache
+C:\Users\97mjh\Downloads\2022-01-OSSP1-ElegantSiblings-3-main\2022-01-OSSP1-ElegantSiblings-3-main\Server\ServerNetworkModule\ServerNetworkModule\obj\Debug\net6.0\ServerNetworkModule.AssemblyInfo.cs
+C:\Users\97mjh\Downloads\2022-01-OSSP1-ElegantSiblings-3-main\2022-01-OSSP1-ElegantSiblings-3-main\Server\ServerNetworkModule\ServerNetworkModule\obj\Debug\net6.0\ServerNetworkModule.csproj.CoreCompileInputs.cache

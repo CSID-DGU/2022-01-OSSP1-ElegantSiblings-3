@@ -10,6 +10,11 @@ using System.Threading;
 
 namespace ServerNetworkModule
 {
+	/// <summary>
+	/// 접속자 수 만큼 CUserToken가 생성된다
+	/// CUserToken로 어느 Client가 전송했는지, 어떤 Client에 전송해야하는지 알 수 있다
+	/// </summary>
+
 	public class CUserToken
 	{
 		public Socket socket { get; set; }

@@ -21,7 +21,7 @@ namespace ServerNetworkModule
 		public delegate void SessionHandler(CUserToken token);
 		public SessionHandler session_created_callback { get; set; }
 
-		// configs.
+
 		int max_connections;
 		int buffer_size;
 		readonly int pre_alloc_count = 2;       // read, write
@@ -32,77 +32,56 @@ namespace ServerNetworkModule
 			this.session_created_callback = null;
 		}
 
-		// Initializes the server by preallocating reusable buffers and 
-		// context objects.  These objects do not need to be preallocated 
-		// or reused, but it is done this way to illustrate how the API can 
-		// easily be used to create reusable objects to increase server performance.
-		//
 		public void initialize()
 		{
+			// 버퍼 전체의 크기 = 최대 동시 접속 수 x 버퍼 하나의 크기 x (send + receive)
 			this.max_connections = 10000;
 			this.buffer_size = 1024;
-
 			this.buffer_manager = new BufferManager(this.max_connections * this.buffer_size * this.pre_alloc_count, this.buffer_size);
-			this.receive_event_args_pool = new SocketAsyncEventArgsPool(this.max_connections);
-			this.send_event_args_pool = new SocketAsyncEventArgsPool(this.max_connections);
-
-			// Allocates one large byte buffer which all I/O operations use a piece of.  This gaurds 
-			// against memory fragmentation
 			this.buffer_manager.InitBuffer();
 
-			// preallocate pool of SocketAsyncEventArgs objects
-			SocketAsyncEventArgs arg;
 
+			// SocketAsyncEventArgs 객체를 미리 생성하여 pool에 저장
+			SocketAsyncEventArgs arg;
+			this.receive_event_args_pool = new SocketAsyncEventArgsPool(this.max_connections);
+			this.send_event_args_pool = new SocketAsyncEventArgsPool(this.max_connections);
+		
+			// 최대 동시 접속 수 만큼 객체 생성
 			for (int i = 0; i < this.max_connections; i++)
 			{
-				// 동일한 소켓에 대고 send, receive를 하므로
-				// user token은 세션별로 하나씩만 만들어 놓고 
-				// receive, send EventArgs에서 동일한 token을 참조하도록 구성한다.
+				// 동일한 Socket에서 send, receive를 하므로
+				// user token은 세션별로 하나씩 만들고 receive, send EventArgs에서 동일한 token을 참조한다
 				CUserToken token = new CUserToken();
 
 				// receive pool
 				{
-					//Pre-allocate a set of reusable SocketAsyncEventArgs
 					arg = new SocketAsyncEventArgs();
 					arg.Completed += new EventHandler<SocketAsyncEventArgs>(receive_completed);
 					arg.UserToken = token;
-
-					// assign a byte buffer from the buffer pool to the SocketAsyncEventArg object
 					this.buffer_manager.SetBuffer(arg);
-
-					// add SocketAsyncEventArg to the pool
 					this.receive_event_args_pool.Push(arg);
 				}
 
-
 				// send pool
 				{
-					//Pre-allocate a set of reusable SocketAsyncEventArgs
 					arg = new SocketAsyncEventArgs();
 					arg.Completed += new EventHandler<SocketAsyncEventArgs>(send_completed);
 					arg.UserToken = token;
-
-					// assign a byte buffer from the buffer pool to the SocketAsyncEventArg object
 					this.buffer_manager.SetBuffer(arg);
-
-					// add SocketAsyncEventArg to the pool
 					this.send_event_args_pool.Push(arg);
 				}
 			}
 		}
 
+		// Listener 생성
 		public void listen(string host, int port, int backlog)
 		{
 			this.client_listener = new CListener();
 			this.client_listener.callback_on_newclient += on_new_client;
-			this.client_listener.start(host, port, backlog);
+			this.client_listener.start(host, port, backlog);  // Client의 접속을 기다림
 		}
 
-		/// <summary>
-		/// todo:검토중...
 		/// 원격 서버에 접속 성공 했을 때 호출됩니다.
-		/// </summary>
-		/// <param name="socket"></param>
 		public void on_connect_completed(Socket socket, CUserToken token)
 		{
 			// SocketAsyncEventArgsPool에서 빼오지 않고 그때 그때 할당해서 사용한다.
@@ -123,11 +102,8 @@ namespace ServerNetworkModule
 			begin_receive(socket, receive_event_arg, send_event_arg);
 		}
 
-		/// <summary>
-		/// 새로운 클라이언트가 접속 성공 했을 때 호출됩니다.
-		/// AcceptAsync의 콜백 매소드에서 호출되며 여러 스레드에서 동시에 호출될 수 있기 때문에 공유자원에 접근할 때는 주의해야 합니다.
-		/// </summary>
-		/// <param name="client_socket"></param>
+
+		// 새로운 클라이언트가 접속 성공 했을 때 호출
 		void on_new_client(Socket client_socket, object token)
 		{
 			//todo:
@@ -139,28 +115,34 @@ namespace ServerNetworkModule
 				Thread.CurrentThread.ManagedThreadId, client_socket.Handle,
 				this.connected_count));
 
-			// 플에서 하나 꺼내와 사용한다.
+			// receive_args, send_args pool에서 하나 꺼냄
 			SocketAsyncEventArgs receive_args = this.receive_event_args_pool.Pop();
 			SocketAsyncEventArgs send_args = this.send_event_args_pool.Pop();
-
 			CUserToken user_token = null;
+
+			// SocketAsyncEventArgs를 생성할 때 만든 CUserToken을 콜백 메서드로 넘김
 			if (this.session_created_callback != null)
 			{
 				user_token = receive_args.UserToken as CUserToken;
 				this.session_created_callback(user_token);
 			}
 
+			// Client로부터 데이터를 수신할 준비를 한다
 			begin_receive(client_socket, receive_args, send_args);
 			//user_token.start_keepalive();
 		}
 
+
+		// Client로부터 데이터를 수신할 때 호출
 		void begin_receive(Socket socket, SocketAsyncEventArgs receive_args, SocketAsyncEventArgs send_args)
 		{
-			// receive_args, send_args 아무곳에서나 꺼내와도 된다. 둘다 동일한 CUserToken을 물고 있다.
+			// receive_args, send_args 아무곳에서 꺼내도 된다 (동일한 CUserToken을 갖고 있음)
 			CUserToken token = receive_args.UserToken as CUserToken;
+
+			// 생성된 Client Socket을 보관하고 통신할 때 사용
 			token.set_event_args(receive_args, send_args);
-			// 생성된 클라이언트 소켓을 보관해 놓고 통신할 때 사용한다.
 			token.socket = socket;
+
 
 			bool pending = socket.ReceiveAsync(receive_args);
 			if (!pending)
@@ -168,6 +150,7 @@ namespace ServerNetworkModule
 				process_receive(receive_args);
 			}
 		}
+
 
 		// This method is called whenever a receive or send operation is completed on a socket 
 		//

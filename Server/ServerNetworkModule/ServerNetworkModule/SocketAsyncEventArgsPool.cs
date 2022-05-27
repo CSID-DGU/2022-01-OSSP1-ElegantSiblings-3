@@ -10,6 +10,10 @@ using System.Threading;
 
 namespace ServerNetworkModule
 {
+	/// <summary>
+	/// MSDN (마이크로소프트 개발자 네트워크) 코드 사용
+	/// </summary>
+
 	// Represents a collection of reusable SocketAsyncEventArgs objects.  
 	class SocketAsyncEventArgsPool
 	{
