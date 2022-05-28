@@ -18,3 +18,6 @@
 # 기술 스택
  - Unity
  - C#
+
+# 실시간 멀티 서버
+![슬라이드12](https://user-images.githubusercontent.com/102275981/170844062-0163f636-b39a-49e1-968b-8fd85e6b2e67.PNG)
