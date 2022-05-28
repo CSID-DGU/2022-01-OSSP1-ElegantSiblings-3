@@ -1,0 +1,10 @@
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\CSampleClient\bin\Debug\CSampleClient.exe.config
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\CSampleClient\bin\Debug\CSampleClient.exe
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\CSampleClient\bin\Debug\CSampleClient.pdb
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\CSampleClient\bin\Debug\FreeNet.dll
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\CSampleClient\bin\Debug\FreeNet.pdb
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\CSampleClient\obj\Debug\CSampleClient.csproj.AssemblyReference.cache
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\CSampleClient\obj\Debug\CSampleClient.csproj.CoreCompileInputs.cache
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\CSampleClient\obj\Debug\CSampleClient.csproj.CopyComplete
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\CSampleClient\obj\Debug\CSampleClient.exe
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\CSampleClient\obj\Debug\CSampleClient.pdb

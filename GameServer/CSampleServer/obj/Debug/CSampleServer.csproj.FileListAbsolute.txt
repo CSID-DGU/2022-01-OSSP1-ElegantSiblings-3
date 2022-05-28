@@ -1,0 +1,10 @@
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\CSampleServer\bin\Debug\CSampleServer.exe.config
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\CSampleServer\bin\Debug\CSampleServer.exe
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\CSampleServer\bin\Debug\CSampleServer.pdb
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\CSampleServer\bin\Debug\FreeNet.dll
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\CSampleServer\bin\Debug\FreeNet.pdb
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\CSampleServer\obj\Debug\CSampleServer.csproj.AssemblyReference.cache
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\CSampleServer\obj\Debug\CSampleServer.csproj.CoreCompileInputs.cache
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\CSampleServer\obj\Debug\CSampleServer.csproj.CopyComplete
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\CSampleServer\obj\Debug\CSampleServer.exe
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\CSampleServer\obj\Debug\CSampleServer.pdb

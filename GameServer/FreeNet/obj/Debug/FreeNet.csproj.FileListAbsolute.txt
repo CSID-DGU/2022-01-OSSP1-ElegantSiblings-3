@@ -1,0 +1,12 @@
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\FreeNet\bin\Debug\FreeNet.dll
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\FreeNet\bin\Debug\FreeNet.pdb
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\FreeNet\obj\Debug\FreeNet.csproj.AssemblyReference.cache
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\FreeNet\obj\Debug\FreeNet.csproj.CoreCompileInputs.cache
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\FreeNet\obj\Debug\FreeNet.dll
+C:\Users\user\Downloads\source2\소스코드\FreeNet_server_sourcecode\FreeNet\obj\Debug\FreeNet.pdb
+E:\document\Unity\2022-01-OSSP1-ElegantSiblings-3\GameServer\FreeNet\obj\Debug\FreeNet.csproj.AssemblyReference.cache
+E:\document\Unity\2022-01-OSSP1-ElegantSiblings-3\GameServer\FreeNet\obj\Debug\FreeNet.csproj.CoreCompileInputs.cache
+E:\document\Unity\2022-01-OSSP1-ElegantSiblings-3\GameServer\FreeNet\bin\Debug\FreeNet.dll
+E:\document\Unity\2022-01-OSSP1-ElegantSiblings-3\GameServer\FreeNet\bin\Debug\FreeNet.pdb
+E:\document\Unity\2022-01-OSSP1-ElegantSiblings-3\GameServer\FreeNet\obj\Debug\FreeNet.dll
+E:\document\Unity\2022-01-OSSP1-ElegantSiblings-3\GameServer\FreeNet\obj\Debug\FreeNet.pdb
