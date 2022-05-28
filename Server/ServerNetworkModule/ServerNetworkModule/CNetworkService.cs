@@ -103,17 +103,16 @@ namespace ServerNetworkModule
 		}
 
 
+
+
 		// 새로운 클라이언트가 접속 성공 했을 때 호출
 		void on_new_client(Socket client_socket, object token)
 		{
-			//todo:
-			// peer list처리.
+			//todo: peer list처리
 
 			Interlocked.Increment(ref this.connected_count);
 
-			Console.WriteLine(string.Format("[{0}] A client connected. handle {1},  count {2}",
-				Thread.CurrentThread.ManagedThreadId, client_socket.Handle,
-				this.connected_count));
+			Console.WriteLine(string.Format("[{0}] A client connected. handle {1},  count {2}", Thread.CurrentThread.ManagedThreadId, client_socket.Handle, this.connected_count));
 
 			// receive_args, send_args pool에서 하나 꺼냄
 			SocketAsyncEventArgs receive_args = this.receive_event_args_pool.Pop();
@@ -143,7 +142,6 @@ namespace ServerNetworkModule
 			token.set_event_args(receive_args, send_args);
 			token.socket = socket;
 
-
 			bool pending = socket.ReceiveAsync(receive_args);
 			if (!pending)
 			{
@@ -152,9 +150,7 @@ namespace ServerNetworkModule
 		}
 
 
-		// This method is called whenever a receive or send operation is completed on a socket 
-		//
-		// <param name="e">SocketAsyncEventArg associated with the completed receive operation</param>
+		// receiveAsync 콜백 메서드
 		void receive_completed(object sender, SocketAsyncEventArgs e)
 		{
 			if (e.LastOperation == SocketAsyncOperation.Receive)
@@ -166,47 +162,43 @@ namespace ServerNetworkModule
 			throw new ArgumentException("The last operation completed on the socket was not a receive.");
 		}
 
-		// This method is called whenever a receive or send operation is completed on a socket 
-		//
-		// <param name="e">SocketAsyncEventArg associated with the completed send operation</param>
+		// sendAsnc 콜백 메서드
 		void send_completed(object sender, SocketAsyncEventArgs e)
 		{
 			CUserToken token = e.UserToken as CUserToken;
 			token.process_send(e);
 		}
 
-		// This method is invoked when an asynchronous receive operation completes. 
-		// If the remote host closed the connection, then the socket is closed.  
-		//
+
+		// 비동기 수신이 완료되었을 때 호출
 		private void process_receive(SocketAsyncEventArgs e)
 		{
-			// check if the remote host closed the connection
 			CUserToken token = e.UserToken as CUserToken;
+
 			if (e.BytesTransferred > 0 && e.SocketError == SocketError.Success)
 			{
-				token.on_receive(e.Buffer, e.Offset, e.BytesTransferred);
+				token.on_receive(e.Buffer, e.Offset, e.BytesTransferred);  // 수신된 byte배열, 데이터의 시작 위치, 수신된 바이트 수
 
 				bool pending = token.socket.ReceiveAsync(e);
 				if (!pending)
 				{
-					// Oh! stack overflow??
+					// pending 상태가 아니면, 계속 데이터를 받을 수 있도록 함
 					process_receive(e);
 				}
 			}
-			else
+			else  // 호스트 연결이 끊기면 소켓이 닫힌다
 			{
 				Console.WriteLine(string.Format("error {0},  transferred {1}", e.SocketError, e.BytesTransferred));
 				close_clientsocket(token);
 			}
 		}
 
+		// Socket을 닫을 때 호출
 		public void close_clientsocket(CUserToken token)
 		{
 			token.on_removed();
 
-			// Free the SocketAsyncEventArg so they can be reused by another client
-			// 버퍼는 반환할 필요가 없다. SocketAsyncEventArg가 버퍼를 물고 있기 때문에
-			// 이것을 재사용 할 때 물고 있는 버퍼를 그대로 사용하면 되기 때문이다.
+			// 버퍼는 반환할 필요가 없다. SocketAsyncEventArg가 버퍼를 가지고 있기 떄문에, 재사용 시 저장된 버퍼를 그대로 사용하면 되기 때문이다.
 			if (this.receive_event_args_pool != null)
 			{
 				this.receive_event_args_pool.Push(token.receive_event_args);

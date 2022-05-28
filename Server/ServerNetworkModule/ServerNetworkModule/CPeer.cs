@@ -31,7 +31,7 @@ namespace ServerNetworkModule
 		/// 이 매소드가 리턴되면 buffer는 비워지며 다음 패킷을 담을 준비를 한다.
 		/// 따라서 매소드를 리턴하기 전에 사용할 데이터를 모두 빼내야 한다.
 		/// </param>
-		public void on_message(Const<byte[]> buffer)
+	/*	public void on_message(Const<byte[]> buffer)
 		{
 			CPacket msg = new CPacket(buffer.Value);
 			Int16 protocol_id = msg.pop_int16();
@@ -48,6 +48,6 @@ namespace ServerNetworkModule
 					}
 					break;
 			}
-		}
+		}*/
 	}
 }

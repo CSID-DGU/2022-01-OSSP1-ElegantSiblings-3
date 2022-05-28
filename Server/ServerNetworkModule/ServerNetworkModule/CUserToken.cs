@@ -14,24 +14,18 @@ namespace ServerNetworkModule
 	/// 접속자 수 만큼 CUserToken가 생성된다
 	/// CUserToken로 어느 Client가 전송했는지, 어떤 Client에 전송해야하는지 알 수 있다
 	/// </summary>
-
+	/// 
 	public class CUserToken
 	{
 		public Socket socket { get; set; }
 
 		public SocketAsyncEventArgs receive_event_args { get; private set; }
 		public SocketAsyncEventArgs send_event_args { get; private set; }
-
-		// 바이트를 패킷 형식으로 해석해주는 해석기.
-		CMessageResolver message_resolver;
-
-		// session객체. 어플리케이션 딴에서 구현하여 사용.
-		IPeer peer;
-
-		// 전송할 패킷을 보관해놓는 큐. 1-Send로 처리하기 위한 큐이다.
-		Queue<CPacket> sending_queue;
-		// sending_queue lock처리에 사용되는 객체.
-		private object cs_sending_queue;
+		
+		CMessageResolver message_resolver;		// 바이트를 패킷 형식으로 해석
+		IPeer peer;								// session객체. 어플리케이션 딴에서 구현하여 사용.
+		Queue<CPacket> sending_queue;			// 전송할 패킷을 보관해놓는 큐. 1-Send로 처리하기 위한 큐이다.
+		private object cs_sending_queue;		// sending_queue lock처리에 사용되는 객체.
 
 		public CUserToken()
 		{
@@ -53,17 +47,12 @@ namespace ServerNetworkModule
 			this.send_event_args = send_event_args;
 		}
 
-		/// <summary>
-		///	이 매소드에서 직접 바이트 데이터를 해석해도 되지만 Message resolver클래스를 따로 둔 이유는
-		///	추후에 확장성을 고려하여 다른 resolver를 구현할 때 CUserToken클래스의 코드 수정을 최소화 하기 위함이다.
-		/// </summary>
-		/// <param name="buffer"></param>
-		/// <param name="offset"></param>
-		/// <param name="transfered"></param>
+
 		public void on_receive(byte[] buffer, int offset, int transfered)
 		{
 			this.message_resolver.on_receive(buffer, offset, transfered, on_message);
 		}
+
 
 		void on_message(Const<byte[]> buffer)
 		{
@@ -72,6 +61,7 @@ namespace ServerNetworkModule
 				this.peer.on_message(buffer);
 			}
 		}
+
 
 		public void on_removed()
 		{
@@ -84,14 +74,12 @@ namespace ServerNetworkModule
 		}
 
 		/// <summary>
-		/// 패킷을 전송한다.
-		/// 큐가 비어 있을 경우에는 큐에 추가한 뒤 바로 SendAsync매소드를 호출하고,
-		/// 데이터가 들어있을 경우에는 새로 추가만 한다.
-		/// 
-		/// 큐잉된 패킷의 전송 시점 :
-		///		현재 진행중인 SendAsync가 완료되었을 때 큐를 검사하여 나머지 패킷을 전송한다.
+		/// 코드 수정이 필요할 수 있음!!!!!!!!!!!!!!!!!!!!!!
+		/// 패킷을 전송
+		/// 큐가 비어 있을 경우에는 큐에 추가한 뒤 바로 SendAsync매소드를 호출하고, 데이터가 들어있을 경우에는 새로 추가만 한다.
+		/// 큐잉된 패킷의 전송 시점: 현재 진행중인 SendAsync가 완료되었을 때 큐를 검사하여 나머지 패킷을 전송한다.
 		/// </summary>
-		/// <param name="msg"></param>
+
 		public void send(CPacket msg)
 		{
 			CPacket clone = new CPacket();
@@ -103,41 +91,37 @@ namespace ServerNetworkModule
 				if (this.sending_queue.Count <= 0)
 				{
 					this.sending_queue.Enqueue(clone);
+					//this.sending_queue.Enqueue(msg);
+
 					start_send();
 					return;
 				}
 
-				// 큐에 무언가가 들어 있다면 아직 이전 전송이 완료되지 않은 상태이므로 큐에 추가만 하고 리턴한다.
-				// 현재 수행중인 SendAsync가 완료된 이후에 큐를 검사하여 데이터가 있으면 SendAsync를 호출하여 전송해줄 것이다.
-				Console.WriteLine("Queue is not empty. Copy and Enqueue a msg. protocol id : " + msg.protocol_id);
+				//Console.WriteLine("Queue is not empty. Copy and Enqueue a msg. protocol id : " + msg.protocol_id);
 				this.sending_queue.Enqueue(clone);
+				//this.sending_queue.Enqueue(msg);
 			}
 		}
 
 		/// <summary>
-		/// 비동기 전송을 시작한다.
+		/// 비동기 전송을 시작
 		/// </summary>
 		void start_send()
 		{
 			lock (this.cs_sending_queue)
 			{
-				// 전송이 아직 완료된 상태가 아니므로 데이터만 가져오고 큐에서 제거하진 않는다.
-				CPacket msg = this.sending_queue.Peek();
+				CPacket msg = this.sending_queue.Peek();	// 전송이 완료된 상태가 아니므로 데이터만 가져오고 큐에서 제거하진 않는다
+				msg.record_size();							// 헤더에 패킷 사이즈를 기록
 
-				// 헤더에 패킷 사이즈를 기록한다.
-				msg.record_size();
-
-				// 이번에 보낼 패킷 사이즈 만큼 버퍼 크기를 설정하고
+				// 보낼 패킷 사이즈 만큼 버퍼 크기를 설정
 				this.send_event_args.SetBuffer(this.send_event_args.Offset, msg.position);
-				// 패킷 내용을 SocketAsyncEventArgs버퍼에 복사한다.
+
+				// 패킷 내용을 SocketAsyncEventArgs버퍼에 복사
 				Array.Copy(msg.buffer, 0, this.send_event_args.Buffer, this.send_event_args.Offset, msg.position);
 
 				// 비동기 전송 시작.
 				bool pending = this.socket.SendAsync(this.send_event_args);
-				if (!pending)
-				{
-					process_send(this.send_event_args);
-				}
+				if (!pending) process_send(this.send_event_args);			
 			}
 		}
 
@@ -157,14 +141,8 @@ namespace ServerNetworkModule
 
 			lock (this.cs_sending_queue)
 			{
-				// count가 0이하일 경우는 없겠지만...
-				if (this.sending_queue.Count <= 0)
-				{
-					throw new Exception("Sending queue count is less than zero!");
-				}
-
-				//todo:재전송 로직 다시 검토~~ 테스트 안해봤음.
-				// 패킷 하나를 다 못보낸 경우는??
+				if (this.sending_queue.Count <= 0) throw new Exception("Sending queue count is less than zero!");
+				
 				int size = this.sending_queue.Peek().position;
 				if (e.BytesTransferred != size)
 				{
@@ -172,7 +150,6 @@ namespace ServerNetworkModule
 					Console.WriteLine(error);
 					return;
 				}
-
 
 				//System.Threading.Interlocked.Increment(ref sent_count);
 				lock (cs_count)
@@ -185,19 +162,11 @@ namespace ServerNetworkModule
 					}
 				}
 
-				//Console.WriteLine(string.Format("process send : {0}, transferred {1}, sent count {2}",
-				//	e.SocketError, e.BytesTransferred, sent_count));
-
-				// 전송 완료된 패킷을 큐에서 제거한다.
-				//CPacket packet = this.sending_queue.Dequeue();
-				//CPacket.destroy(packet);
-				this.sending_queue.Dequeue();
-
-				// 아직 전송하지 않은 대기중인 패킷이 있다면 다시한번 전송을 요청한다.
-				if (this.sending_queue.Count > 0)
-				{
-					start_send();
-				}
+				//Console.WriteLine(string.Format("process send : {0}, transferred {1}, sent count {2}", e.SocketError, e.BytesTransferred, sent_count));
+			
+				this.sending_queue.Dequeue();	// 전송 완료된 패킷을 큐에서 제거
+			
+				if (this.sending_queue.Count > 0) start_send();		// 아직 전송하지 않은 대기중인 패킷이 있다면 다시한번 전송을 요청
 			}
 		}
 
