@@ -6,17 +6,17 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
+    path: Assets/Test.unity
+    guid: c761a06f9badafa4a819c105849587c1
+  - enabled: 1
+    path: Assets/HomePage.unity
+    guid: 61ffb3ecc37807b409df4ba400bb671c
   - enabled: 1
     path: Assets/PVPGame.unity
     guid: b455262305c3b234db8d0d8a9f5722ff
   - enabled: 1
     path: Assets/LoginPage.unity
     guid: d6f0117aef6f523408445fd7e1672cb6
-  - enabled: 1
-    path: Assets/HomePage.unity
-    guid: 61ffb3ecc37807b409df4ba400bb671c
   - enabled: 1
     path: Assets/GamePlayPage.unity
     guid: e1c11a6795a6f664a97716ea65d2a0b8
@@ -26,7 +26,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Game.unity
     guid: db56e3fe50b715d46be1c8e8bb4bceff
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
   m_configObjects: {}
