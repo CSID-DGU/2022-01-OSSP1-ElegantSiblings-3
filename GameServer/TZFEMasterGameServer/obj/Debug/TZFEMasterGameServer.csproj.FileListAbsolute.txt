@@ -1,0 +1,9 @@
+E:\document\Unity\2022-01-OSSP1-ElegantSiblings-3\GameServer\TZFEMasterGameServer\bin\Debug\TZFEMasterGameServer.exe
+E:\document\Unity\2022-01-OSSP1-ElegantSiblings-3\GameServer\TZFEMasterGameServer\bin\Debug\TZFEMasterGameServer.pdb
+E:\document\Unity\2022-01-OSSP1-ElegantSiblings-3\GameServer\TZFEMasterGameServer\obj\Debug\TZFEMasterGameServer.csproj.AssemblyReference.cache
+E:\document\Unity\2022-01-OSSP1-ElegantSiblings-3\GameServer\TZFEMasterGameServer\obj\Debug\TZFEMasterGameServer.csproj.CoreCompileInputs.cache
+E:\document\Unity\2022-01-OSSP1-ElegantSiblings-3\GameServer\TZFEMasterGameServer\obj\Debug\TZFEMasterGameServer.exe
+E:\document\Unity\2022-01-OSSP1-ElegantSiblings-3\GameServer\TZFEMasterGameServer\obj\Debug\TZFEMasterGameServer.pdb
+E:\document\Unity\2022-01-OSSP1-ElegantSiblings-3\GameServer\TZFEMasterGameServer\bin\Debug\FreeNet.dll
+E:\document\Unity\2022-01-OSSP1-ElegantSiblings-3\GameServer\TZFEMasterGameServer\bin\Debug\FreeNet.pdb
+E:\document\Unity\2022-01-OSSP1-ElegantSiblings-3\GameServer\TZFEMasterGameServer\obj\Debug\TZFEMasterGameServer.csproj.CopyComplete
