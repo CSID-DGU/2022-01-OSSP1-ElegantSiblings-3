@@ -18,13 +18,13 @@ public class NetworkManager : MonoBehaviour
 	{
 		this.received_msg = "";
 
-		// 네트워크 통신을 위해 CFreeNetUnityService객체를 추가합니다.
+		// 네트워크 통신을 위해 CFreeNetUnityService객체 추가
 		this.gameserver = gameObject.AddComponent<CFreeNetUnityService>();
 
-		// 상태 변화(접속, 끊김등)를 통보 받을 델리게이트 설정.
+		// 상태 변화(접속, 끊김등)를 통보 받을 델리게이트
 		this.gameserver.appcallback_on_status_changed += on_status_changed;
 
-		// 패킷 수신 델리게이트 설정.
+		// 패킷 수신 델리게이트
 		this.gameserver.appcallback_on_message += on_message;
 	}
 
@@ -46,16 +46,16 @@ public class NetworkManager : MonoBehaviour
 	{
 		switch (status)
 		{
-			// 접속 성공.
+			// 접속 성공
 			case NETWORK_EVENT.connected:
 				{
 					LogManager.log("on connected");
 					this.received_msg += "on connected\n";
-					GameObject.Find("MainTitle").GetComponent<MainTitle>().on_connected();
+					GameObject.Find("MatchingManager").GetComponent<MatchingManager>().on_connected();
 				}
 				break;
 
-			// 연결 끊김.
+			// 연결 끊김
 			case NETWORK_EVENT.disconnected:
 				LogManager.log("disconnected");
 				this.received_msg += "disconnected\n";

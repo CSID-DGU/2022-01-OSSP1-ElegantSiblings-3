@@ -66,11 +66,28 @@ namespace TZFEMasterGameServer
 					this.battle_room.loading_complete(player);
 					break;
 
-				case PROTOCOL.BOARD_UPDATE_REQ:
-					{
-						string board = msg.pop_string();
-						this.battle_room.board_update_req(this.player, board);
-					}
+
+				case PROTOCOL.MODIFIED_SCORE:
+					Console.WriteLine("Sended by Player" + player.player_index);
+					int curr = msg.pop_int32();
+					int highest = msg.pop_int32();
+					Console.WriteLine("Modified score is (" + curr.ToString() + ", " + highest.ToString() + ")");
+					//this.battle_room.Modified_score(player);
+					break;
+
+				case PROTOCOL.MOVED_NODE:
+					Console.WriteLine("Sended by Player" + player.player_index);
+					int dir = msg.pop_int32();
+					Console.WriteLine("Mode To " + dir.ToString());
+					//this.battle_room.Moved_Node(msg);
+					break;
+
+				case PROTOCOL.CREATED_NEW_NODE:
+					Console.WriteLine("Sended by Player" + player.player_index);
+					int x = msg.pop_int32();
+					int y = msg.pop_int32();
+					Console.WriteLine("New node location (" + x.ToString() + ", " + y.ToString() + ")");
+					//this.battle_room.Created_New_Node(player);
 					break;
 			}
 		}

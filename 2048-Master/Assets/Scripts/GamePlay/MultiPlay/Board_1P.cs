@@ -7,11 +7,12 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Random = System.Random;
-
+//
 using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.EventSystems;
 using System.IO;
+using FreeNet;
 
 public class Board_1P : MonoBehaviour
 {
@@ -48,8 +49,10 @@ public class Board_1P : MonoBehaviour
     public RectTransform realNodeRect;
 
 
-    // Send board data P1 -> P2
-
+    // 데이터 통신
+    public SendGameEvent sned_game_event;
+    public int curr_score;
+    public int highest_node_value;
 
 
     // Touch Event
@@ -90,30 +93,115 @@ public class Board_1P : MonoBehaviour
 
     }
 
-    private void SendGameData()
+
+    //============================== Send Game Data ==============================//
+
+    public class SendGameEvent
     {
-        GameData2 temp = new GameData2();
-        foreach (var node in nodeData) temp.node2Clone.Add(new Node2Clone(node));
-        string sendData = JsonUtility.ToJson(temp);
+        private BattleRoom battle_room;
+
+        public SendGameEvent(BattleRoom _battle_room) { battle_room = _battle_room; }
+
+        public void Modified_Score(int curr, int highest)
+        {
+            CPacket msg = CPacket.create((short)PROTOCOL.MODIFIED_SCORE);
+            msg.push(curr);
+            msg.push(highest);
+            battle_room.On_Send(msg);
+        }
+
+        public void Moved_Node(Node2.Direction dir)
+        {
+            CPacket msg = CPacket.create((short)PROTOCOL.MOVED_NODE);
+            msg.push((int)dir);
+            battle_room.On_Send(msg);
+        }
+
+        public void Create_Random_Node(Vector2Int loc)
+        {
+            CPacket msg = CPacket.create((short)PROTOCOL.CREATED_NEW_NODE);
+            msg.push((int)loc.x);
+            msg.push((int)loc.y);
+            battle_room.On_Send(msg);
+        }
     }
+
+    //============================== Update Screen ==============================//
+
+    private void Update_Score_Screen()
+    {
+        GameObject.Find("CurrScore_Player").GetComponent<TextMeshProUGUI>().text = curr_score.ToString();
+        GameObject.Find("HighestNodeValue_Player").GetComponent<TextMeshProUGUI>().text = highest_node_value.ToString();
+
+        Color color = new Color(1f, 0.42f, 0.42f);
+
+        switch (highest_node_value)
+        {
+            case 2:
+                color = new Color(0.14f, 0.62f, 1f);
+                break;
+            case 4:
+                color = new Color(0.14f, 0.62f, 1f);
+                break;
+            case 8:
+                color = new Color(1f, 0.45f, 0f);
+                break;
+            case 16:
+                color = new Color(1f, 0.45f, 0f);
+                break;
+            case 32:
+                color = new Color(1f, 0.42f, 0.42f);
+                break;
+            case 64:
+                color = new Color(1f, 0.42f, 0.42f);
+                break;
+            case 128:
+                color = new Color(1f, 0.35f, 0.35f);
+                break;
+            case 256:
+                color = new Color(1f, 0.35f, 0.35f);
+                break;
+            case 512:
+                color = new Color(1f, 0.15f, 0.15f);
+                break;
+            case 1024:
+                color = new Color(1f, 0.15f, 0.15f);
+                break;
+            case 2048:
+                color = new Color(1f, 0, 0);
+                break;
+            case 4096:
+                color = new Color(1f, 0, 0);
+                break;
+            default:
+                color = Color.black;
+                break;
+        }
+
+        GameObject.Find("HighestNodeValue_Player").GetComponent<TextMeshProUGUI>().color = color;
+    }
+
+
 
     //============================== Make Game Board ==============================//
-    private void NewBoard()
-    {
-
-    }
 
     private void CreateGameBoard()
     {
-        /* first initialize Score Board */
+        /* 게임 데이터 송/수신 */
+        sned_game_event = new SendGameEvent(GameObject.Find("BattleRoom").GetComponent<BattleRoom>());
+        curr_score = 0;
+        highest_node_value = 2;
+        Update_Score_Screen();    
 
-        /* first initialize empty Node rect */
+
+        /* initialize empty Node rect */
         realNodeList.Clear();
         nodeMap.Clear();
         nodeData.Clear();
 
         var emptyChildCount = emptyNodeRect.transform.childCount;
         for (int i = 0; i < emptyChildCount; i++) { var child = emptyNodeRect.GetChild(i); }
+
 
         /* and, empty node create for get grid point*/
         for (int i = 0; i < col; i++)
@@ -143,19 +231,18 @@ public class Board_1P : MonoBehaviour
         }
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(emptyNodeRect);
-
-        foreach (var data in nodeData)
-        {
+        foreach (var data in nodeData) 
             data.position = data.nodeRectObj.GetComponent<RectTransform>().localPosition;
-            Debug.Log(data.position);
-        }
-
-        CreateRandom();
-
-        SendGameData();
     }
 
-  
+    public void On_Game_Start()
+    {
+        CreateRandom();
+    }
+
+
+    //============================== Method ==============================//
+
     private bool IsValid(Vector2Int point)
     {
         if (point.x == -1 || point.x == row || point.y == col || point.y == -1)
@@ -165,10 +252,15 @@ public class Board_1P : MonoBehaviour
     }
     private void CreateBlock(int x, int y, int? blockNum = null)
     {
-        if (nodeMap[new Vector2Int(x, y)].realNodeObj != null) return;
+        Vector2Int loc = new Vector2Int(x, y);
+
+        if (nodeMap[loc].realNodeObj != null) return;
+
+        // 생성된 Node 위치 Send
+        sned_game_event.Create_Random_Node(loc);
 
         GameObject realNodeObj = Instantiate(nodePrefab, realNodeRect.transform, false);
-        var node = nodeMap[new Vector2Int(x, y)];
+        var node = nodeMap[loc];
         var pos = node.position;
         realNodeObj.GetComponent<RectTransform>().localPosition = pos;
         realNodeObj.transform.DOPunchScale(new Vector3(.32f, .32f, .32f), 0.15f, 3);
@@ -198,7 +290,13 @@ public class Board_1P : MonoBehaviour
         }
 
         // TODO: Update Score
+        curr_score += to.value.GetValueOrDefault();
+        highest_node_value = Mathf.Max(highest_node_value, to.value.GetValueOrDefault());
+        sned_game_event.Modified_Score(curr_score, highest_node_value);
+        Update_Score_Screen();
     }
+
+
 
     public void Move(Node2 from, Node2 to)
     {
@@ -217,12 +315,14 @@ public class Board_1P : MonoBehaviour
         }
     }
 
+
     /// <summary>
-    /// Move Blocks by User Input.
+    /// Move Blocks by User Input
     /// </summary>
-    /// <param name="dir"></param>
     public void MoveTo(Node2.Direction dir)
     {
+        sned_game_event.Moved_Node(dir);
+
         if (dir == Node2.Direction.RIGHT)
         {
             for (int j = 0; j < col; j++)
@@ -379,6 +479,7 @@ public class Board_1P : MonoBehaviour
 
         return gameOver;
     }
+
     private void CreateRandom()
     {
         var emptys = nodeData.FindAll(x => x.realNodeObj == null);
@@ -443,9 +544,6 @@ public class Board_1P : MonoBehaviour
             nodeData.ForEach(x => x.combined = false);
             state = State.WAIT;
             CreateRandom();
-
-            //--- State Save For UndoRedo ---//
-            SendGameData();
         }
     }
 
@@ -482,7 +580,7 @@ public class Board_1P : MonoBehaviour
         UpdateByKeyboard();
         if (Input.GetKeyUp(KeyCode.Backspace)) ReturnPrevPageButton();
 
-        /*UpdateByTouchscreen();
+    /*    UpdateByTouchscreen();
         if (Application.platform == RuntimePlatform.Android)
             if (Input.GetKey(KeyCode.Escape)) ReturnPrevPageButton();*/
     }

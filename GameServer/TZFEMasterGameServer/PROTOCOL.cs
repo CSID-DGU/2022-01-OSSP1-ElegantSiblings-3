@@ -25,14 +25,14 @@ namespace TZFEMasterGameServer
 		// 게임 시작
 		GAME_START = 3,
 
-		// 턴 시작
-		START_PLAYER_TURN = 4,
+		// 점수 갱신 (누적 점수, 최대 크기 노드)
+		MODIFIED_SCORE = 4,
 
-		// 클라이언트의 Board Update 요청
-		BOARD_UPDATE_REQ = 5,
+		// 노드가 이동됨
+		MOVED_NODE = 5,
 
-		// 플레이어가 이동 했음을 알린다
-		PLAYER_MOVED = 6,
+		// 노드(랜덤 노드)가 생성됨
+		CREATED_NEW_NODE = 6,
 
 		// 클라이언트의 턴 연출이 끝났음을 알린다
 		TURN_FINISHED_REQ = 7,
