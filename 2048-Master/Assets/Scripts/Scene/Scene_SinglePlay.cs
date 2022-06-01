@@ -14,38 +14,40 @@ public class SinglePlayMode
 }
 
 
-public class SinglePlayPage : MonoBehaviour
+public class Scene_SinglePlay : MonoBehaviour
 {
+    private string theme_name;
+
     public void Awake()
     {
-        //DataClear();
+        // TODO: theme ¼³Á¤
     }
 
-    public void ReturnPrevPageButton()
+    public void Button_Back_Click()
     {
-        SceneManager.LoadScene("GamePlayPage");
+        SceneManager.LoadScene("Scene_GamePlay");
     }
 
-    public void ReturnHomePageButton()
+    public void Button_Home_Click()
     {
-        SceneManager.LoadScene("HomePage");
+        SceneManager.LoadScene("Scene_Home");
     }
 
-    public void ClassicModeButton()
+    public void Button_ClassicMode_Click()
     {
         string path = Path.Combine(Application.persistentDataPath, "SinglePlayMode.json");
         File.WriteAllText(path, new SinglePlayMode { modeName = "ClassicMode" }.GetJson());
         SceneManager.LoadScene("Game");
     }
 
-    public void ChallengeModeButton()
+    public void Button_ChallengeMode_Click()
     {
         string path = Path.Combine(Application.persistentDataPath, "SinglePlayMode.json");
         File.WriteAllText(path, new SinglePlayMode { modeName = "ChallengeMode" }.GetJson());
         SceneManager.LoadScene("Game");
     }
 
-    public void PracticeModeButton()
+    public void Button_PracticeMode_Click()
     {
         string path = Path.Combine(Application.persistentDataPath, "SinglePlayMode.json");
         File.WriteAllText(path, new SinglePlayMode { modeName = "PracticeMode" }.GetJson());

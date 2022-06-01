@@ -9,24 +9,27 @@ EditorBuildSettings:
     path: Assets/Test.unity
     guid: c761a06f9badafa4a819c105849587c1
   - enabled: 1
-    path: Assets/GameRoom.unity
-    guid: 0699c0e4186ec6543aa8590a536943e2
-  - enabled: 1
-    path: Assets/HomePage.unity
+    path: Assets/Scene_Home.unity
     guid: 61ffb3ecc37807b409df4ba400bb671c
   - enabled: 1
-    path: Assets/PVPGame.unity
-    guid: b455262305c3b234db8d0d8a9f5722ff
-  - enabled: 1
-    path: Assets/LoginPage.unity
-    guid: d6f0117aef6f523408445fd7e1672cb6
-  - enabled: 1
-    path: Assets/SinglePlayPage.unity
-    guid: 509ff00bc0bfb4e4590ebf85dace79da
-  - enabled: 1
-    path: Assets/GamePlayPage.unity
+    path: Assets/Scene_GamePlay.unity
     guid: e1c11a6795a6f664a97716ea65d2a0b8
+  - enabled: 1
+    path: Assets/Scene_SinglePlay.unity
+    guid: 509ff00bc0bfb4e4590ebf85dace79da
   - enabled: 1
     path: Assets/Game.unity
     guid: db56e3fe50b715d46be1c8e8bb4bceff
+  - enabled: 1
+    path: Assets/Scene_MultiPlay.unity
+    guid: d5133d3d7a107a04fbe904e3aba71857
+  - enabled: 1
+    path: Assets/Scene_GameRoom.unity
+    guid: 0699c0e4186ec6543aa8590a536943e2
+  - enabled: 0
+    path: Assets/PVPGame.unity
+    guid: b455262305c3b234db8d0d8a9f5722ff
+  - enabled: 0
+    path: Assets/LoginPage.unity
+    guid: d6f0117aef6f523408445fd7e1672cb6
   m_configObjects: {}

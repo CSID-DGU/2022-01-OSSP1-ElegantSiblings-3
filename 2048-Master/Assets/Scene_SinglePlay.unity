@@ -238,7 +238,7 @@ GameObject:
   - component: {fileID: 289416577}
   - component: {fileID: 289416576}
   m_Layer: 5
-  m_Name: ChallengeMode_Button
+  m_Name: Button_ChallengeMode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -258,7 +258,7 @@ RectTransform:
   m_Children:
   - {fileID: 603058680}
   m_Father: {fileID: 1559562647}
-  m_RootOrder: 1
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -310,8 +310,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1559562650}
-        m_TargetAssemblyTypeName: SinglePlayPage, Assembly-CSharp
-        m_MethodName: ChallengeModeButton
+        m_TargetAssemblyTypeName: Scene_SinglePlay, Assembly-CSharp
+        m_MethodName: Button_ChallengeMode_Click
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -341,7 +341,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: b28326752b307ac4ca9dec12bb07b1fb, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e164fdb4b985d044b97dff9a5c66e8b4, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -372,7 +372,7 @@ GameObject:
   - component: {fileID: 392183380}
   - component: {fileID: 392183379}
   m_Layer: 5
-  m_Name: ClassicMode_Button
+  m_Name: Button_ClassicMode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -392,7 +392,7 @@ RectTransform:
   m_Children:
   - {fileID: 2036053755}
   m_Father: {fileID: 1559562647}
-  m_RootOrder: 0
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -444,8 +444,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1559562650}
-        m_TargetAssemblyTypeName: SinglePlayPage, Assembly-CSharp
-        m_MethodName: ClassicModeButton
+        m_TargetAssemblyTypeName: Scene_SinglePlay, Assembly-CSharp
+        m_MethodName: Button_ClassicMode_Click
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -475,7 +475,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5c0c447d0b4e3ea4eb5926671809dd6d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8722c22c6a9611042a2b77423bf5449a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -536,7 +536,7 @@ GameObject:
   - component: {fileID: 603058682}
   - component: {fileID: 603058681}
   m_Layer: 5
-  m_Name: ChallengeMode_Button_Text
+  m_Name: Text_Button_ChallengeMode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -672,7 +672,7 @@ GameObject:
   - component: {fileID: 731117266}
   - component: {fileID: 731117265}
   m_Layer: 5
-  m_Name: ReturnHomePage
+  m_Name: Button_Home
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -692,7 +692,7 @@ RectTransform:
   m_Children:
   - {fileID: 1888021526}
   m_Father: {fileID: 1559562647}
-  m_RootOrder: 3
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -744,8 +744,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1559562650}
-        m_TargetAssemblyTypeName: SinglePlayPage, Assembly-CSharp
-        m_MethodName: ReturnHomePageButton
+        m_TargetAssemblyTypeName: Scene_SinglePlay, Assembly-CSharp
+        m_MethodName: Button_Home_Click
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -775,7 +775,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 4e17632f989c4d9439662d463ef7a526, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ac0e66d9aa2bcde499802caa658ab4af, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -881,7 +881,7 @@ GameObject:
   - component: {fileID: 1269996738}
   - component: {fileID: 1269996737}
   m_Layer: 5
-  m_Name: PracticeMode_Button_Text
+  m_Name: Text_Button_PracticeMode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1016,7 +1016,7 @@ GameObject:
   - component: {fileID: 1547298816}
   - component: {fileID: 1547298815}
   m_Layer: 5
-  m_Name: ReturnPrevPage_Text
+  m_Name: Text_Button_Back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1170,11 +1170,11 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1583436274}
+  - {fileID: 731117264}
   - {fileID: 392183378}
   - {fileID: 289416575}
   - {fileID: 1738996449}
-  - {fileID: 731117264}
-  - {fileID: 1583436274}
   m_Father: {fileID: 185017331}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1203,7 +1203,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 76f3bbd70cc49b3479e1b6b6966cd67f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 694730440cca57942ad60579ab88fd9d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1246,7 +1246,7 @@ GameObject:
   - component: {fileID: 1583436276}
   - component: {fileID: 1583436275}
   m_Layer: 5
-  m_Name: ReturnPrevPage
+  m_Name: Button_Back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1266,7 +1266,7 @@ RectTransform:
   m_Children:
   - {fileID: 1547298814}
   m_Father: {fileID: 1559562647}
-  m_RootOrder: 4
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1318,8 +1318,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1559562650}
-        m_TargetAssemblyTypeName: SinglePlayPage, Assembly-CSharp
-        m_MethodName: ReturnPrevPageButton
+        m_TargetAssemblyTypeName: Scene_SinglePlay, Assembly-CSharp
+        m_MethodName: Button_Back_Click
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1349,7 +1349,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 292971d992d667843b490895d033b07e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f7ead1fdc6747c44bb47362f69b326ca, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1380,7 +1380,7 @@ GameObject:
   - component: {fileID: 1738996451}
   - component: {fileID: 1738996450}
   m_Layer: 5
-  m_Name: PracticeMode_Button
+  m_Name: Button_PracticeMode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1400,7 +1400,7 @@ RectTransform:
   m_Children:
   - {fileID: 1269996736}
   m_Father: {fileID: 1559562647}
-  m_RootOrder: 2
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1452,8 +1452,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1559562650}
-        m_TargetAssemblyTypeName: SinglePlayPage, Assembly-CSharp
-        m_MethodName: PracticeModeButton
+        m_TargetAssemblyTypeName: Scene_SinglePlay, Assembly-CSharp
+        m_MethodName: Button_PracticeMode_Click
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1483,7 +1483,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: e4692866432ea524598a425a3d7c9197, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1131bb5f3ae12b2468533134886ed41d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1664,7 +1664,7 @@ GameObject:
   - component: {fileID: 1888021528}
   - component: {fileID: 1888021527}
   m_Layer: 5
-  m_Name: ReturnHomePage_Text
+  m_Name: Text_Button_Home
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1799,7 +1799,7 @@ GameObject:
   - component: {fileID: 2036053757}
   - component: {fileID: 2036053756}
   m_Layer: 5
-  m_Name: ClassicMode_Button_Text
+  m_Name: Text_Button_ClassicMode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

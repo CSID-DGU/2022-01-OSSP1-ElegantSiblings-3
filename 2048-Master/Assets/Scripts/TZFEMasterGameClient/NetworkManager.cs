@@ -6,6 +6,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using FreeNet;
+using UnityEngine.SceneManagement;
 
 public class NetworkManager : MonoBehaviour
 {
@@ -37,6 +38,12 @@ public class NetworkManager : MonoBehaviour
 	public bool is_connected()
 	{
 		return this.gameserver.is_connected();
+	}
+
+	public void disconnect()
+    {
+		this.gameserver.disconnected();
+		SceneManager.LoadScene("Scene_MultiPlay");
 	}
 
 	/// <summary>

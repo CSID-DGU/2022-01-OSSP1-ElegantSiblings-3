@@ -104,15 +104,14 @@ public class MatchingManager : MonoBehaviour
 
 			case USER_STATE.WAITING_MATCHING:				
 				GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), this.matching_bg);
-				GUI.DrawTexture(new Rect(Screen.width / 2 - 100, Screen.height / 2 - 50, 200, 82), this.waiting_img[(waiting_count / 10) % 4]);
+				//GUI.DrawTexture(new Rect(Screen.width / 2 - 100, Screen.height / 2 - 50, 200, 82), this.waiting_img[(waiting_count / 10) % 4]);
+				GUI.DrawTexture(new Rect(Screen.width / 2 - (Screen.width / 6 / 2), Screen.height / 2 - (Screen.height / 6 / 2), Screen.width / 6, Screen.height / 6), this.waiting_img[(waiting_count / 10) % 4]);				
 				if (++waiting_count >= 2000) waiting_count = 0;
 				Thread.Sleep(50);
 
 				break;
 		}
 	}
-
-	
 
 
 	/// <summary>
@@ -146,5 +145,18 @@ public class MatchingManager : MonoBehaviour
 				}
 				break;
 		}
+	}
+
+	private void Cancel_Matching()
+    {
+		network_manager.disconnect();
+	}
+
+	private void Update()
+	{
+		if (Input.GetKeyUp(KeyCode.Backspace)) Cancel_Matching();
+
+		if (Application.platform == RuntimePlatform.Android)
+			if (Input.GetKey(KeyCode.Escape)) Cancel_Matching();
 	}
 }

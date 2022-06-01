@@ -60,6 +60,14 @@ public class CFreeNetUnityService : MonoBehaviour
 		return this.gameserver != null;
 	}
 
+	public void disconnected()
+	{
+		if (this.gameserver != null)
+		{
+			((CRemoteServerPeer)this.gameserver).token.disconnect();
+		}
+	}
+
 
 	/// <summary>
 	/// 접속 성공시 호출될 콜백 매소드.

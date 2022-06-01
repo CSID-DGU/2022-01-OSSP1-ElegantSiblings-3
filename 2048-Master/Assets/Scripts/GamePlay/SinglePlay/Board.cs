@@ -95,13 +95,13 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         SaveGame();
         SaveToJson();
-        SceneManager.LoadScene("SinglePlayPage");
+        SceneManager.LoadScene("Scene_SinglePlay");
     }
     public void ReturnHomePageButton()
     {
         SaveGame();
         SaveToJson();
-        SceneManager.LoadScene("HomePage");
+        SceneManager.LoadScene("Scene_Home");
     }
     public void NewGameButton()
     {
