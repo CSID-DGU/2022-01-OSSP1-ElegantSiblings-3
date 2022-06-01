@@ -51,6 +51,7 @@ public class Board_2P : MonoBehaviour
 
     // 데이터 통신
     public RecvGameEvent recv_game_event;
+    public bool first_load;
     public int curr_score;
     public int highest_node_value;
 
@@ -99,33 +100,59 @@ public class Board_2P : MonoBehaviour
 
     public class RecvGameEvent
     {
-        private Board_2P board;
-
-        public RecvGameEvent(Board_2P _board) { board = _board; }
-
-        public void Modified_Score(CPacket msg)
+        private enum GameEvent : int
         {
-            int curr = msg.pop_int32();
-            int highest = msg.pop_int32();
-            board.curr_score = curr;
-            board.highest_node_value = highest;
-            board.Update_Score_Screen();
+            FIRST_LOAD, MOVE_BLOCK, CHANGED_BLOCK_STATE, CREATE_BLOCK // 0, 1, 2, 3
         }
 
-        public void Moved_Node(CPacket msg)
+        private GameEvent prev_event;
+        private Queue<int?> moved_direction;
+        private Queue<Vector2Int?> created_node_location;
+
+        public RecvGameEvent()
         {
-            int dir = msg.pop_int32();
-            if (dir == 0) board.MoveTo(Node2.Direction.RIGHT);
-            if (dir == 2) board.MoveTo(Node2.Direction.LEFT);
-            if (dir == 3) board.MoveTo(Node2.Direction.UP);
-            if (dir == 1) board.MoveTo(Node2.Direction.DOWN);
+            prev_event = GameEvent.FIRST_LOAD;
+            moved_direction = new Queue<int?>();
+            created_node_location = new Queue<Vector2Int?>();
         }
 
-        public void Create_Random_Node(CPacket msg)
+        public void Receive_Moved_Direction(CPacket msg)
         {
-            int x = msg.pop_int32();
-            int y = msg.pop_int32();
-            board.CreateBlock(x, y);
+            moved_direction.Enqueue(msg.pop_int32());
+        }
+
+        public void Receive_Created_Node_Location(CPacket msg)
+        {
+            created_node_location.Enqueue(new Vector2Int(msg.pop_int32(), msg.pop_int32()));
+        }
+
+        public int? Moved_Direction()
+        {
+            if ((prev_event == GameEvent.MOVE_BLOCK || prev_event == GameEvent.CREATE_BLOCK) && moved_direction.Count > 0)
+            {
+                Debug.Log("Move Node..." + " (prev event is " + prev_event + ")");
+                int? dir = moved_direction.Dequeue();
+                prev_event = GameEvent.MOVE_BLOCK;
+                return dir;
+            }
+            return null;
+        }
+
+        public void Changed_Block_State()
+        {
+            prev_event = GameEvent.CHANGED_BLOCK_STATE;
+        }
+
+        public Vector2Int? Created_Node_Location()
+        {
+            if ((prev_event == GameEvent.FIRST_LOAD || prev_event == GameEvent.CHANGED_BLOCK_STATE) && created_node_location.Count > 0)
+            {
+                Debug.Log("Create Node..." + " (prev event is " + prev_event + ")");
+                Vector2Int? loc = created_node_location.Dequeue();
+                prev_event = GameEvent.CREATE_BLOCK;
+                return loc;
+            }
+            return null;
         }
     }
 
@@ -189,7 +216,8 @@ public class Board_2P : MonoBehaviour
     private void CreateGameBoard()
     {
         /* first initialize Score Board */
-        recv_game_event = new RecvGameEvent(this);
+        recv_game_event = new RecvGameEvent();
+        first_load = true;
         curr_score = 0;
         highest_node_value = 2;
         Update_Score_Screen();
@@ -234,7 +262,9 @@ public class Board_2P : MonoBehaviour
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(emptyNodeRect);
         foreach (var data in nodeData)
-            data.position = data.nodeRectObj.GetComponent<RectTransform>().localPosition;  
+            data.position = data.nodeRectObj.GetComponent<RectTransform>().localPosition;
+
+        //CreateRandom();
     }
 
 
@@ -279,7 +309,10 @@ public class Board_2P : MonoBehaviour
             to.combined = true;
         }
 
-        // TODO: Update Score
+        // Update Score
+        curr_score += to.value.GetValueOrDefault();
+        highest_node_value = Mathf.Max(highest_node_value, to.value.GetValueOrDefault());
+        Update_Score_Screen();
     }
 
     public void Move(Node2 from, Node2 to)
@@ -328,7 +361,6 @@ public class Board_2P : MonoBehaviour
                         {
                             Move(node, right);
                         }
-                        else if (right == null) return;
                     }
                 }
             }
@@ -422,6 +454,7 @@ public class Board_2P : MonoBehaviour
         {
             if (data.target != null)
             {
+                recv_game_event.Changed_Block_State();
                 state = State.PROCESSING;
                 data.StartMoveAnimation();
             }
@@ -503,15 +536,31 @@ public class Board_2P : MonoBehaviour
             }
         }
 
-        if (state == State.END)
-        {
-            nodeData.ForEach(x => x.combined = false);
-            state = State.WAIT;
-            //CreateRandom();
 
-            //--- State Save For UndoRedo ---//
+        if (state == State.END || first_load == true)
+        {
+            Vector2Int? loc = recv_game_event.Created_Node_Location();
+
+            if (loc != null)
+            {
+                nodeData.ForEach(x => x.combined = false);
+                first_load = false;
+                state = State.WAIT;
+                CreateBlock_By_Event(loc.GetValueOrDefault());
+            }
         }
     }
+
+
+    private void CreateBlock_By_Event(Vector2Int loc)
+    {
+        // TODO: Board 1P에서 게임오버된 상태에서는 데이터를 보내면 안 된다
+        if (nodeMap[loc].realNodeObj == null)
+        {
+            CreateBlock(loc.x, loc.y);
+        }
+    }
+
 
     private void Show()
     {
@@ -531,6 +580,30 @@ public class Board_2P : MonoBehaviour
                 v += t + " ";
             }
             v += "\n";
+        }
+    }
+
+    // Update
+
+    private void Update()
+    {
+        UpdateState();
+        Move_By_Receive_Event();
+    }
+
+    private void Move_By_Receive_Event()
+    {
+        if(state == State.WAIT)
+        {
+            int? dir = recv_game_event.Moved_Direction();
+
+            if (dir != null)
+            {
+                if (dir.GetValueOrDefault() == 0) MoveTo(Node2.Direction.RIGHT);
+                if (dir.GetValueOrDefault() == 2) MoveTo(Node2.Direction.LEFT);
+                if (dir.GetValueOrDefault() == 3) MoveTo(Node2.Direction.UP);
+                if (dir.GetValueOrDefault() == 1) MoveTo(Node2.Direction.DOWN);
+            }
         }
     }
 }

@@ -169,10 +169,10 @@ namespace TZFEMasterGameServer
 
 		public void On_Modified_Score(Player sender, int curr, int highest) 
 		{
-			CPacket msg = CPacket.create((short)PROTOCOL.MODIFIED_SCORE);
+			/*CPacket msg = CPacket.create((short)PROTOCOL.MODIFIED_SCORE);
 			msg.push(curr);
 			msg.push(highest);
-			Get_Rival(sender).send(msg);
+			Get_Rival(sender).send(msg);*/
 		}
 
 

@@ -81,21 +81,17 @@ public class BattleRoom : MonoBehaviour
 
 
 	/// <summary>
-	/// CServer로부터 패킷 수신
+	/// Server로부터 패킷 수신
 	/// </summary>
 	void on_recv(CPacket msg)
 	{
 		PROTOCOL protocol_id = (PROTOCOL)msg.pop_protocol_id();
-		Debug.Log(">> Recv protocol id " + protocol_id);
+		//Debug.Log(">> Recv protocol id " + protocol_id);
 
 		switch (protocol_id)
 		{
 			case PROTOCOL.GAME_START:
 				on_game_start(msg);
-				break;
-
-			case PROTOCOL.MODIFIED_SCORE:
-				On_Modified_Score(msg);
 				break;
 
 			case PROTOCOL.MOVED_NODE:
@@ -123,19 +119,14 @@ public class BattleRoom : MonoBehaviour
 		board_player.On_Game_Start();
 	}
 
-	private void On_Modified_Score(CPacket msg)  
-	{
-		board_rival.recv_game_event.Modified_Score(msg);
-	}
-
 	private void On_Moved_Node(CPacket msg)  
 	{
-		board_rival.recv_game_event.Moved_Node(msg);
+		board_rival.recv_game_event.Receive_Moved_Direction(msg);
 	}
 
 	private void On_Created_New_Node(CPacket msg) 
 	{
-		board_rival.recv_game_event.Create_Random_Node(msg);
+		board_rival.recv_game_event.Receive_Created_Node_Location(msg);
 	}
 
 

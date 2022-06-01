@@ -98,6 +98,8 @@ public class Board_1P : MonoBehaviour
 
     public class SendGameEvent
     {
+        // 데이터를 보내는 법
+
         private BattleRoom battle_room;
 
         public SendGameEvent(BattleRoom _battle_room) { battle_room = _battle_room; }
@@ -346,7 +348,6 @@ public class Board_1P : MonoBehaviour
                         {
                             Move(node, right);
                         }
-                        else if (right == null) return;
                     }
                 }
             }
@@ -577,8 +578,8 @@ public class Board_1P : MonoBehaviour
     {
         UpdateState();
 
-      /*  UpdateByKeyboard();
-        if (Input.GetKeyUp(KeyCode.Backspace)) ReturnPrevPageButton();*/
+        UpdateByKeyboard();
+        if (Input.GetKeyUp(KeyCode.Backspace)) ReturnPrevPageButton();
 
         UpdateByTouchscreen();
         if (Application.platform == RuntimePlatform.Android)
@@ -614,8 +615,6 @@ public class Board_1P : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.DownArrow)) MoveTo(Node2.Direction.DOWN);
             }
         }
-
-        if (Input.GetKeyUp(KeyCode.Space)) Show();
     }
 
     private void UpdateByTouchscreen()
@@ -645,8 +644,6 @@ public class Board_1P : MonoBehaviour
                         if (vectorM.y > 0) MoveTo(Node2.Direction.UP);
                         else MoveTo(Node2.Direction.DOWN);
                     }
-
-                    Show();
                 }
 
                 TouchGameBoard = false;
