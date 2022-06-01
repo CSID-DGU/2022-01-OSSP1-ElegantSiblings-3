@@ -126,8 +126,8 @@ public class Board_1P : MonoBehaviour
         }
     }
 
-    //============================== Update Screen ==============================//
 
+    //============================== Update Screen ==============================//
     private void Update_Score_Screen()
     {
         GameObject.Find("CurrScore_Player").GetComponent<TextMeshProUGUI>().text = curr_score.ToString();
@@ -577,12 +577,12 @@ public class Board_1P : MonoBehaviour
     {
         UpdateState();
 
-        UpdateByKeyboard();
-        if (Input.GetKeyUp(KeyCode.Backspace)) ReturnPrevPageButton();
+      /*  UpdateByKeyboard();
+        if (Input.GetKeyUp(KeyCode.Backspace)) ReturnPrevPageButton();*/
 
-    /*    UpdateByTouchscreen();
+        UpdateByTouchscreen();
         if (Application.platform == RuntimePlatform.Android)
-            if (Input.GetKey(KeyCode.Escape)) ReturnPrevPageButton();*/
+            if (Input.GetKey(KeyCode.Escape)) ReturnPrevPageButton();
     }
 
 
@@ -620,11 +620,9 @@ public class Board_1P : MonoBehaviour
 
     private void UpdateByTouchscreen()
     {
-        //if (isReloading) return;
-
         if (state == State.WAIT)
         {
-            if (Input.touchCount > 0 && TouchGameBoard == true)
+            if (Input.touchCount > 0)// && TouchGameBoard == true)
             {
                 Touch touch = Input.GetTouch(0);
 

@@ -638,12 +638,12 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         UpdateState();
 
-        UpdateByKeyboard();
-        if (Input.GetKeyUp(KeyCode.Backspace)) ReturnPrevPageButton();
+     /*   UpdateByKeyboard();
+        if (Input.GetKeyUp(KeyCode.Backspace)) ReturnPrevPageButton();*/
 
-        /*UpdateByTouchscreen();
+        UpdateByTouchscreen();
         if (Application.platform == RuntimePlatform.Android)
-            if (Input.GetKey(KeyCode.Escape)) ReturnPrevPageButton();*/
+            if (Input.GetKey(KeyCode.Escape)) ReturnPrevPageButton();
     }
 
 

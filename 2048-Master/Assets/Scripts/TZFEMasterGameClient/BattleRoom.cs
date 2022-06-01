@@ -86,6 +86,7 @@ public class BattleRoom : MonoBehaviour
 	void on_recv(CPacket msg)
 	{
 		PROTOCOL protocol_id = (PROTOCOL)msg.pop_protocol_id();
+		Debug.Log(">> Recv protocol id " + protocol_id);
 
 		switch (protocol_id)
 		{
@@ -122,19 +123,19 @@ public class BattleRoom : MonoBehaviour
 		board_player.On_Game_Start();
 	}
 
-	private void On_Modified_Score(CPacket msg)  // 플레이어가 블록을 이동시킴
+	private void On_Modified_Score(CPacket msg)  
 	{
-
+		board_rival.recv_game_event.Modified_Score(msg);
 	}
 
-	private void On_Moved_Node(CPacket msg)  // 플레이어가 블록을 이동시킴
+	private void On_Moved_Node(CPacket msg)  
 	{
-
+		board_rival.recv_game_event.Moved_Node(msg);
 	}
 
-	private void On_Created_New_Node(CPacket msg)  // 플레이어가 블록을 이동시킴
+	private void On_Created_New_Node(CPacket msg) 
 	{
-
+		board_rival.recv_game_event.Create_Random_Node(msg);
 	}
 
 

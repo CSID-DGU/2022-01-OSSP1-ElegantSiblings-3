@@ -159,12 +159,38 @@ namespace TZFEMasterGameServer
 
 
 		/// <summary>
-		/// 클라이언트의 board update 요청
+		/// 플레이어의 경쟁 상대를 리턴
 		/// </summary>
-		public void board_update_req(Player sender, string board) 
+		private Player Get_Rival(Player player)
+        {
+			return (player.player_index == 0 ? players[1] : players[0]);
+        }
+
+
+		public void On_Modified_Score(Player sender, int curr, int highest) 
 		{
-			// TODO: 
+			CPacket msg = CPacket.create((short)PROTOCOL.MODIFIED_SCORE);
+			msg.push(curr);
+			msg.push(highest);
+			Get_Rival(sender).send(msg);
 		}
+
+
+		public void On_Moved_Node(Player sender, int dir)
+		{
+			CPacket msg = CPacket.create((short)PROTOCOL.MOVED_NODE);
+			msg.push(dir);
+			Get_Rival(sender).send(msg);
+		}
+
+		public void On_Created_New_Node(Player sender, int x, int y)
+		{
+			CPacket msg = CPacket.create((short)PROTOCOL.CREATED_NEW_NODE);
+			msg.push(x);
+			msg.push(y);
+			Get_Rival(sender).send(msg);
+		}
+
 
 
 		void game_over()

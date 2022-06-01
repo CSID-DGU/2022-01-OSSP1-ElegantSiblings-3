@@ -68,26 +68,26 @@ namespace TZFEMasterGameServer
 
 
 				case PROTOCOL.MODIFIED_SCORE:
-					Console.WriteLine("Sended by Player" + player.player_index);
+					//Console.WriteLine("Sended by Player" + player.player_index);
 					int curr = msg.pop_int32();
 					int highest = msg.pop_int32();
-					Console.WriteLine("Modified score is (" + curr.ToString() + ", " + highest.ToString() + ")");
-					//this.battle_room.Modified_score(player);
+					//Console.WriteLine("Modified score is (" + curr.ToString() + ", " + highest.ToString() + ")");
+					this.battle_room.On_Modified_Score(player, curr, highest);
 					break;
 
 				case PROTOCOL.MOVED_NODE:
-					Console.WriteLine("Sended by Player" + player.player_index);
+					//Console.WriteLine("Sended by Player" + player.player_index);
 					int dir = msg.pop_int32();
-					Console.WriteLine("Mode To " + dir.ToString());
-					//this.battle_room.Moved_Node(msg);
+					//Console.WriteLine("Mode To " + dir.ToString());
+					this.battle_room.On_Moved_Node(player, dir);
 					break;
 
 				case PROTOCOL.CREATED_NEW_NODE:
-					Console.WriteLine("Sended by Player" + player.player_index);
+					//Console.WriteLine("Sended by Player" + player.player_index);
 					int x = msg.pop_int32();
 					int y = msg.pop_int32();
-					Console.WriteLine("New node location (" + x.ToString() + ", " + y.ToString() + ")");
-					//this.battle_room.Created_New_Node(player);
+					//Console.WriteLine("New node location (" + x.ToString() + ", " + y.ToString() + ")");
+					this.battle_room.On_Created_New_Node(player, x, y);
 					break;
 			}
 		}

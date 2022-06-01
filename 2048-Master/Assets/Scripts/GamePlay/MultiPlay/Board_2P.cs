@@ -7,11 +7,12 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Random = System.Random;
-
+//
 using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.EventSystems;
 using System.IO;
+using FreeNet;
 
 public class Board_2P : MonoBehaviour
 {
@@ -48,6 +49,12 @@ public class Board_2P : MonoBehaviour
     public RectTransform realNodeRect;
 
 
+    // 데이터 통신
+    public RecvGameEvent recv_game_event;
+    public int curr_score;
+    public int highest_node_value;
+
+
     // Touch Event
     public Vector2 vectorS = new Vector2();
     public Vector2 vectorE = new Vector2();
@@ -79,6 +86,7 @@ public class Board_2P : MonoBehaviour
         //   SceneManager.LoadScene("SinglePlayPage");
     }
 
+
     //============================== Game Data Method ==============================//
 
     private void ThemeRoad()
@@ -87,16 +95,105 @@ public class Board_2P : MonoBehaviour
     }
 
 
-    //============================== Make Game Board ==============================//
-    private void NewBoard()
-    {
+    //============================== Send Game Data ==============================//
 
+    public class RecvGameEvent
+    {
+        private Board_2P board;
+
+        public RecvGameEvent(Board_2P _board) { board = _board; }
+
+        public void Modified_Score(CPacket msg)
+        {
+            int curr = msg.pop_int32();
+            int highest = msg.pop_int32();
+            board.curr_score = curr;
+            board.highest_node_value = highest;
+            board.Update_Score_Screen();
+        }
+
+        public void Moved_Node(CPacket msg)
+        {
+            int dir = msg.pop_int32();
+            if (dir == 0) board.MoveTo(Node2.Direction.RIGHT);
+            if (dir == 2) board.MoveTo(Node2.Direction.LEFT);
+            if (dir == 3) board.MoveTo(Node2.Direction.UP);
+            if (dir == 1) board.MoveTo(Node2.Direction.DOWN);
+        }
+
+        public void Create_Random_Node(CPacket msg)
+        {
+            int x = msg.pop_int32();
+            int y = msg.pop_int32();
+            board.CreateBlock(x, y);
+        }
     }
 
+
+    //============================== Update Screen ==============================//
+    private void Update_Score_Screen()
+    {
+        GameObject.Find("CurrScore_Rival").GetComponent<TextMeshProUGUI>().text = curr_score.ToString();
+        GameObject.Find("HighestNodeValue_Rival").GetComponent<TextMeshProUGUI>().text = highest_node_value.ToString();
+
+        Color color = new Color(1f, 0.42f, 0.42f);
+
+        switch (highest_node_value)
+        {
+            case 2:
+                color = new Color(0.14f, 0.62f, 1f);
+                break;
+            case 4:
+                color = new Color(0.14f, 0.62f, 1f);
+                break;
+            case 8:
+                color = new Color(1f, 0.45f, 0f);
+                break;
+            case 16:
+                color = new Color(1f, 0.45f, 0f);
+                break;
+            case 32:
+                color = new Color(1f, 0.42f, 0.42f);
+                break;
+            case 64:
+                color = new Color(1f, 0.42f, 0.42f);
+                break;
+            case 128:
+                color = new Color(1f, 0.35f, 0.35f);
+                break;
+            case 256:
+                color = new Color(1f, 0.35f, 0.35f);
+                break;
+            case 512:
+                color = new Color(1f, 0.15f, 0.15f);
+                break;
+            case 1024:
+                color = new Color(1f, 0.15f, 0.15f);
+                break;
+            case 2048:
+                color = new Color(1f, 0, 0);
+                break;
+            case 4096:
+                color = new Color(1f, 0, 0);
+                break;
+            default:
+                color = Color.black;
+                break;
+        }
+
+        GameObject.Find("HighestNodeValue_Rival").GetComponent<TextMeshProUGUI>().color = color;
+    }
+
+
+    //============================== Make Game Board ==============================//
     private void CreateGameBoard()
     {
         /* first initialize Score Board */
-        GameData2 gameData2 = new GameData2();
+        recv_game_event = new RecvGameEvent(this);
+        curr_score = 0;
+        highest_node_value = 2;
+        Update_Score_Screen();
+
 
         /* first initialize empty Node rect */
         realNodeList.Clear();
@@ -105,6 +202,7 @@ public class Board_2P : MonoBehaviour
 
         var emptyChildCount = emptyNodeRect.transform.childCount;
         for (int i = 0; i < emptyChildCount; i++) { var child = emptyNodeRect.GetChild(i); }
+
 
         /* and, empty node create for get grid point*/
         for (int i = 0; i < col; i++)
@@ -124,8 +222,6 @@ public class Board_2P : MonoBehaviour
                 if (IsValid(left)) v[2] = left;
                 if (IsValid(up)) v[3] = up;
 
-
-
                 Node2 node = new Node2(v);
                 node.point = point;
                 node.nodeRectObj = instantiatePrefab;
@@ -137,14 +233,8 @@ public class Board_2P : MonoBehaviour
         }
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(emptyNodeRect);
-
         foreach (var data in nodeData)
-        {
-            data.position = data.nodeRectObj.GetComponent<RectTransform>().localPosition;
-            Debug.Log(data.position);
-        }
-
-        CreateRandom();
+            data.position = data.nodeRectObj.GetComponent<RectTransform>().localPosition;  
     }
 
 
@@ -371,23 +461,6 @@ public class Board_2P : MonoBehaviour
 
         return gameOver;
     }
-    private void CreateRandom()
-    {
-        var emptys = nodeData.FindAll(x => x.realNodeObj == null);
-        if (emptys.Count == 0)
-        {
-            if (IsGameOver())
-            {
-                OnGameOver();
-            }
-        }
-        else
-        {
-            var rand = UnityEngine.Random.Range(0, emptys.Count);
-            var pt = emptys[rand].point;
-            CreateBlock(pt.x, pt.y);
-        }
-    }
 
     public void OnGameOver()
     {
@@ -434,7 +507,7 @@ public class Board_2P : MonoBehaviour
         {
             nodeData.ForEach(x => x.combined = false);
             state = State.WAIT;
-            CreateRandom();
+            //CreateRandom();
 
             //--- State Save For UndoRedo ---//
         }
@@ -458,94 +531,6 @@ public class Board_2P : MonoBehaviour
                 v += t + " ";
             }
             v += "\n";
-        }
-    }
-
-
-    //---------------------------------------------------------------------//
-    //---------------------------- Touch Event ----------------------------//
-    //---------------------------------------------------------------------//
-
-    private void Update()
-    {
-        UpdateState();
-
-    /*    UpdateByKeyboard();
-        if (Input.GetKeyUp(KeyCode.Backspace)) ReturnPrevPageButton();*/
-
-        /*UpdateByTouchscreen();
-        if (Application.platform == RuntimePlatform.Android)
-            if (Input.GetKey(KeyCode.Escape)) ReturnPrevPageButton();*/
-    }
-
-
-    //--------------- 터치 영역 제한 ----------------//
-    public bool TouchGameBoard = false;
-    public void OnPointerDown(PointerEventData data)
-    {
-        TouchGameBoard = true;
-    }
-
-    public void OnPointerUp(PointerEventData data)
-    {
-        TouchGameBoard = true;
-    }
-    //-----------------------------------------------//
-
-
-    private void UpdateByKeyboard()
-    {
-        //if (isReloading) return;
-
-        if (state == State.WAIT)
-        {
-            if (Input.anyKeyDown == true)
-            {
-                if (Input.GetKeyDown(KeyCode.RightArrow)) MoveTo(Node2.Direction.RIGHT);
-                if (Input.GetKeyDown(KeyCode.LeftArrow)) MoveTo(Node2.Direction.LEFT);
-                if (Input.GetKeyDown(KeyCode.UpArrow)) MoveTo(Node2.Direction.UP);
-                if (Input.GetKeyDown(KeyCode.DownArrow)) MoveTo(Node2.Direction.DOWN);
-            }
-        }
-
-        if (Input.GetKeyUp(KeyCode.Space)) Show();
-    }
-
-    private void UpdateByTouchscreen()
-    {
-        //if (isReloading) return;
-
-        if (state == State.WAIT)
-        {
-            if (Input.touchCount > 0 && TouchGameBoard == true)
-            {
-                Touch touch = Input.GetTouch(0);
-
-                if (touch.phase == TouchPhase.Began)
-                {
-                    vectorS = touch.position;
-                }
-                else if (touch.phase == TouchPhase.Ended)
-                {
-                    vectorE = touch.position;
-                    vectorM = new Vector2(vectorE.x - vectorS.x, vectorE.y - vectorS.y);
-
-                    if (Mathf.Abs(vectorM.x) > Mathf.Abs(vectorM.y))
-                    {
-                        if (vectorM.x > 0) MoveTo(Node2.Direction.RIGHT);
-                        else MoveTo(Node2.Direction.LEFT);
-                    }
-                    else if (Mathf.Abs(vectorM.x) < Mathf.Abs(vectorM.y))
-                    {
-                        if (vectorM.y > 0) MoveTo(Node2.Direction.UP);
-                        else MoveTo(Node2.Direction.DOWN);
-                    }
-
-                    Show();
-                }
-
-                TouchGameBoard = false;
-            }
         }
     }
 }
