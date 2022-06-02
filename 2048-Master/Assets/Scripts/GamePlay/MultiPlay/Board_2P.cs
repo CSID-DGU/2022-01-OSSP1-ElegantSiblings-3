@@ -168,40 +168,37 @@ public class Board_2P : MonoBehaviour
         switch (highest_node_value)
         {
             case 2:
-                color = new Color(0.14f, 0.62f, 1f);
+                color = Color.black;
                 break;
             case 4:
-                color = new Color(0.14f, 0.62f, 1f);
+                color = Color.black;
                 break;
             case 8:
-                color = new Color(1f, 0.45f, 0f);
+                color = Color.black;
                 break;
             case 16:
-                color = new Color(1f, 0.45f, 0f);
+                color = Color.black;
                 break;
             case 32:
-                color = new Color(1f, 0.42f, 0.42f);
+                color = Color.black;
                 break;
             case 64:
-                color = new Color(1f, 0.42f, 0.42f);
+                color = Color.black;
                 break;
             case 128:
-                color = new Color(1f, 0.35f, 0.35f);
+                color = Color.black;
                 break;
             case 256:
-                color = new Color(1f, 0.35f, 0.35f);
+                color = new Color(237f / 255f, 125f / 255f, 49f / 255f);
                 break;
             case 512:
-                color = new Color(1f, 0.15f, 0.15f);
+                color = new Color(236f / 255f, 77f / 255f, 50f / 255f);
                 break;
             case 1024:
-                color = new Color(1f, 0.15f, 0.15f);
+                color = Color.red;
                 break;
             case 2048:
-                color = new Color(1f, 0, 0);
-                break;
-            case 4096:
-                color = new Color(1f, 0, 0);
+                color = Color.red;
                 break;
             default:
                 color = Color.black;

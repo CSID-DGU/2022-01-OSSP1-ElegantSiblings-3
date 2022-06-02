@@ -14,7 +14,7 @@ using UnityEngine.EventSystems;
 using System.IO;
 using FreeNet;
 
-public class Board_1P : MonoBehaviour
+public class Board_1P : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public enum State
     {
@@ -86,6 +86,25 @@ public class Board_1P : MonoBehaviour
         //   SceneManager.LoadScene("SinglePlayPage");
     }
 
+    public void Button_GiveUp_Click()
+    {
+        GameObject.Find("BackGround").transform.Find("Messagebox_GiveUp").gameObject.SetActive(true);
+        GameObject.Find("BackGround").transform.Find("Button_GiveUp_Yes").gameObject.SetActive(true);
+        GameObject.Find("BackGround").transform.Find("Button_GiveUp_No").gameObject.SetActive(true);
+    }
+
+    public void Button_GiveUp_Yes_Click()
+    {
+        sned_game_event.GiveUp();
+    }
+
+    public void Button_GiveUp_No_Click()
+    {
+        GameObject.Find("Messagebox_GiveUp").GetComponent<Image>().gameObject.SetActive(false);
+        GameObject.Find("Button_GiveUp_Yes").GetComponent<Button>().gameObject.SetActive(false);
+        GameObject.Find("Button_GiveUp_No").GetComponent<Button>().gameObject.SetActive(false);
+    }
+
     //============================== Game Data Method ==============================//
 
     private void ThemeRoad()
@@ -126,6 +145,11 @@ public class Board_1P : MonoBehaviour
             msg.push((int)loc.y);
             battle_room.On_Send(msg);
         }
+
+        public void GiveUp()
+        {
+            battle_room.Disconnect();
+        }
     }
 
 
@@ -140,40 +164,37 @@ public class Board_1P : MonoBehaviour
         switch (highest_node_value)
         {
             case 2:
-                color = new Color(0.14f, 0.62f, 1f);
+                color = Color.black;
                 break;
             case 4:
-                color = new Color(0.14f, 0.62f, 1f);
+                color = Color.black;
                 break;
             case 8:
-                color = new Color(1f, 0.45f, 0f);
+                color = Color.black;
                 break;
             case 16:
-                color = new Color(1f, 0.45f, 0f);
+                color = Color.black;
                 break;
             case 32:
-                color = new Color(1f, 0.42f, 0.42f);
+                color = Color.black;
                 break;
             case 64:
-                color = new Color(1f, 0.42f, 0.42f);
+                color = Color.black;
                 break;
             case 128:
-                color = new Color(1f, 0.35f, 0.35f);
+                color = Color.black;
                 break;
             case 256:
-                color = new Color(1f, 0.35f, 0.35f);
+                color = new Color(237f / 255f, 125f / 255f, 49f / 255f);
                 break;
             case 512:
-                color = new Color(1f, 0.15f, 0.15f);
+                color = new Color(236f / 255f, 77f / 255f, 50f / 255f);
                 break;
             case 1024:
-                color = new Color(1f, 0.15f, 0.15f);
+                color = Color.red;
                 break;
             case 2048:
-                color = new Color(1f, 0, 0);
-                break;
-            case 4096:
-                color = new Color(1f, 0, 0);
+                color = Color.red;
                 break;
             default:
                 color = Color.black;
@@ -189,6 +210,10 @@ public class Board_1P : MonoBehaviour
 
     private void CreateGameBoard()
     {
+        GameObject.Find("Messagebox_GiveUp").GetComponent<Image>().gameObject.SetActive(false);
+        GameObject.Find("Button_GiveUp_Yes").GetComponent<Button>().gameObject.SetActive(false);
+        GameObject.Find("Button_GiveUp_No").GetComponent<Button>().gameObject.SetActive(false);
+
         /* 게임 데이터 송/수신 */
         sned_game_event = new SendGameEvent(GameObject.Find("BattleRoom").GetComponent<BattleRoom>());
         curr_score = 0;
@@ -577,13 +602,8 @@ public class Board_1P : MonoBehaviour
     private void Update()
     {
         UpdateState();
-
         UpdateByKeyboard();
-        if (Input.GetKeyUp(KeyCode.Backspace)) ReturnPrevPageButton();
-
         UpdateByTouchscreen();
-        if (Application.platform == RuntimePlatform.Android)
-            if (Input.GetKey(KeyCode.Escape)) ReturnPrevPageButton();
     }
 
 
@@ -621,7 +641,7 @@ public class Board_1P : MonoBehaviour
     {
         if (state == State.WAIT)
         {
-            if (Input.touchCount > 0)// && TouchGameBoard == true)
+            if (Input.touchCount > 0 && TouchGameBoard == true)
             {
                 Touch touch = Input.GetTouch(0);
 

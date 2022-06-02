@@ -54,7 +54,7 @@ public class BattleRoom : MonoBehaviour
 		CPacket msg = CPacket.create((short)PROTOCOL.LOADING_COMPLETED);
 		this.network_manager.send(msg);
 
-		Debug.Log("3");
+	/*	Debug.Log("3");
 		Thread.Sleep(1000);
 
 		Debug.Log("2");
@@ -63,9 +63,14 @@ public class BattleRoom : MonoBehaviour
 		Debug.Log("1");
 		Thread.Sleep(1000);
 
-		Debug.Log("Hello~~ Player" + player_me_index);
+		Debug.Log("Hello~~ Player" + player_me_index);*/
 	}
 
+
+	public void Disconnect()
+    {
+		network_manager.disconnect();
+    }
 
 	/// <summary>
 	/// Server로 패킷 전송
@@ -112,7 +117,6 @@ public class BattleRoom : MonoBehaviour
 		}
 	}
 
-
 	private void on_game_start(CPacket msg)  // 게임 시작
 	{
 		this.game_state = GAME_STATE.STARTED;
@@ -128,7 +132,6 @@ public class BattleRoom : MonoBehaviour
 	{
 		board_rival.recv_game_event.Receive_Created_Node_Location(msg);
 	}
-
 
 	private void on_room_removed()  // 게임룸 삭제
 	{
