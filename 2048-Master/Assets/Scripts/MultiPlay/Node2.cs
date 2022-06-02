@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -52,21 +51,4 @@ public class Node2
         }
         return farNode;
     } 
-}
-
-
-[System.Serializable]
-public class Node2Clone
-{
-    public int value = -1;
-    public Vector2Int point;
-
-    public Node2Clone() { }
-    public Node2Clone(Node2 node)
-    {
-        this.value = node.value == null ? -1 : node.value.GetValueOrDefault();
-        this.point = new Vector2Int(node.point.x, node.point.y);
-    }
-
-    public Node2Clone Copy() => new Node2Clone { value = this.value, point = new Vector2Int(this.point.x, this.point.y) };
 }

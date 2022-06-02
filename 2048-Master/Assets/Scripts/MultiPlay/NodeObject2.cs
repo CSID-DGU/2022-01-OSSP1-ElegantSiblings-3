@@ -8,7 +8,6 @@ using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
-[System.Serializable]
 public class NodeObject2 : MonoBehaviour
 {
     [NonSerialized] public Node2 from = null;

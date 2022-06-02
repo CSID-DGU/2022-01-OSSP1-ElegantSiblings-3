@@ -23,6 +23,7 @@ public class MatchingManager : MonoBehaviour
 	USER_STATE user_state;
 	BattleRoom battle_room;
 
+	string theme_name;
 	Texture matching_bg;
 	List<Texture> waiting_img;
 	int waiting_count;
@@ -37,13 +38,16 @@ public class MatchingManager : MonoBehaviour
 		this.battle_room = GameObject.Find("BattleRoom").GetComponent<BattleRoom>();
 		this.battle_room.gameObject.SetActive(false);
 
-		this.matching_bg = Resources.Load("theme3/Matching_theme3") as Texture;
+		// TODO: theme_name load
+		theme_name = "_Theme3";
+
+		this.matching_bg = Resources.Load("theme3/Scene_GameRoom_Background_Matching" + theme_name) as Texture;
 		this.waiting_img = new List<Texture>
 		{
-			Resources.Load("theme3/Waiting0_theme3") as Texture,
-			Resources.Load("theme3/Waiting1_theme3") as Texture,
-			Resources.Load("theme3/Waiting2_theme3") as Texture,
-			Resources.Load("theme3/Waiting3_theme3") as Texture
+			Resources.Load("theme3/Scene_GameRoom_Message_Waiting0" + theme_name) as Texture,
+			Resources.Load("theme3/Scene_GameRoom_Message_Waiting1" + theme_name) as Texture,
+			Resources.Load("theme3/Scene_GameRoom_Message_Waiting2" + theme_name) as Texture,
+			Resources.Load("theme3/Scene_GameRoom_Message_Waiting3" + theme_name) as Texture
 		};
 		this.waiting_count = 0;
 
@@ -105,7 +109,7 @@ public class MatchingManager : MonoBehaviour
 			case USER_STATE.WAITING_MATCHING:				
 				GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), this.matching_bg);
 				//GUI.DrawTexture(new Rect(Screen.width / 2 - 100, Screen.height / 2 - 50, 200, 82), this.waiting_img[(waiting_count / 10) % 4]);
-				GUI.DrawTexture(new Rect(Screen.width / 2 - (Screen.width / 6 / 2), Screen.height / 2 - (Screen.height / 6 / 2), Screen.width / 6, Screen.height / 6), this.waiting_img[(waiting_count / 10) % 4]);				
+				GUI.DrawTexture(new Rect(Screen.width / 2 - (Screen.width / 4.35f / 2), Screen.height / 2 - (Screen.height / 6f / 2), Screen.width / 4.35f, Screen.height / 6f), this.waiting_img[(waiting_count / 10) % 4]);				
 				if (++waiting_count >= 2000) waiting_count = 0;
 				Thread.Sleep(50);
 

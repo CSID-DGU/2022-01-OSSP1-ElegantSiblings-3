@@ -11,6 +11,7 @@ public class Scene_GamePlay : MonoBehaviour
 
     public void Awake()
     {
+
         // TODO: theme ¼³Á¤
     }
 

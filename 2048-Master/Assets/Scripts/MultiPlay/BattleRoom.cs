@@ -24,8 +24,8 @@ public class BattleRoom : MonoBehaviour
 	byte player_me_index;               // 플레이어 번호(인덱스)
 	bool is_game_finished;              // 게임이 종료되었는지 확인하는 변수
 
-	Board_1P board_player;				// 플레이어 게임 보드
-	Board_2P board_rival;				// 상대방 게임 보드
+	Board_Player board_player;				// 플레이어 게임 보드
+	Board_Rival board_rival;				// 상대방 게임 보드
 
 
 	private void Awake()
@@ -33,8 +33,8 @@ public class BattleRoom : MonoBehaviour
 		this.network_manager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
 		this.game_state = GAME_STATE.READY;
 
-		this.board_player = GameObject.Find("NodeBoard_1P").GetComponent<Board_1P>();
-		this.board_rival = GameObject.Find("NodeBoard_2P").GetComponent<Board_2P>();
+		this.board_player = GameObject.Find("NodeBoard_1P").GetComponent<Board_Player>();
+		this.board_rival = GameObject.Find("NodeBoard_2P").GetComponent<Board_Rival>();
 	}
 
 
