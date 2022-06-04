@@ -60,7 +60,7 @@ public class CFreeNetUnityService : MonoBehaviour
 		return this.gameserver != null;
 	}
 
-	public void disconnected()
+	public void Disconnect()
 	{
 		if (this.gameserver != null)
 		{
@@ -124,7 +124,7 @@ public class CFreeNetUnityService : MonoBehaviour
 	}
 
 	/// <summary>
-	/// 정상적인 종료시에는 OnApplicationQuit매소드에서 disconnect를 호출해 줘야 유니티가 hang되지 않는다.
+	/// 정상적인 종료시에는 OnApplicationQuit매소드에서 disconnect를 호출
 	/// </summary>
 	void OnApplicationQuit()
 	{

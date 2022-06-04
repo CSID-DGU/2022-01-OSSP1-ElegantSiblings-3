@@ -53,6 +53,7 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
     public SendGameEvent sned_game_event;
     public int curr_score;
     public int highest_node_value;
+    public bool is_game_playing = true;
 
 
     // Touch Event
@@ -67,34 +68,23 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
         CreateGameBoard();
     }
 
-    public void OnApplicationQuit()
-    {
-
-    }
-
-    private void Start() { }
-
-
-
-
 
     //============================== Button Object Event ==============================//
-    public void ReturnPrevPageButton()
-    {
-        //   SaveGame();
-        // SaveToJson();
-        //   SceneManager.LoadScene("SinglePlayPage");
-    }
-
     public void Button_GiveUp_Click()
     {
-        GameObject.Find("BackGround").transform.Find("Messagebox_GiveUp").gameObject.SetActive(true);
-        GameObject.Find("BackGround").transform.Find("Button_GiveUp_Yes").gameObject.SetActive(true);
-        GameObject.Find("BackGround").transform.Find("Button_GiveUp_No").gameObject.SetActive(true);
+        if (is_game_playing)
+        {
+            GameObject.Find("BackGround").transform.Find("Messagebox_GiveUp").gameObject.SetActive(true);
+            GameObject.Find("BackGround").transform.Find("Button_GiveUp_Yes").gameObject.SetActive(true);
+            GameObject.Find("BackGround").transform.Find("Button_GiveUp_No").gameObject.SetActive(true);
+        }
     }
 
     public void Button_GiveUp_Yes_Click()
     {
+        GameObject.Find("Messagebox_GiveUp").GetComponent<Image>().gameObject.SetActive(false);
+        GameObject.Find("Button_GiveUp_Yes").GetComponent<Button>().gameObject.SetActive(false);
+        GameObject.Find("Button_GiveUp_No").GetComponent<Button>().gameObject.SetActive(false);
         sned_game_event.GiveUp();
     }
 
@@ -146,7 +136,8 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
 
         public void GiveUp()
         {
-            battle_room.Disconnect();
+            CPacket msg = CPacket.create((short)PROTOCOL.GIVE_UP_GAME);
+            battle_room.On_Send(msg);
         }
     }
 
@@ -208,6 +199,8 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
 
     private void CreateGameBoard()
     {
+        is_game_playing = false;
+
         GameObject.Find("Messagebox_GiveUp").GetComponent<Image>().gameObject.SetActive(false);
         GameObject.Find("Button_GiveUp_Yes").GetComponent<Button>().gameObject.SetActive(false);
         GameObject.Find("Button_GiveUp_No").GetComponent<Button>().gameObject.SetActive(false);
@@ -599,9 +592,12 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
 
     private void Update()
     {
-        UpdateState();
-        UpdateByKeyboard();
-        UpdateByTouchscreen();
+        if (is_game_playing)
+        {
+            UpdateState();
+            UpdateByKeyboard();
+            UpdateByTouchscreen();
+        }
     }
 
 
@@ -621,8 +617,6 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
 
     private void UpdateByKeyboard()
     {
-        //if (isReloading) return;
-
         if (state == State.WAIT)
         {
             if (Input.anyKeyDown == true)

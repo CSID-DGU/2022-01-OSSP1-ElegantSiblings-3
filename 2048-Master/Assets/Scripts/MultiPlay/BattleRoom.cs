@@ -1,6 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
+//
+using TMPro;
 //
 using System.Threading;
 using System;
@@ -17,19 +21,20 @@ public class BattleRoom : MonoBehaviour
 		STARTED
 	}
 
-
 	NetworkManager network_manager;		// 데이터 송,수신을 위한 네트워크 매니저
 	GAME_STATE game_state;              // 게임 상태를 나타냄
 
 	byte player_me_index;               // 플레이어 번호(인덱스)
 	bool is_game_finished;              // 게임이 종료되었는지 확인하는 변수
 
-	Board_Player board_player;				// 플레이어 게임 보드
-	Board_Rival board_rival;				// 상대방 게임 보드
-
+	Board_Player board_player;			// 플레이어 게임 보드
+	Board_Rival board_rival;            // 상대방 게임 보드
 
 	private void Awake()
     {
+		GameObject.Find("BackGround").transform.Find("Messagebox_Result").gameObject.SetActive(false);
+		GameObject.Find("BackGround").transform.Find("Messagebox_Start").gameObject.SetActive(false);
+
 		this.network_manager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
 		this.game_state = GAME_STATE.READY;
 
@@ -53,23 +58,12 @@ public class BattleRoom : MonoBehaviour
 
 		CPacket msg = CPacket.create((short)PROTOCOL.LOADING_COMPLETED);
 		this.network_manager.send(msg);
-
-	/*	Debug.Log("3");
-		Thread.Sleep(1000);
-
-		Debug.Log("2");
-		Thread.Sleep(1000);
-
-		Debug.Log("1");
-		Thread.Sleep(1000);
-
-		Debug.Log("Hello~~ Player" + player_me_index);*/
 	}
 
 
 	public void Disconnect()
     {
-		network_manager.disconnect();
+		network_manager.Disconnect();
     }
 
 	/// <summary>
@@ -96,7 +90,7 @@ public class BattleRoom : MonoBehaviour
 		switch (protocol_id)
 		{
 			case PROTOCOL.GAME_START:
-				on_game_start(msg);
+				On_Game_Start(msg);
 				break;
 
 			case PROTOCOL.MOVED_NODE:
@@ -107,20 +101,18 @@ public class BattleRoom : MonoBehaviour
 				On_Created_New_Node(msg);
 				break;
 
-			case PROTOCOL.ROOM_REMOVED:
-				on_room_removed();
-				break;
-
 			case PROTOCOL.GAME_OVER:
-				on_game_over(msg);
+				On_Game_Over(msg);
 				break;
 		}
 	}
 
-	private void on_game_start(CPacket msg)  // 게임 시작
+	private void On_Game_Start(CPacket msg)  // 게임 시작
 	{
+		StartCoroutine(Game_Ready());
+
 		this.game_state = GAME_STATE.STARTED;
-		board_player.On_Game_Start();
+		board_player.On_Game_Start();		
 	}
 
 	private void On_Moved_Node(CPacket msg)  
@@ -133,13 +125,64 @@ public class BattleRoom : MonoBehaviour
 		board_rival.recv_game_event.Receive_Created_Node_Location(msg);
 	}
 
-	private void on_room_removed()  // 게임룸 삭제
+	private void On_Game_Over(CPacket msg)  // 게임 결과 및 종료
 	{
+		int result = msg.pop_int32();
 
+		if (result != 0)
+		{
+			board_player.is_game_playing = false;
+			StartCoroutine(Destroy_Room(result));
+		}
 	}
 
-	private void on_game_over(CPacket msg)  // 게임 종료
-	{
 
+	// Delay를 가진 루프 매서드
+	private IEnumerator Game_Ready()
+    {
+		WaitForSeconds wait = new WaitForSeconds(1f);
+
+		GameObject.Find("BackGround").transform.Find("Messagebox_Start").gameObject.SetActive(true);
+		string theme = "_Theme3";
+
+		for (int i = 3; i > 0; i--)
+		{	
+			GameObject.Find("Messagebox_Start").GetComponent<Image>().sprite
+				= Resources.Load<Sprite>("theme3/Scene_GameRoom_Message_Start" + i.ToString() + theme);
+			yield return wait;
+		}
+
+		GameObject.Find("BackGround").transform.Find("Messagebox_Start").gameObject.SetActive(false);
+		board_player.is_game_playing = true;
+	}
+
+	private IEnumerator Destroy_Room(int game_result)
+	{
+		WaitForSeconds wait = new WaitForSeconds(1f);
+
+		GameObject.Find("BackGround").transform.Find("Messagebox_Result").gameObject.SetActive(true);
+		Sprite sprite = null;
+		string theme = "_Theme3";
+
+		for (int i = 3; i > 0; i--)
+		{
+			if (game_result == 1)
+			{
+				sprite = Resources.Load<Sprite>("theme3/Scene_GameRoom_Message_Victory" + i.ToString() + theme);
+			}
+			else if (game_result == 2)
+			{
+				sprite = Resources.Load<Sprite>("theme3/Scene_GameRoom_Message_Defeated" + i.ToString() + theme);
+			}
+			else if (game_result == 3)
+			{
+				sprite = Resources.Load<Sprite>("theme3/Scene_GameRoom_Message_Draw" + i.ToString() + theme);
+			}
+
+			GameObject.Find("Messagebox_Result").GetComponent<Image>().sprite = sprite;
+			yield return wait;
+		}
+
+		network_manager.Disconnect();
 	}
 }

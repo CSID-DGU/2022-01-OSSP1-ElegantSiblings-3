@@ -26,17 +26,17 @@ public enum PROTOCOL : short
 	// 노드(랜덤 노드)가 생성됨
 	CREATED_NEW_NODE = 6,
 
-	// 클라이언트의 턴 연출이 끝났음을 알린다
-	TURN_FINISHED_REQ = 7,
+	// 게임 포기
+	GIVE_UP_GAME = 7,
 
-	// 상대방 플레이어가 나가 방이 삭제되었다
-	ROOM_REMOVED = 8,
+	// 게임 규칙에 의해 게임 종료 (플레이어 중 2048을 달성한 사람이 있는가? 항복을 한 사람이 있는가?)
+	GAME_OVER = 8,
 
-	// 게임방 입장 요청
-	ENTER_GAME_ROOM_REQ = 9,
+	// 상대와의 연결 상태 체크
+	CHECKING_CONNECTION_STATUS = 9,
 
-	// 게임 종료
-	GAME_OVER = 10,
+	// 게임룸 입장 요청
+	ENTER_GAME_ROOM_REQ = 10,
 
 	END
 }

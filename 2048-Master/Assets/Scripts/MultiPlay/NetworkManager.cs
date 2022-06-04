@@ -40,9 +40,9 @@ public class NetworkManager : MonoBehaviour
 		return this.gameserver.is_connected();
 	}
 
-	public void disconnect()
+	public void Disconnect()
     {
-		this.gameserver.disconnected();
+		this.gameserver.Disconnect();
 		SceneManager.LoadScene("Scene_MultiPlay");
 	}
 

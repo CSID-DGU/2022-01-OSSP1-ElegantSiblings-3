@@ -153,7 +153,7 @@ public class MatchingManager : MonoBehaviour
 
 	private void Cancel_Matching()
     {
-		network_manager.disconnect();
+		network_manager.Disconnect();
 	}
 
 	private void Update()

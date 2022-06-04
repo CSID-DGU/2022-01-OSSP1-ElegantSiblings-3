@@ -20,20 +20,15 @@ namespace TZFEMasterGameServer
 			LOADING_COMPLETE,       // 로딩을 완료한 상태	
 		}
 
-		List<Player> players;   // 게임을 진행하는 플레이어 (1P, 2P)
+		List<Player> players;							// 게임을 진행하는 플레이어 (1P, 2P)
 		Dictionary<byte, PLAYER_STATE> player_state;    // 플레이어 상태를 관리
-
-		// game board (1P, 2P)
-		//List<short> board_1P;
-		//List<short> board_2P;
-
+		bool is_game_over;
 
 		public GameRoom()
 		{
 			this.players = new List<Player>();
 			this.player_state = new Dictionary<byte, PLAYER_STATE>();
-
-			// TODO: 4*4 모양의 board를 구성
+			is_game_over = false;
 		}
 
 
@@ -62,8 +57,8 @@ namespace TZFEMasterGameServer
 				player.send(msg);
 			});
 
-			user1.enter_room(player1, this);
-			user2.enter_room(player2, this);
+			user1.Enter_Room(player1, this);
+			user2.Enter_Room(player2, this);
 		}
 
 
@@ -71,7 +66,6 @@ namespace TZFEMasterGameServer
 		{
 			CPacket msg = CPacket.create((short)PROTOCOL.ROOM_REMOVED);
 			broadcast(msg);
-
 			this.players.Clear();
 		}
 
@@ -140,21 +134,78 @@ namespace TZFEMasterGameServer
 		/// </summary>
 		void battle_start()
 		{
-			reset_gamedata();   // 게임 데이터 초기화
-
 			// 게임 시작 메시지 전송.
 			CPacket msg = CPacket.create((short)PROTOCOL.GAME_START);
 
 			msg.push((byte)this.players.Count);
-			// TODO: Game Rule
 			msg.push("Game Start!!");
 
 			broadcast(msg);
 		}
 
 
-		void reset_gamedata()
+		/// <summary>
+		/// Game Rule
+		/// </summary>
+		void Game_Rule(Player player1, Player player2, short protocol)  // 0: Not Fin, 1: Player Win, 2: Rival Win, 3: Draw
 		{
+			if (protocol == (short)PROTOCOL.MODIFIED_SCORE)
+			{
+				int check_highest = 16;//2048;
+
+				if (player1.highest_node_value >= check_highest || player2.highest_node_value >= check_highest)
+				{
+					CPacket msg_player1 = CPacket.create((short)PROTOCOL.GAME_OVER);
+					CPacket msg_player2 = CPacket.create((short)PROTOCOL.GAME_OVER);
+
+					if (player1.highest_node_value >= check_highest && player2.highest_node_value >= check_highest)
+					{
+						msg_player1.push(3);
+						msg_player2.push(3);
+					}
+					else if (player1.highest_node_value >= check_highest)
+					{
+						msg_player1.push(1);
+						msg_player2.push(2);
+					}
+					else if (player2.highest_node_value >= check_highest)
+					{
+						msg_player1.push(2);
+						msg_player2.push(1);
+					}
+
+					player1.send(msg_player1);
+					player2.send(msg_player2);
+					is_game_over = true;
+				}
+			}
+			else if (protocol == (short)PROTOCOL.GIVE_UP_GAME)
+			{
+				CPacket msg_player1 = CPacket.create((short)PROTOCOL.GAME_OVER);
+				CPacket msg_player2 = CPacket.create((short)PROTOCOL.GAME_OVER);
+
+				if (player1.give_up && player2.give_up)
+				{
+					msg_player1.push(3);
+					msg_player2.push(3);
+				}
+				else if(player1.give_up)
+                {
+					msg_player1.push(2);
+					msg_player2.push(1);
+				}
+				else if (player2.give_up)
+				{
+					msg_player1.push(1);
+					msg_player2.push(2);
+				}
+
+				player1.send(msg_player1);
+				player2.send(msg_player2);
+				is_game_over = true;
+			}
+			
+			return;
 		}
 
 
@@ -169,15 +220,15 @@ namespace TZFEMasterGameServer
 
 		public void On_Modified_Score(Player sender, int curr, int highest) 
 		{
-			/*CPacket msg = CPacket.create((short)PROTOCOL.MODIFIED_SCORE);
-			msg.push(curr);
-			msg.push(highest);
-			Get_Rival(sender).send(msg);*/
+			if (is_game_over) return;
+			sender.Update_Score(curr, highest);
+			Game_Rule(sender, Get_Rival(sender), (short)PROTOCOL.MODIFIED_SCORE);
 		}
 
 
 		public void On_Moved_Node(Player sender, int dir)
 		{
+			if (is_game_over) return;
 			CPacket msg = CPacket.create((short)PROTOCOL.MOVED_NODE);
 			msg.push(dir);
 			Get_Rival(sender).send(msg);
@@ -185,18 +236,18 @@ namespace TZFEMasterGameServer
 
 		public void On_Created_New_Node(Player sender, int x, int y)
 		{
+			if (is_game_over) return;
 			CPacket msg = CPacket.create((short)PROTOCOL.CREATED_NEW_NODE);
 			msg.push(x);
 			msg.push(y);
 			Get_Rival(sender).send(msg);
 		}
 
-
-
-		void game_over()
-		{
-			// TODO: 승패 결정 및 방 제거
-			Program.game_main.room_manager.remove_room(this);
+		public void On_Give_Up_Game(Player sender)
+        {
+			if (is_game_over) return;
+			sender.Give_Up();
+			Game_Rule(sender, Get_Rival(sender), (short)PROTOCOL.GIVE_UP_GAME);
 		}
 	}
 }

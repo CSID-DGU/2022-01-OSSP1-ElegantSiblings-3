@@ -37,7 +37,7 @@ namespace TZFEMasterGameServer
 		void IPeer.on_removed()
 		{
 			Console.WriteLine("The client disconnected.");
-
+			if (battle_room != null) this.battle_room.On_Give_Up_Game(player);
 			Program.remove_user(this);
 		}
 
@@ -66,33 +66,30 @@ namespace TZFEMasterGameServer
 					this.battle_room.loading_complete(player);
 					break;
 
-
 				case PROTOCOL.MODIFIED_SCORE:
-					//Console.WriteLine("Sended by Player" + player.player_index);
 					int curr = msg.pop_int32();
 					int highest = msg.pop_int32();
-					//Console.WriteLine("Modified score is (" + curr.ToString() + ", " + highest.ToString() + ")");
 					this.battle_room.On_Modified_Score(player, curr, highest);
 					break;
 
 				case PROTOCOL.MOVED_NODE:
-					//Console.WriteLine("Sended by Player" + player.player_index);
 					int dir = msg.pop_int32();
-					//Console.WriteLine("Mode To " + dir.ToString());
 					this.battle_room.On_Moved_Node(player, dir);
 					break;
 
 				case PROTOCOL.CREATED_NEW_NODE:
-					//Console.WriteLine("Sended by Player" + player.player_index);
 					int x = msg.pop_int32();
 					int y = msg.pop_int32();
-					//Console.WriteLine("New node location (" + x.ToString() + ", " + y.ToString() + ")");
 					this.battle_room.On_Created_New_Node(player, x, y);
+					break;
+
+				case PROTOCOL.GIVE_UP_GAME:
+					this.battle_room.On_Give_Up_Game(player);
 					break;
 			}
 		}
 
-		public void enter_room(Player player, GameRoom room)
+		public void Enter_Room(Player player, GameRoom room)
 		{
 			this.player = player;
 			this.battle_room = room;
