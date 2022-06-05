@@ -1,14 +1,27 @@
 using System;
 using UnityEngine;
 using MySql.Data.MySqlClient;
+//
+using TMPro;
+using UnityEngine.UI;
 
 public class MysqlTest : MonoBehaviour
 {
     private void Awake()
     {
-        Debug.Log("종강기원");
-        Insert();
+        //Debug.Log("종강기원");
+        //Insert();
     }
+
+
+    public void Button_Login_Click()
+    {
+        string id = GameObject.Find("UserID_InputField").GetComponent<TMP_InputField>().text;
+        string pw = GameObject.Find("UserPW_InputField").GetComponent<TMP_InputField>().text;
+
+        Debug.Log("ID: " + id + Environment.NewLine + "PW: " + pw);
+    }
+    
 
     public void Insert()
     {

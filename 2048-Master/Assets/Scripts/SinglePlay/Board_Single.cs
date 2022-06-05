@@ -185,6 +185,10 @@ public class Board_Single : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
 
         SingleGameDataManager.Write(g_data);
 
+
+        // TODO: DB 저장 필요
+
+
      //   game_data.nodeData.Clear();
      //   foreach (var node in nodeData) game_data.nodeData.Add(new NodeClone(node));
 

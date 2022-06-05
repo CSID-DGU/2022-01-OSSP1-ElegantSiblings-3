@@ -14,6 +14,9 @@ public class SingleGameDataManager
     public int high_block = 0;
     public List<Block> block_list = new List<Block>();
 
+    
+    // TODO: Get_Json 
+
     public static void Write(SingleGameDataManager game_data)
     {
         Json.Write(Path.Combine(Application.persistentDataPath, "SingleGameDataManager.json"), game_data);
