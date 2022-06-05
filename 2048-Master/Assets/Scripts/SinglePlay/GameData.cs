@@ -1,6 +1,39 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+//
+using System;
+using System.IO;
+
+
+[System.Serializable]
+public class SingleGameDataManager
+{
+    public int curr_score = 0;
+    public int best_score = 0;
+    public int high_block = 0;
+    public List<Block> block_list = new List<Block>();
+
+    public static void Write(SingleGameDataManager game_data)
+    {
+        Json.Write(Path.Combine(Application.persistentDataPath, "SingleGameDataManager.json"), game_data);
+    }
+
+    public static SingleGameDataManager Read()
+    {
+        SingleGameDataManager game_data = Json.Read<SingleGameDataManager>(Path.Combine(Application.persistentDataPath, "SingleGameDataManager.json"));
+        return game_data == null ? new SingleGameDataManager() : game_data;
+    }
+}
+
+
+[System.Serializable]
+public class Block
+{
+    public int? value = null;
+    public Vector2Int point = new Vector2Int();
+}
+
 
 [System.Serializable]
 public class GameData
@@ -40,19 +73,5 @@ public class GameData
         foreach (NodeClone e in nodeData) temp.nodeData.Add(e.Copy());
 
         return temp;
-    }
-}
-
-
-[System.Serializable]
-public class Serialization<T>
-{
-    [SerializeField]
-    List<T> target;
-    public List<T> ToList() { return target; }
-
-    public Serialization(List<T> target)
-    {
-        this.target = target;
     }
 }

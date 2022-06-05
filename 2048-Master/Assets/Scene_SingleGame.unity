@@ -196,7 +196,7 @@ GameObject:
   - component: {fileID: 117354735}
   - component: {fileID: 117354734}
   m_Layer: 5
-  m_Name: Text_ReturnPrevPage
+  m_Name: Text_Button_Back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -407,7 +407,7 @@ GameObject:
   - component: {fileID: 139454271}
   - component: {fileID: 139454270}
   m_Layer: 5
-  m_Name: CurrScore
+  m_Name: Textbox_CurrScore
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -430,7 +430,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 63, y: 785}
+  m_AnchoredPosition: {x: -760, y: -2}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &139454270
@@ -542,7 +542,7 @@ GameObject:
   - component: {fileID: 149170140}
   - component: {fileID: 149170139}
   m_Layer: 5
-  m_Name: TargetNumber
+  m_Name: Textbox_TargetNumber
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -565,7 +565,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -373, y: 798}
+  m_AnchoredPosition: {x: 655, y: 214}
   m_SizeDelta: {x: 300, y: 130}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &149170139
@@ -588,7 +588,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 10
+  m_text: 2048
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -762,7 +762,7 @@ GameObject:
   - component: {fileID: 392294103}
   - component: {fileID: 392294102}
   m_Layer: 5
-  m_Name: ReturnHomePage
+  m_Name: Button_Home
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -786,8 +786,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 442, y: 831}
-  m_SizeDelta: {x: 124, y: 124}
+  m_AnchoredPosition: {x: 861, y: 454}
+  m_SizeDelta: {x: 134, y: 134}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &392294102
 MonoBehaviour:
@@ -865,7 +865,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 4e17632f989c4d9439662d463ef7a526, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ac0e66d9aa2bcde499802caa658ab4af, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -896,7 +896,7 @@ GameObject:
   - component: {fileID: 477343579}
   - component: {fileID: 477343578}
   m_Layer: 5
-  m_Name: ReturnPrevPage
+  m_Name: Button_Back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -916,11 +916,11 @@ RectTransform:
   m_Children:
   - {fileID: 117354733}
   m_Father: {fileID: 1831508423}
-  m_RootOrder: 1
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -438, y: 819}
+  m_AnchoredPosition: {x: -873, y: 449}
   m_SizeDelta: {x: 100, y: 134}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &477343578
@@ -999,7 +999,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 292971d992d667843b490895d033b07e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f7ead1fdc6747c44bb47362f69b326ca, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1060,7 +1060,7 @@ GameObject:
   - component: {fileID: 557711306}
   - component: {fileID: 557711305}
   m_Layer: 5
-  m_Name: Text_NewGame
+  m_Name: Text_Button_NewGame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1195,7 +1195,7 @@ GameObject:
   - component: {fileID: 590816436}
   - component: {fileID: 590816435}
   m_Layer: 5
-  m_Name: HighScore
+  m_Name: Textbox_BestScore
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1218,7 +1218,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 355, y: 787}
+  m_AnchoredPosition: {x: -760, y: -242}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &590816435
@@ -1359,7 +1359,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -419}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1080, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &740392723
@@ -1423,17 +1423,18 @@ MonoBehaviour:
     type: 3}
   emptyNodeRect: {fileID: 68728252}
   realNodeRect: {fileID: 1103381382}
+  mode:
+    index: 0
+    name: Classic
   isReloading: 0
-  gameMode:
-    modeName: 
-  gameData:
+  game_data:
     fixedState: 0
     targetBlockNumber: 0
     highestBlockNumber: 0
     currScore: 0
     highScore: 0
     nodeData: []
-  stateData:
+  state_data:
     stateDataCount: 1
     mainState: []
     subState: []
@@ -1495,9 +1496,9 @@ MonoBehaviour:
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 1080, y: 1920}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -1625,7 +1626,7 @@ GameObject:
   - component: {fileID: 982218302}
   - component: {fileID: 982218301}
   m_Layer: 5
-  m_Name: ReturnHomePage_Text
+  m_Name: Text_Button_Home
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1823,7 +1824,7 @@ GameObject:
   - component: {fileID: 1001007671}
   - component: {fileID: 1001007670}
   m_Layer: 5
-  m_Name: Undo
+  m_Name: Button_Undo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1843,12 +1844,12 @@ RectTransform:
   m_Children:
   - {fileID: 1275398160}
   m_Father: {fileID: 1831508423}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 303.8, y: 205}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: 650, y: 30}
+  m_SizeDelta: {x: 130, y: 130}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1001007670
 MonoBehaviour:
@@ -1926,7 +1927,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 8d9471f4708f93e40836db223702178a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 36eb443210ac8374f903f0e9a561b3e4, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1993,7 +1994,7 @@ GameObject:
   - component: {fileID: 1135748434}
   - component: {fileID: 1135748433}
   m_Layer: 5
-  m_Name: Redo
+  m_Name: Button_Redo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2013,12 +2014,12 @@ RectTransform:
   m_Children:
   - {fileID: 1401638870}
   m_Father: {fileID: 1831508423}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 447.6, y: 205}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: 835, y: 30}
+  m_SizeDelta: {x: 130, y: 130}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1135748433
 MonoBehaviour:
@@ -2096,7 +2097,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 6a76c47683f58f24fa8df07b6742caf3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: df063f0224cc6594c9e8f33d3189c7b5, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2126,7 +2127,7 @@ GameObject:
   - component: {fileID: 1275398162}
   - component: {fileID: 1275398161}
   m_Layer: 5
-  m_Name: Text_Undo
+  m_Name: Text_Button_Undo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2139,7 +2140,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1275398159}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2261,7 +2262,7 @@ GameObject:
   - component: {fileID: 1401638872}
   - component: {fileID: 1401638871}
   m_Layer: 5
-  m_Name: Text_Redo
+  m_Name: Text_Button_Redo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2397,7 +2398,7 @@ GameObject:
   - component: {fileID: 1452271359}
   - component: {fileID: 1452271358}
   m_Layer: 5
-  m_Name: NewGame
+  m_Name: Button_NewGame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2417,11 +2418,11 @@ RectTransform:
   m_Children:
   - {fileID: 557711304}
   m_Father: {fileID: 1831508423}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -291, y: 205}
+  m_AnchoredPosition: {x: -734, y: 214}
   m_SizeDelta: {x: 280, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1452271358
@@ -2500,7 +2501,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: fd6f7ca1a6fbc304b884bcd1dbdeb278, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e2486182af415514187e2364b091a158, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2549,10 +2550,10 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 740392722}
-  - {fileID: 477343577}
   - {fileID: 1452271357}
   - {fileID: 1001007669}
   - {fileID: 1135748432}
+  - {fileID: 477343577}
   - {fileID: 392294101}
   m_Father: {fileID: 913224413}
   m_RootOrder: 1
@@ -2560,7 +2561,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1080, y: 1920}
+  m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1831508424
 MonoBehaviour:
@@ -2582,7 +2583,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 60b05500774ba5f47a2928f774aede20, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5f0b346182f88ca4e904fc04a088837d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

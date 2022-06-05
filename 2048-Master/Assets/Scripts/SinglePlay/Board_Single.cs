@@ -13,10 +13,9 @@ using TMPro;
 using UnityEngine.EventSystems;
 using System.IO;
 
-/// <summary>
-/// coder by shlifedev(zero is black)
-/// </summary>
-public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+
+
+public class Board_Single : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public enum State
     {
@@ -25,11 +24,11 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     public State state = State.WAIT;
 
-    public static Board Instance
+    public static Board_Single Instance
     {
         get
         {
-            if (_inst == null) _inst = FindObjectOfType<Board>();
+            if (_inst == null) _inst = FindObjectOfType<Board_Single>();
             return _inst;
         }
     }
@@ -37,10 +36,10 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
 
     // Create Board and Node
-    private static Board _inst;
-    public List<NodeObject> realNodeList = new List<NodeObject>();
-    public List<Node> nodeData = new List<Node>();
-    public Dictionary<Vector2Int, Node> nodeMap = new Dictionary<Vector2Int, Node>();
+    private static Board_Single _inst;
+    public List<NodeObject> real_node_list = new List<NodeObject>();
+    public List<Node> node_list = new List<Node>();
+    public Dictionary<Vector2Int, Node> node_map = new Dictionary<Vector2Int, Node>();
     public int col = 4;
     public int row = 4;
 
@@ -51,10 +50,22 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
 
     // GameData Load, Save, NewGame, Undo, Redo
+    //public SingleMode game_mode;
+    //public SingleGameDataManager game_data;
+
+
+    // 
+    public int target_num;
+    public int curr_score;
+    public int best_score;
+    public int high_block;
+
+
+    //
     public bool isReloading;
-    public SinglePlayMode gameMode;
-    public GameData gameData;
-    public StateData stateData;
+ //   public GameData game_data;
+    public StateData state_data;
+
     public string path_gameMode;
     public string path_gameData;
     public string path_stateData;
@@ -73,15 +84,15 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     private void Awake()
     {
-        LoadGame();
+        Load_GameData();
         ThemeRoad();
-        CreateGameBoard();
+        //CreateGameBoard();
     }
 
     public void OnApplicationQuit()
     {
-        SaveGame();
-        SaveToJson();
+        //SaveGame();
+        //SaveToJson();
     }
 
     private void Start() { }
@@ -93,110 +104,115 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     //============================== Button Object Event ==============================//
     public void ReturnPrevPageButton()
     {
-        SaveGame();
-        SaveToJson();
+        //SaveGame();
+        //SaveToJson();
         SceneManager.LoadScene("Scene_SinglePlay");
     }
     public void ReturnHomePageButton()
     {
-        SaveGame();
-        SaveToJson();
+        //SaveGame();
+        //SaveToJson();
         SceneManager.LoadScene("Scene_Home");
     }
     public void NewGameButton()
     {
-        ClearGame();
-        SaveToJson();
-        isReloading = true;
-        SceneManager.LoadScene("Game");
+        //ClearGame();
+        //SaveToJson();
+        //isReloading = true;
+        SceneManager.LoadScene("Scene_SingleGame");
     }
     public void UndoButton()
     {
-        UndoGame();
-        SaveToJson();
-        isReloading = true;
-        SceneManager.LoadScene("Game");
+        //UndoGame();
+        //SaveToJson();
+        //isReloading = true;
+        //SceneManager.LoadScene("Scene_SingleGame");
     }
     public void RedoButton()
     {
-        RedoGame();
-        SaveToJson();
-        isReloading = true;
-        SceneManager.LoadScene("Game");
+        //RedoGame();
+        //SaveToJson();
+        //isReloading = true;
+        //SceneManager.LoadScene("Scene_SingleGame");
     }
 
 
 
     //============================== Game Data Method ==============================//
-    private void LoadGame()
+    private void Load_GameData()
     {
+        // TODO: target number, state count
+
         isReloading = false;
 
-        gameMode = new SinglePlayMode();
-        path_gameMode = Path.Combine(Application.persistentDataPath, "SinglePlayMode.json");
-        if (File.Exists(path_gameMode))
-        {
-            string loadJson = File.ReadAllText(path_gameMode);
-            gameMode = JsonUtility.FromJson<SinglePlayMode>(loadJson);
-            if (gameMode == null) gameMode = new SinglePlayMode();
-        }
+        // 저장된 데이터 불러오기
+        var game_mode = SingleMode.Get_Mode();
+        var game_data = SingleGameDataManager.Read();
 
-        gameData = new GameData() { targetBlockNumber = new Dictionary<string, int> { { "ClassicMode", 2048 }, { "ChallengeMode", 1073741824 }, { "PracticeMode", 2048 } }[gameMode.modeName] };
-        path_gameData = Path.Combine(Application.persistentDataPath, gameMode.modeName + "GameData.json");
-        if (File.Exists(path_gameData))
-        {
-            string loadJson = File.ReadAllText(path_gameData);
-            gameData = JsonUtility.FromJson<GameData>(loadJson);
-            if (gameData == null) gameData = new GameData() { targetBlockNumber = new Dictionary<string, int> { { "ClassicMode", 2048 }, { "ChallengeMode", 1073741824 }, { "PracticeMode", 2048 } }[gameMode.modeName] };
-        }
+        curr_score = game_data.curr_score;
+        best_score = game_data.best_score;
+        high_block = game_data.high_block;
+        Create_GameBoard(game_data);
 
-        stateData = new StateData() { stateDataCount = new Dictionary<string, int> { { "ClassicMode", 1 }, { "ChallengeMode", 1 }, { "PracticeMode", 10 } }[gameMode.modeName] };
-        path_stateData = Path.Combine(Application.persistentDataPath, gameMode.modeName + "StateData.json");
-        if (File.Exists(path_stateData))
-        {
-            string loadJson = File.ReadAllText(path_stateData);
-            stateData = JsonUtility.FromJson<StateData>(loadJson);
-            if (stateData == null) stateData = new StateData() { stateDataCount = new Dictionary<string, int> { { "ClassicMode", 1 }, { "ChallengeMode", 1 }, { "PracticeMode", 10 } }[gameMode.modeName] };
-        }
+
+        // 테마 로드
+        GameObject.Find("BackGround").GetComponent<Image>().sprite = Theme.Get_Image("GameBoard_Single" + "_" + game_mode.name);
+        GameObject.Find("Button_NewGame").GetComponent<Image>().sprite = Theme.Get_Image("Button_NewGame" + "_" + game_mode.name);
+        GameObject.Find("Button_Undo").GetComponent<Image>().sprite = Theme.Get_Image("Button_Undo" + "_" + game_mode.name);
+        GameObject.Find("Button_Redo").GetComponent<Image>().sprite = Theme.Get_Image("Button_Redo" + "_" + game_mode.name);
+        GameObject.Find("Button_Back").GetComponent<Image>().sprite = Theme.Get_Image("Button_Back");
+        GameObject.Find("Button_Home").GetComponent<Image>().sprite = Theme.Get_Image("Button_Home");
+
+
+        // 오브젝트 초기화
+        GameObject.Find("Textbox_CurrScore").GetComponent<TextMeshProUGUI>().text = game_data.curr_score.ToString();
+        GameObject.Find("Textbox_BestScore").GetComponent<TextMeshProUGUI>().text = game_data.best_score.ToString();
+        GameObject.Find("Textbox_TargetNumber").GetComponent<TextMeshProUGUI>().text = new List<string> { "2048", "Infinity", "2048" }[(int)game_mode.index];
     }
+
     private void ThemeRoad()
     {
-        GameObject.Find("ReturnPrevPage").GetComponent<Image>().sprite = Resources.Load<Sprite>("theme3/" + "BackArrow_Theme3");
-        GameObject.Find("ReturnHomePage").GetComponent<Image>().sprite = Resources.Load<Sprite>("theme3/" + "ReturnHome_Theme3");
-
-        GameObject.Find("BackGround").GetComponent<Image>().sprite = Resources.Load<Sprite>("theme3/" + gameMode.modeName + "GameBoard_theme3");
-        GameObject.Find("NewGame").GetComponent<Image>().sprite = Resources.Load<Sprite>("theme3/" + gameMode.modeName + "NewGame_theme3");
-        GameObject.Find("Undo").GetComponent<Image>().sprite = Resources.Load<Sprite>("theme3/" + gameMode.modeName + "Undo_theme3");
-        GameObject.Find("Redo").GetComponent<Image>().sprite = Resources.Load<Sprite>("theme3/" + gameMode.modeName + "Redo_theme3");
-    }
-    private void SaveGame()
-    {
-        gameData.nodeData.Clear();
-        foreach (var node in nodeData) gameData.nodeData.Add(new NodeClone(node));
 
     }
-    private void ClearGame()
+    private void Save_Game()
     {
-        gameData.clear();
-        stateData.clear();
+        SingleGameDataManager g_data = new SingleGameDataManager();
+
+        g_data.curr_score = this.curr_score;
+        g_data.high_block = this.high_block;
+        foreach (var node in this.node_list)
+            g_data.block_list.Add(new Block { value = node.value, point = new Vector2Int(node.point.x, node.point.y) });
+
+        SingleGameDataManager.Write(g_data);
+
+     //   game_data.nodeData.Clear();
+     //   foreach (var node in nodeData) game_data.nodeData.Add(new NodeClone(node));
+
+    }
+    private void Reset_Game()
+    {
+        SingleGameDataManager.Write(new SingleGameDataManager());
+
+        //   game_data.clear();
+        //   state_data.clear();
     }
     private void UndoGame()
     {
-        gameData = stateData.Undo();
+     //   game_data = state_data.Undo();
     }
     private void RedoGame()
     {
-        gameData = stateData.Redo();
+     //   game_data = state_data.Redo();
     }
     private void SaveToJson()
     {
-        File.WriteAllText(path_gameData, gameData.GetJson());
-        File.WriteAllText(path_stateData, stateData.GetJson());
+     //   File.WriteAllText(path_gameData, game_data.GetJson());
+    //    File.WriteAllText(path_stateData, state_data.GetJson());
     }
     private void ClearJson()
     {
-        File.WriteAllText(path_gameData, null);
-        File.WriteAllText(path_stateData, null);
+      //  File.WriteAllText(path_gameData, null);
+       // File.WriteAllText(path_stateData, null);
     }
 
 
@@ -204,12 +220,12 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
 
     //============================== Make Game Board ==============================//
-    private void NewBoard()
+    /*private void NewBoard()
     {
         var emptyChildCount = emptyNodeRect.transform.childCount;
         for (int i = 0; i < emptyChildCount; i++) { var child = emptyNodeRect.GetChild(i); }
 
-        /* and, empty node create for get grid point*/
+        // and, empty node create for get grid point
         for (int i = 0; i < col; i++)
         {
             for (int j = 0; j < row; j++)
@@ -230,14 +246,14 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                 Node node = new Node(v);
                 node.point = point;
                 node.nodeRectObj = instantiatePrefab;
-                nodeData.Add(node);
+                node_list.Add(node);
                 instantiatePrefab.name = node.point.ToString();
-                this.nodeMap.Add(point, node);
+                this.node_map.Add(point, node);
             }
         }
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(emptyNodeRect);
-        foreach (var data in nodeData)
+        foreach (var data in node_list)
             data.position = data.nodeRectObj.GetComponent<RectTransform>().localPosition;
 
         CreateRandom();
@@ -245,18 +261,18 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     private void CreateGameBoard()
     {
-        bool exsitSaveFile = gameData.nodeData.Count == 0 ? false : true;
+        bool exsitSaveFile = game_data.nodeData.Count == 0 ? false : true;
 
-        /* first initialize Score Board */
+        // first initialize Score Board 
         //GameObject.Find("ModeName").GetComponent<TextMeshProUGUI>().text = new Dictionary<string, string> { { "ClassicMode", "Classic Mode" }, { "ChallengeMode", "Challenge Mode" }, { "PracticeMode", "Practice Mode" } }[gameMode.modeName];
-        GameObject.Find("TargetNumber").GetComponent<TextMeshProUGUI>().text = new Dictionary<int, string> { { 2048, "2048" }, { 1073741824, "Infinity" } }[gameData.targetBlockNumber];
-        GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = gameData.currScore.ToString();
-        GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text = gameData.highScore.ToString();
+       // GameObject.Find("TargetNumber").GetComponent<TextMeshProUGUI>().text = new Dictionary<int, string> { { 2048, "2048" }, { 1073741824, "Infinity" } }[game_data.targetBlockNumber];
+        GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = game_data.currScore.ToString();
+        GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text = game_data.highScore.ToString();
 
-        /* first initialize empty Node rect */
-        realNodeList.Clear();
-        nodeMap.Clear();
-        nodeData.Clear();
+        // first initialize empty Node rect
+        real_node_list.Clear();
+        node_map.Clear();
+        node_list.Clear();
 
         if (exsitSaveFile == false) NewBoard();      
         else
@@ -264,7 +280,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             var emptyChildCount = emptyNodeRect.transform.childCount;
             for (int i = 0; i < emptyChildCount; i++) { var child = emptyNodeRect.GetChild(i); }
 
-            /* and, empty node create for get grid point*/
+            // and, empty node create for get grid point
             for (int i = 0; i < col; i++)
             {
                 for (int j = 0; j < row; j++)
@@ -286,28 +302,91 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                     node.point = point;
                     node.nodeRectObj = instantiatePrefab;
 
-                    NodeClone nodeClone = gameData.nodeData[i * 4 + j];
+                    NodeClone nodeClone = game_data.nodeData[i * 4 + j];
                     node.value = nodeClone.value == -1 ? null : nodeClone.value;
                     //node.combined = nodeClone.combined;
 
-                    nodeData.Add(node);
+                    node_list.Add(node);
                     instantiatePrefab.name = node.point.ToString();
-                    this.nodeMap.Add(point, node);
+                    this.node_map.Add(point, node);
                 }
             }
 
             LayoutRebuilder.ForceRebuildLayoutImmediate(emptyNodeRect);  
-            foreach (var data in nodeData)
+            foreach (var data in node_list)
                 data.position = data.nodeRectObj.GetComponent<RectTransform>().localPosition;
 
-            foreach (var data in gameData.nodeData)
+            foreach (var data in game_data.nodeData)
                 if (data.value >= 2) CreateBlock(data.point.x, data.point.y, data.value);
         }
 
-        SaveGame();
+        Save_Game();
 
-        if (stateData.Empty()) stateData.AddState(gameData.Copy());
+        if (state_data.Empty()) state_data.AddState(game_data.Copy());
+    }*/
+
+
+    // ************************************************** //
+    private void Create_GameBoard(SingleGameDataManager game_data)
+    {
+      /*  bool exsitSaveFile = game_data.nodeData.Count == 0 ? false : true;
+
+        // first initialize empty Node rect 
+        real_node_list.Clear();
+        node_map.Clear();
+        node_list.Clear();
+
+        if (exsitSaveFile == false) NewBoard();
+        else
+        {
+            var emptyChildCount = emptyNodeRect.transform.childCount;
+            for (int i = 0; i < emptyChildCount; i++) { var child = emptyNodeRect.GetChild(i); }
+
+            // and, empty node create for get grid point
+            for (int i = 0; i < col; i++)
+            {
+                for (int j = 0; j < row; j++)
+                {
+                    var instantiatePrefab = GameObject.Instantiate(emptyNodePrefab, emptyNodeRect.transform, false);
+                    var point = new Vector2Int(j, i);
+                    //r-d-l-u
+                    Vector2Int left = point - new Vector2Int(1, 0);
+                    Vector2Int down = point - new Vector2Int(0, 1);
+                    Vector2Int right = point + new Vector2Int(1, 0);
+                    Vector2Int up = point + new Vector2Int(0, 1);
+                    Vector2Int?[] v = new Vector2Int?[4];
+                    if (IsValid(right)) v[0] = right;
+                    if (IsValid(down)) v[1] = down;
+                    if (IsValid(left)) v[2] = left;
+                    if (IsValid(up)) v[3] = up;
+
+                    Node node = new Node(v);
+                    node.point = point;
+                    node.nodeRectObj = instantiatePrefab;
+
+                    NodeClone nodeClone = game_data.nodeData[i * 4 + j];
+                    node.value = nodeClone.value == -1 ? null : nodeClone.value;
+                    //node.combined = nodeClone.combined;
+
+                    node_list.Add(node);
+                    instantiatePrefab.name = node.point.ToString();
+                    this.node_map.Add(point, node);
+                }
+            }
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(emptyNodeRect);
+            foreach (var data in node_list)
+                data.position = data.nodeRectObj.GetComponent<RectTransform>().localPosition;
+
+            foreach (var data in game_data.nodeData)
+                if (data.value >= 2) CreateBlock(data.point.x, data.point.y, data.value);
+        }
+
+        Save_Game();
+
+        if (state_data.Empty()) state_data.AddState(game_data.Copy());*/
     }
+
 
     private bool IsValid(Vector2Int point)
     {
@@ -318,15 +397,15 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     }
     private void CreateBlock(int x, int y, int? blockNum = null)
     {
-        if (nodeMap[new Vector2Int(x, y)].realNodeObj != null) return;
+        if (node_map[new Vector2Int(x, y)].realNodeObj != null) return;
 
         GameObject realNodeObj = Instantiate(nodePrefab, realNodeRect.transform, false);
-        var node = nodeMap[new Vector2Int(x, y)];
+        var node = node_map[new Vector2Int(x, y)];
         var pos = node.position;
         realNodeObj.GetComponent<RectTransform>().localPosition = pos;
         realNodeObj.transform.DOPunchScale(new Vector3(.32f, .32f, .32f), 0.15f, 3);
         var nodeObj = realNodeObj.GetComponent<NodeObject>();
-        this.realNodeList.Add(nodeObj);
+        this.real_node_list.Add(nodeObj);
 
         if (blockNum == null) nodeObj.InitializeFirstValue();
         else nodeObj.InitializeSavedValue(blockNum.GetValueOrDefault());
@@ -350,11 +429,11 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             to.combined = true;
         }
 
-        gameData.currScore += to.value.GetValueOrDefault();
-        gameData.highScore = Mathf.Max(gameData.highScore, gameData.currScore);
-        gameData.highestBlockNumber = Mathf.Max(gameData.highestBlockNumber, to.value.GetValueOrDefault());
-        GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = gameData.currScore.ToString();
-        GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text = gameData.highScore.ToString();
+      /*  game_data.currScore += to.value.GetValueOrDefault();
+        game_data.highScore = Mathf.Max(game_data.highScore, game_data.currScore);
+        game_data.highestBlockNumber = Mathf.Max(game_data.highestBlockNumber, to.value.GetValueOrDefault());
+        GameObject.Find("CurrScore").GetComponent<TextMeshProUGUI>().text = game_data.currScore.ToString();
+        GameObject.Find("HighScore").GetComponent<TextMeshProUGUI>().text = game_data.highScore.ToString();*/
     }
 
     public void Move(Node from, Node to)
@@ -386,7 +465,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             {
                 for (int i = (row - 2); i >= 0; i--)
                 { 
-                    var node = nodeMap[new Vector2Int(i, j)];
+                    var node = node_map[new Vector2Int(i, j)];
                     if (node.value == null) 
                         continue; 
                     var right = node.FindTarget(node, Node.Direction.RIGHT);
@@ -415,7 +494,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             {
                 for (int i = 1; i < row; i++)
                 { 
-                    var node = nodeMap[new Vector2Int(i, j)];
+                    var node = node_map[new Vector2Int(i, j)];
                     if (node.value == null) 
                         continue; 
 
@@ -444,7 +523,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             {
                 for (int i = 0; i<row; i++)
                 {
-                    var node = nodeMap[new Vector2Int(i, j)];
+                    var node = node_map[new Vector2Int(i, j)];
                     if (node.value == null) 
                         continue;  
                     var up = node.FindTarget(node, Node.Direction.UP);
@@ -471,7 +550,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             {
                 for (int i = 0; i< row; i++)
                 {
-                    var node = nodeMap[new Vector2Int(i, j)];
+                    var node = node_map[new Vector2Int(i, j)];
                     if (node.value == null) 
                         continue;  
                     var down = node.FindTarget(node, Node.Direction.DOWN);
@@ -493,7 +572,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             }
         }
         
-        foreach (var data in realNodeList)
+        foreach (var data in real_node_list)
         {
             if (data.target != null)
             {
@@ -517,7 +596,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public bool IsGameOver()
     {
         bool gameOver = true;
-        nodeData.ForEach(x =>
+        node_list.ForEach(x =>
         { 
             for (int i = 0; i < x.linkedNode.Length; i++)
             {
@@ -525,7 +604,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                 if (x.linkedNode[i] == null)
                     continue;
                 
-                var nearNode = nodeMap[x.linkedNode[i].Value];
+                var nearNode = node_map[x.linkedNode[i].Value];
                 if(x.value != null && nearNode.value != null)
                 if (x.value == nearNode.value)
                 {
@@ -538,7 +617,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     }
     private void CreateRandom()
     {
-        var emptys = nodeData.FindAll(x => x.realNodeObj == null); 
+        var emptys = node_list.FindAll(x => x.realNodeObj == null); 
         if (emptys.Count == 0)
         {
             if (IsGameOver())
@@ -567,7 +646,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public void UpdateState()
     {
         bool targetAllNull = true;
-        foreach (var data in realNodeList)
+        foreach (var data in real_node_list)
         {
             if (data.target != null)
             { 
@@ -582,13 +661,13 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             { 
                 var removed = new List<NodeObject>();
                 List<NodeObject> removeTarget = new List<NodeObject>();
-                foreach (var data in realNodeList) 
+                foreach (var data in real_node_list) 
                     if (data.needDestroy)  
                         removeTarget.Add(data);
                 
                 removeTarget.ForEach(x =>
                 {
-                    realNodeList.Remove(x);
+                    real_node_list.Remove(x);
                     GameObject.Destroy(x.gameObject);
                 });
                 state = State.END;
@@ -597,14 +676,14 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
         if (state == State.END)
         {
-            nodeData.ForEach(x => x.combined = false);
+            node_list.ForEach(x => x.combined = false);
             state = State.WAIT;
             CreateRandom();
 
             //--- State Save For UndoRedo ---//
-            SaveGame();        
-            stateData.AddState(gameData);
-            if (gameData.highestBlockNumber >= gameData.targetBlockNumber) { OnGameEnd(); }
+            Save_Game();        
+           // state_data.AddState(game_data);
+           // if (game_data.highestBlockNumber >= game_data.targetBlockNumber) { OnGameEnd(); }
         }
     }
 
@@ -615,7 +694,7 @@ public class Board : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         {
             for (int j = 0; j < row; j++)
             {
-                var p = nodeMap[new Vector2Int(j, i)].value;
+                var p = node_map[new Vector2Int(j, i)].value;
                 string t = p.ToString();
                 if (p.HasValue == false)
                 {

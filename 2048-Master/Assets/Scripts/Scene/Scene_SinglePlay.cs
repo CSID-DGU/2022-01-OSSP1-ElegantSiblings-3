@@ -1,26 +1,42 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+//
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using System.IO;
 
 
-[System.Serializable]
-public class SinglePlayMode
+public enum SINGLE_MODE_LIST
 {
-    public string modeName = "";
-    public string GetJson() => JsonUtility.ToJson(this, true);
+    CLASSIC, CHALLENGE, PRACTICE
+}
+
+[System.Serializable]
+public class SingleMode
+{
+    public SINGLE_MODE_LIST index = SINGLE_MODE_LIST.CLASSIC;
+    public string name = "Classic";
+
+    public static void Set_Mode(SINGLE_MODE_LIST m_name)
+    {
+        Json.Write(Path.Combine(Application.persistentDataPath, "SingleMode.json"),
+            new SingleMode { index = m_name, name = new List<string> { "Classic", "Challenge", "Practice" }[(int)m_name] });
+    }
+
+    public static SingleMode Get_Mode()
+    {
+        SingleMode m = Json.Read<SingleMode>(Path.Combine(Application.persistentDataPath, "SingleMode.json"));
+        return m == null ? new SingleMode() : m;
+    }
 }
 
 
 public class Scene_SinglePlay : MonoBehaviour
 {
-    private string theme_name;
-
     public void Awake()
     {
-        // TODO: theme ¼³Á¤
+        GameObject.Find("BackGround").GetComponent<Image>().sprite = Theme.Get_Image("Scene_SinglePlay");
     }
 
     public void Button_Back_Click()
@@ -35,23 +51,20 @@ public class Scene_SinglePlay : MonoBehaviour
 
     public void Button_ClassicMode_Click()
     {
-        string path = Path.Combine(Application.persistentDataPath, "SinglePlayMode.json");
-        File.WriteAllText(path, new SinglePlayMode { modeName = "ClassicMode" }.GetJson());
-        SceneManager.LoadScene("Game");
+        SingleMode.Set_Mode(SINGLE_MODE_LIST.CLASSIC);
+        SceneManager.LoadScene("Scene_SingleGame");
     }
 
     public void Button_ChallengeMode_Click()
     {
-        string path = Path.Combine(Application.persistentDataPath, "SinglePlayMode.json");
-        File.WriteAllText(path, new SinglePlayMode { modeName = "ChallengeMode" }.GetJson());
-        SceneManager.LoadScene("Game");
+        SingleMode.Set_Mode(SINGLE_MODE_LIST.CHALLENGE);
+        SceneManager.LoadScene("Scene_SingleGame");
     }
 
     public void Button_PracticeMode_Click()
     {
-        string path = Path.Combine(Application.persistentDataPath, "SinglePlayMode.json");
-        File.WriteAllText(path, new SinglePlayMode { modeName = "PracticeMode" }.GetJson());
-        SceneManager.LoadScene("Game");
+        SingleMode.Set_Mode(SINGLE_MODE_LIST.PRACTICE);
+        SceneManager.LoadScene("Scene_SingleGame");
     }
 
     public void DataClear()

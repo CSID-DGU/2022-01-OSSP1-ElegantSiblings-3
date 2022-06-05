@@ -85,7 +85,10 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
         GameObject.Find("Messagebox_GiveUp").GetComponent<Image>().gameObject.SetActive(false);
         GameObject.Find("Button_GiveUp_Yes").GetComponent<Button>().gameObject.SetActive(false);
         GameObject.Find("Button_GiveUp_No").GetComponent<Button>().gameObject.SetActive(false);
-        sned_game_event.GiveUp();
+        if (is_game_playing)
+        {
+            sned_game_event.GiveUp();
+        }
     }
 
     public void Button_GiveUp_No_Click()

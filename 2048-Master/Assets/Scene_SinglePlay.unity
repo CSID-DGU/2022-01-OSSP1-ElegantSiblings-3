@@ -238,7 +238,7 @@ GameObject:
   - component: {fileID: 289416577}
   - component: {fileID: 289416576}
   m_Layer: 5
-  m_Name: Button_ChallengeMode
+  m_Name: Button_Challenge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -372,7 +372,7 @@ GameObject:
   - component: {fileID: 392183380}
   - component: {fileID: 392183379}
   m_Layer: 5
-  m_Name: Button_ClassicMode
+  m_Name: Button_Classic
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1380,7 +1380,7 @@ GameObject:
   - component: {fileID: 1738996451}
   - component: {fileID: 1738996450}
   m_Layer: 5
-  m_Name: Button_PracticeMode
+  m_Name: Button_Practice
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
