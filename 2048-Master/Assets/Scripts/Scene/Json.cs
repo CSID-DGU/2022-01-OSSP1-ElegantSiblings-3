@@ -7,9 +7,16 @@ using System.IO;
 
 public class Json
 {
+    public static string GetJson<T>(T obj) => JsonUtility.ToJson(obj, true);
+    
     public static void Write<T>(string path, T obj)
     {
         File.WriteAllText(path, JsonUtility.ToJson(obj, true));
+    }
+
+    public static void Delete(string path)
+    {
+        if (File.Exists(path)) File.Delete(path);     
     }
 
     public static T Read<T>(string path)

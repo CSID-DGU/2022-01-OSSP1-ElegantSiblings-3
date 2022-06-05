@@ -16,8 +16,12 @@ public class MysqlTest : MonoBehaviour
 
     public void Button_Login_Click()
     {
+        // TODO: DB
+
         string id = GameObject.Find("UserID_InputField").GetComponent<TMP_InputField>().text;
         string pw = GameObject.Find("UserPW_InputField").GetComponent<TMP_InputField>().text;
+
+
 
         Debug.Log("ID: " + id + Environment.NewLine + "PW: " + pw);
     }

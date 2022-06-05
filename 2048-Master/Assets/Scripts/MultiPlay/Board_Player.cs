@@ -53,7 +53,7 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
     public SendGameEvent sned_game_event;
     public int curr_score;
     public int highest_node_value;
-    public bool is_game_playing = true;
+    public bool game_start = true;
 
 
     // Touch Event
@@ -72,7 +72,7 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
     //============================== Button Object Event ==============================//
     public void Button_GiveUp_Click()
     {
-        if (is_game_playing)
+        if (game_start)
         {
             GameObject.Find("BackGround").transform.Find("Messagebox_GiveUp").gameObject.SetActive(true);
             GameObject.Find("BackGround").transform.Find("Button_GiveUp_Yes").gameObject.SetActive(true);
@@ -85,7 +85,7 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
         GameObject.Find("Messagebox_GiveUp").GetComponent<Image>().gameObject.SetActive(false);
         GameObject.Find("Button_GiveUp_Yes").GetComponent<Button>().gameObject.SetActive(false);
         GameObject.Find("Button_GiveUp_No").GetComponent<Button>().gameObject.SetActive(false);
-        if (is_game_playing)
+        if (game_start)
         {
             sned_game_event.GiveUp();
         }
@@ -202,7 +202,7 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
 
     private void CreateGameBoard()
     {
-        is_game_playing = false;
+        game_start = false;
 
         GameObject.Find("Messagebox_GiveUp").GetComponent<Image>().gameObject.SetActive(false);
         GameObject.Find("Button_GiveUp_Yes").GetComponent<Button>().gameObject.SetActive(false);
@@ -595,7 +595,7 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
 
     private void Update()
     {
-        if (is_game_playing)
+        if (game_start)
         {
             UpdateState();
             UpdateByKeyboard();
@@ -631,6 +631,7 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
             }
         }
     }
+
 
     private void UpdateByTouchscreen()
     {

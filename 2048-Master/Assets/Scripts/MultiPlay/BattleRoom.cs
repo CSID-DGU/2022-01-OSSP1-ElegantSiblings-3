@@ -131,7 +131,7 @@ public class BattleRoom : MonoBehaviour
 
 		if (result != 0)
 		{
-			board_player.is_game_playing = false;
+			board_player.game_start = false;
 			StartCoroutine(Destroy_Room(result));
 		}
 	}
@@ -153,7 +153,7 @@ public class BattleRoom : MonoBehaviour
 		}
 
 		GameObject.Find("BackGround").transform.Find("Messagebox_Start").gameObject.SetActive(false);
-		board_player.is_game_playing = true;
+		board_player.game_start = true;
 	}
 
 	private IEnumerator Destroy_Room(int game_result)

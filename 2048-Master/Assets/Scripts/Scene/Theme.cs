@@ -16,12 +16,12 @@ public class Theme
 {
     public THEME_LIST name = THEME_LIST.THEME3;
 
-    public static void Set_Theme(THEME_LIST t_name)
+    public static void SetTheme(THEME_LIST t_name)
     {
         Json.Write(Path.Combine(Application.persistentDataPath, "Theme.json"), new Theme { name = t_name });
     }
 
-    public static Sprite Get_Image(string i_name)
+    public static Sprite GetImage(string i_name)
     {
         Theme t = Json.Read<Theme>(Path.Combine(Application.persistentDataPath, "Theme.json"));
         string t_name = t == null ? ((int)THEME_LIST.THEME3).ToString() : ((int)t.name).ToString();

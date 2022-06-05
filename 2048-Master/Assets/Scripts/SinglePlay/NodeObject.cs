@@ -89,7 +89,7 @@ public class NodeObject : MonoBehaviour
         this.value = v[Random.Range(0, v.Length)];
     }
 
-    public void InitializeSavedValue(int valueNum)
+    public void InitializeSpecificValue(int valueNum)
     {
         this.value = valueNum;
     }

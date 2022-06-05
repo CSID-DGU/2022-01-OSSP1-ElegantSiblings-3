@@ -35,7 +35,7 @@ public class  Node
     {
         if (linkedNode[(int)dir].HasValue == true)
         {  
-            var dirNode = Board_Single.Instance.node_map[linkedNode[(int)dir].Value];
+            var dirNode = SingleBoard.Instance.nodeMap[linkedNode[(int)dir].Value];
             // if already combined, return prev block
             if (dirNode != null && dirNode.combined) 
                 return this; 
