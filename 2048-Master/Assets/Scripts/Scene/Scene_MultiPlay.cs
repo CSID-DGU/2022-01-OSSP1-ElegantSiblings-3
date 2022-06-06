@@ -8,8 +8,6 @@ using System.IO;
 
 public class Scene_MultiPlay : MonoBehaviour
 {
-    private string theme_name;
-
     public void Awake()
     {
         // TODO: theme ¼³Á¤

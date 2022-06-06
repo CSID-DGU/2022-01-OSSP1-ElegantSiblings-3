@@ -7,8 +7,6 @@ using System.IO;
 
 public class Scene_GamePlay : MonoBehaviour
 {
-    private string theme_name;
-
     public void Awake()
     {
 
