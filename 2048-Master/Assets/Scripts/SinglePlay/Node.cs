@@ -8,9 +8,6 @@ using UnityEngine.UI;
 [System.Serializable]
 public class  Node
 {
-    /// <summary>
-    /// initialize node data, array size must be set '4'
-    /// </summary> 
     public Node(Vector2Int?[] foundedLinkedNode)
     {
         linkedNode = foundedLinkedNode;
@@ -52,56 +49,4 @@ public class  Node
         }
         return farNode;
     } 
-}
-
-
-[System.Serializable]
-public class NodeClone
-{
-    public int value = -1;
-    public Vector2Int point;
-    public Vector2 position;
-    public bool combined = false;
-    public List<LinkedNode> linkedNode = new List<LinkedNode>();
-
-    public NodeClone() { }
-    public NodeClone(Node node)
-    {
-        this.value = node.value == null ? -1 : node.value.GetValueOrDefault();
-        this.point = new Vector2Int(node.point.x, node.point.y);
-        this.position = new Vector2(node.position.x, node.position.y);
-        this.combined = node.combined;
-        foreach (var linked in node.linkedNode) linkedNode.Add(linked == null ? new LinkedNode() : new LinkedNode { IsNull = false, link = new Vector2Int(linked.GetValueOrDefault().x, linked.GetValueOrDefault().y) });
-        
-    }
-
-    public NodeClone Copy()
-    {
-        NodeClone temp = new NodeClone();
-
-        temp.value = this.value;
-        temp.point = new Vector2Int(this.point.x, this.point.y);
-        temp.position = new Vector2(this.position.x, this.position.y);
-        temp.combined = this.combined;
-        foreach (var linked in this.linkedNode) temp.linkedNode.Add(linked.Copy());
-
-        return temp;
-    }
-}
-
-[System.Serializable]
-public class LinkedNode
-{
-    public bool IsNull = true;
-    public Vector2Int link = new Vector2Int();
-
-    public LinkedNode Copy()
-    {
-        LinkedNode temp = new LinkedNode();
-
-        temp.IsNull = this.IsNull;
-        temp.link = new Vector2Int(this.link.x, this.link.y);
-
-        return temp;
-    }
 }

@@ -71,28 +71,51 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
 
     //============================== Button Event ==============================//
-    public void ReturnPrevPageButton()
+    public void Button_Back_Click()
     {
-        SceneManager.LoadScene("Scene_SinglePlay");
+        if (gameStart)
+        {
+            SceneManager.LoadScene("Scene_SinglePlay");
+        }
     }
-    public void ReturnHomePageButton()
+    public void Button_Home_Click()
     {
-        SceneManager.LoadScene("Scene_Home");
+        if (gameStart)
+        {
+            SceneManager.LoadScene("Scene_Home");
+        }
     }
-    public void NewGameButton()
+    public void Button_NewGame_Click()
     {
-        ResetGame();     
-        SceneManager.LoadScene("Scene_SingleGame");
+        if (gameStart)
+        {
+            ResetGame();
+            SceneManager.LoadScene("Scene_SingleGame");
+        }
     }
-    public void UndoButton()
+    public void Button_Undo_Click()
     {
-        UndoGame();
-        SceneManager.LoadScene("Scene_SingleGame");
+        if (gameStart)
+        {
+            UndoGame();
+            SceneManager.LoadScene("Scene_SingleGame");
+        }
     }
-    public void RedoButton()
+    public void Button_Redo_Click()
     {
-        RedoGame();
-        SceneManager.LoadScene("Scene_SingleGame");
+        if (gameStart)
+        {
+            RedoGame();
+            SceneManager.LoadScene("Scene_SingleGame");
+        }
+    }
+    public void Button_GameEnd_Click()
+    {
+        if (!gameStart)
+        {
+            ResetGame();
+            SceneManager.LoadScene("Scene_SinglePlay");
+        }
     }
 
 
@@ -109,8 +132,6 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private void LoadGameData()
     {
         gameStart = false;
-
-        // TODO: target number, state count
 
         // load saved game data
         var gameMode = SingleGameManager.GetGameMode();
@@ -134,6 +155,8 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         GameObject.Find("Textbox_CurrScore").GetComponent<TextMeshProUGUI>().text = gameState.currScore.ToString();
         GameObject.Find("Textbox_BestScore").GetComponent<TextMeshProUGUI>().text = gameState.bestScore.ToString();
         GameObject.Find("Textbox_TargetNumber").GetComponent<TextMeshProUGUI>().text = new List<string> { "2048", "Infinity", "16" }[(int)gameMode.index];
+        GameObject.Find("Message_Result").GetComponent<Image>().gameObject.SetActive(false);
+        GameObject.Find("Button_GameEnd").GetComponent<Image>().gameObject.SetActive(false);
 
 
         // 게임 보드 생성
@@ -142,7 +165,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
 
 
-    //============================== Make Game Board ==============================//
+    //============================== Create Game Board ==============================//
 
     private void CreateGameBoard(SingleGameState gameData)
     {
@@ -434,16 +457,25 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     private void CheckGameState()
     {
-        // TODO: 게임 종료 이벤트 추가
+        bool isGameEnd = IsGameEnd();
+        bool isGameOver = IsGameOver();
 
-        if (IsGameEnd())
+        if (isGameEnd || isGameOver)
         {
-            Debug.Log("Congratulations!!!!");
-        }
+            gameStart = false;
+            GameObject.Find("BackGround").transform.Find("Message_Result").gameObject.SetActive(true);
+            GameObject.Find("BackGround").transform.Find("Button_GameEnd").gameObject.SetActive(true);
 
-        if (IsGameOver())
-        {
-            Debug.Log("Game Over!!!!");
+            if (isGameEnd)  // game clear
+            {
+                GameObject.Find("Message_Result").GetComponent<Image>().sprite = Theme.GetImage("Scene_SingleGame_Message_GameClear" + "_" + SingleGameManager.GetGameMode().name);
+                GameObject.Find("Button_GameEnd").GetComponent<Image>().sprite = Theme.GetImage("Scene_SingleGame_Button_GameEnd" + "_" + SingleGameManager.GetGameMode().name);
+            }
+            else if (isGameOver)  // game over
+            {
+                GameObject.Find("Message_Result").GetComponent<Image>().sprite = Theme.GetImage("Scene_SingleGame_Message_GameOver" + "_" + SingleGameManager.GetGameMode().name);
+                GameObject.Find("Button_GameEnd").GetComponent<Image>().sprite = Theme.GetImage("Scene_SingleGame_Button_GameEnd" + "_" + SingleGameManager.GetGameMode().name);
+            }
         }
     }
 

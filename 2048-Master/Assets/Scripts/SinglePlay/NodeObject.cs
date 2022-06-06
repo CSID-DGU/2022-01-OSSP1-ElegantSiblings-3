@@ -82,11 +82,11 @@ public class NodeObject : MonoBehaviour
         blockImage.color = color;
     }
 
-    //------------ Modified By J.H ------------//
     public void InitializeFirstValue()
     {
-        int[] v = new int[] { 2 }; // Only 2
-        this.value = v[Random.Range(0, v.Length)];
+        this.value = 2;
+       /* int[] v = new int[] { 2 }; // Only 2
+        this.value = v[Random.Range(0, v.Length)];*/
     }
 
     public void InitializeSpecificValue(int valueNum)
