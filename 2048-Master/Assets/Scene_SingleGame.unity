@@ -407,7 +407,7 @@ GameObject:
   - component: {fileID: 139454271}
   - component: {fileID: 139454270}
   m_Layer: 5
-  m_Name: Textbox_CurrScore
+  m_Name: Textbox_CurrentScore
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1195,7 +1195,7 @@ GameObject:
   - component: {fileID: 590816436}
   - component: {fileID: 590816435}
   m_Layer: 5
-  m_Name: Textbox_BestScore
+  m_Name: Textbox_HighestScore
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1425,9 +1425,9 @@ MonoBehaviour:
   realNodeRect: {fileID: 1103381382}
   gameStart: 0
   targetNumber: 0
-  currScore: 0
-  bestScore: 0
-  highestBlockNumber: 0
+  currentScore: 0
+  highestScore: 0
+  highestBlock: 0
   vectorS: {x: 0, y: 0}
   vectorE: {x: 0, y: 0}
   vectorM: {x: 0, y: 0}

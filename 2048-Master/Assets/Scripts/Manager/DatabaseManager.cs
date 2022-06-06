@@ -35,7 +35,6 @@ public class DatabaseManager
 
 
         MySqlConnection mySqlConnection = new MySqlConnection(string.Format("Server={0};Port={1};Database={2};Uid={3};Pwd={4}", "plus2048.cb8k6mln4cv6.ap-northeast-2.rds.amazonaws.com", "3306", "plus2048", "admin", "dbjunohshin"));
-        bool check = true;
 
         try
         {
@@ -110,5 +109,52 @@ public class DatabaseManager
         }
 
         return dataTable;
+    }
+
+
+    public static void Update(List<KeyValuePair<string, string>> inputList, string id)
+    {
+        string updateQuery = "UPDATE users SET ";
+        for (int i = 0; i < inputList.Count; i++)
+        {
+            if (i != 0) updateQuery += ", ";
+            updateQuery += inputList[i].Key + "='" + inputList[i].Value + "'";
+        }
+        updateQuery += " WHERE id" + "='" + id + "'";
+
+
+        MySqlConnection mySqlConnection = new MySqlConnection(string.Format("Server={0};Port={1};Database={2};Uid={3};Pwd={4}", "plus2048.cb8k6mln4cv6.ap-northeast-2.rds.amazonaws.com", "3306", "plus2048", "admin", "dbjunohshin"));
+
+        try
+        {
+            mySqlConnection.Open();
+            Debug.Log("Connected");
+
+            try
+            {
+                MySqlCommand command = new MySqlCommand(updateQuery, mySqlConnection);
+
+                if (command.ExecuteNonQuery() == 1)
+                {
+                    Debug.Log("Update Success");
+                }
+                else
+                {
+                    Debug.Log("Update Failure");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Debug.Log("Connect Failure");
+                Debug.Log(ex.ToString());
+            }
+
+            mySqlConnection.Close();
+        }
+        catch (Exception ex)
+        {
+            Debug.Log(ex.ToString());
+        }
     }
 }

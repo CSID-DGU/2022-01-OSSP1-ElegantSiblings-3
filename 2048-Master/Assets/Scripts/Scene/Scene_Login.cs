@@ -47,6 +47,19 @@ public class Scene_Login : MonoBehaviour
         SceneManager.LoadScene("Scene_Registration");
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
     public static bool Insert(string insertQuery)
     {
         MySqlConnection mySqlConnection = new MySqlConnection(string.Format("Server={0};Port={1};Database={2};Uid={3};Pwd={4}", "plus2048.cb8k6mln4cv6.ap-northeast-2.rds.amazonaws.com", "3306", "plus2048", "admin", "dbjunohshin"));
@@ -94,6 +107,8 @@ public class Scene_Login : MonoBehaviour
     public static void Update(string updateQuery)
     {
         MySqlConnection mySqlConnection = new MySqlConnection(string.Format("Server={0};Port={1};Database={2};Uid={3};Pwd={4}", "plus2048.cb8k6mln4cv6.ap-northeast-2.rds.amazonaws.com", "3306", "plus2048", "admin", "dbjunohshin"));
+
+
 
         try
         {

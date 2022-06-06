@@ -50,9 +50,9 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     // Game Data
     public bool gameStart = false;
     public int targetNumber;
-    public int currScore;
-    public int bestScore;
-    public int highestBlockNumber;
+    public int currentScore;
+    public int highestScore;
+    public int highestBlock;
 
     // Touch Event
     public Vector2 vectorS = new Vector2();
@@ -75,6 +75,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         if (gameStart)
         {
+            SaveGame();
             SceneManager.LoadScene("Scene_SinglePlay");
         }
     }
@@ -82,6 +83,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         if (gameStart)
         {
+            SaveGame();
             SceneManager.LoadScene("Scene_Home");
         }
     }
@@ -122,9 +124,9 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     //============================== Game Data Handler ==============================//
     private void SaveGame() { SingleGameManager.AddGameState(this); }
-    private void ResetGame() { SingleGameManager.ClearGameState(); }
-    private void UndoGame() { SingleGameManager.Undo(); }
-    private void RedoGame() { SingleGameManager.Redo(); }
+    private void ResetGame() { SingleGameManager.ClearGameState(this); }
+    private void UndoGame() { SingleGameManager.Undo(this); }
+    private void RedoGame() { SingleGameManager.Redo(this); }
 
 
 
@@ -136,9 +138,9 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         // load saved game data
         var gameMode = SingleGameManager.GetGameMode();
         var gameState = SingleGameManager.GetGameState();
-        currScore = gameState.currScore;
-        bestScore = gameState.bestScore;
-        highestBlockNumber = gameState.highestBlockNumber;
+        currentScore = gameState.currentScore;
+        highestScore = gameState.highestScore;
+        highestBlock = gameState.highestBlock;
         targetNumber = new List<int> { 2048, 1073741824, 16 }[(int)gameMode.index];
 
 
@@ -152,8 +154,8 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
 
         // initialize score screen 
-        GameObject.Find("Textbox_CurrScore").GetComponent<TextMeshProUGUI>().text = gameState.currScore.ToString();
-        GameObject.Find("Textbox_BestScore").GetComponent<TextMeshProUGUI>().text = gameState.bestScore.ToString();
+        GameObject.Find("Textbox_CurrentScore").GetComponent<TextMeshProUGUI>().text = gameState.currentScore.ToString();
+        GameObject.Find("Textbox_HighestScore").GetComponent<TextMeshProUGUI>().text = gameState.highestScore.ToString();
         GameObject.Find("Textbox_TargetNumber").GetComponent<TextMeshProUGUI>().text = new List<string> { "2048", "Infinity", "16" }[(int)gameMode.index];
         GameObject.Find("Message_Result").GetComponent<Image>().gameObject.SetActive(false);
         GameObject.Find("Button_GameEnd").GetComponent<Image>().gameObject.SetActive(false);
@@ -300,12 +302,12 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         }
 
         int new_block_value = to.value.GetValueOrDefault();
-        currScore += new_block_value;
-        bestScore = Mathf.Max(bestScore, currScore);
-        highestBlockNumber = Mathf.Max(highestBlockNumber, new_block_value);
+        currentScore += new_block_value;
+        highestScore = Mathf.Max(highestScore, currentScore);
+        highestBlock = Mathf.Max(highestBlock, new_block_value);
 
-        GameObject.Find("Textbox_CurrScore").GetComponent<TextMeshProUGUI>().text = currScore.ToString();
-        GameObject.Find("Textbox_BestScore").GetComponent<TextMeshProUGUI>().text = bestScore.ToString();
+        GameObject.Find("Textbox_CurrentScore").GetComponent<TextMeshProUGUI>().text = currentScore.ToString();
+        GameObject.Find("Textbox_HighestScore").GetComponent<TextMeshProUGUI>().text = highestScore.ToString();
 
         CheckGameState();
     }
@@ -504,7 +506,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     public bool IsGameEnd()
     {
-        return highestBlockNumber >= targetNumber ? true : false;
+        return highestBlock >= targetNumber ? true : false;
     }
 
 
