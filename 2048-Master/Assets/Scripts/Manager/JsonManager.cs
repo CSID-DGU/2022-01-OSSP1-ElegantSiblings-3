@@ -5,7 +5,7 @@ using UnityEngine;
 using System;
 using System.IO;
 
-public class Json
+public class JsonManager
 {
     public static string GetJson<T>(T obj) => JsonUtility.ToJson(obj, true);
     

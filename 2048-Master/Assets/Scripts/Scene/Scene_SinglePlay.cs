@@ -11,6 +11,9 @@ public class Scene_SinglePlay : MonoBehaviour
 {
     public void Awake()
     {
+        System.Data.DataTable dataTable = new System.Data.DataTable();
+        Debug.Log(dataTable.Rows.Count);
+
         GameObject.Find("BackGround").GetComponent<Image>().sprite = Theme.GetImage("Scene_SinglePlay");
     }
 

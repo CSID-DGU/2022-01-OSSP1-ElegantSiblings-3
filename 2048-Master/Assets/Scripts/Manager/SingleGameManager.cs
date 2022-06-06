@@ -35,7 +35,7 @@ public class SingleGameState
         return true;
     }
 
-    public string GetJson() => Json.GetJson(this);
+    public string GetJson() => JsonManager.GetJson(this);
 }
 
 
@@ -73,13 +73,13 @@ public class SingleGameManager
     //------------------- Mode Management -------------------//
     public static void SetGameMode(SINGLE_GAME_MODE mode)
     {
-        Json.Write(Path.Combine(Application.persistentDataPath, "SingleMode.json"),
+        JsonManager.Write(Path.Combine(Application.persistentDataPath, "SingleMode.json"),
             new SingleGameMode { index = mode, name = new List<string> { "Classic", "Challenge", "Practice" }[(int)mode] });
     }
 
     public static SingleGameMode GetGameMode()
     {
-        SingleGameMode mode = Json.Read<SingleGameMode>(Path.Combine(Application.persistentDataPath, "SingleMode.json"));
+        SingleGameMode mode = JsonManager.Read<SingleGameMode>(Path.Combine(Application.persistentDataPath, "SingleMode.json"));
         return mode == null ? new SingleGameMode() : mode;
     }
 
@@ -88,12 +88,12 @@ public class SingleGameManager
     //------------------- Game State Management -------------------//
     private static void SaveGameState(SingleGameStateList gameStateList)
     {
-        Json.Write(Path.Combine(Application.persistentDataPath, "SingleGameState" + GetGameMode().name + ".json"), gameStateList);
+        JsonManager.Write(Path.Combine(Application.persistentDataPath, "SingleGameState" + GetGameMode().name + ".json"), gameStateList);
     }
     
     private static SingleGameStateList LoadGameState()
     {
-        var gameStateList = Json.Read<SingleGameStateList>(Path.Combine(Application.persistentDataPath, "SingleGameState" + GetGameMode().name + ".json"));
+        var gameStateList = JsonManager.Read<SingleGameStateList>(Path.Combine(Application.persistentDataPath, "SingleGameState" + GetGameMode().name + ".json"));
         return gameStateList == null ? new SingleGameStateList() : gameStateList;
     }
 
@@ -123,7 +123,7 @@ public class SingleGameManager
 
     public static void ClearGameState()
     {
-        Json.Delete(Path.Combine(Application.persistentDataPath, "SingleGameState" + GetGameMode().name + ".json"));
+        JsonManager.Delete(Path.Combine(Application.persistentDataPath, "SingleGameState" + GetGameMode().name + ".json"));
     }
 
     public static void Undo()

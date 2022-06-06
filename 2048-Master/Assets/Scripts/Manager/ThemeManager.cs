@@ -18,12 +18,12 @@ public class Theme
 
     public static void SetTheme(THEME_LIST themeName)
     {
-        Json.Write(Path.Combine(Application.persistentDataPath, "Theme.json"), new Theme { name = themeName });
+        JsonManager.Write(Path.Combine(Application.persistentDataPath, "Theme.json"), new Theme { name = themeName });
     }
 
     public static Sprite GetImage(string imageName)
     {
-        Theme t = Json.Read<Theme>(Path.Combine(Application.persistentDataPath, "Theme.json"));
+        Theme t = JsonManager.Read<Theme>(Path.Combine(Application.persistentDataPath, "Theme.json"));
         string t_name = t == null ? ((int)THEME_LIST.THEME3).ToString() : ((int)t.name).ToString();
         return Resources.Load<Sprite>("theme" + t_name + "/" + imageName + "_Theme" + t_name);
     }

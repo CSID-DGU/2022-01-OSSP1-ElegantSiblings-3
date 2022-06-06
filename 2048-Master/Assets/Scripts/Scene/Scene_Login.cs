@@ -1,53 +1,65 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+//
 using MySql.Data.MySqlClient;
 using TMPro;
 using UnityEngine.UI;
 using System.Data;
 using MySql.Data;
+using UnityEngine.SceneManagement;
 
-public class MysqlTest : MonoBehaviour
+
+public class Scene_Login : MonoBehaviour
 {
-   /* private void Awake()
+    private void Awake()
     {
-        DataTable dt = Select();
-
-        foreach (DataRow row in dt.Rows)
-        {
-            Console.WriteLine("{0}\t{1}", row[0], row[1]);
-        }
+        GameObject.Find("InputField_UserID").GetComponent<TMP_InputField>().text = "";
+        GameObject.Find("InputField_UserPW").GetComponent<TMP_InputField>().text = "";
     }
 
     public void Button_Login_Click()
     {
-        string id = GameObject.Find("UserID_InputField").GetComponent<TMP_InputField>().text;
-        string pw = GameObject.Find("UserPW_InputField").GetComponent<TMP_InputField>().text;
-
-
-
-
-        Debug.Log("ID: " + id + Environment.NewLine + "PW: " + pw);
-
-        DataTable dt = Select();
-
-        foreach (DataRow row in dt.Rows)
+        DataTable dataTable = DatabaseManager.Select(new List<KeyValuePair<string, string>>
         {
-            GameObject.Find("UserID_InputField").GetComponent<TMP_InputField>().text = row[0].ToString();
-            GameObject.Find("UserPW_InputField").GetComponent<TMP_InputField>().text = row[1].ToString();
+             new KeyValuePair<string, string>("id", GameObject.Find("InputField_UserID").GetComponent<TMP_InputField>().text),
+             new KeyValuePair<string, string>("password", GameObject.Find("InputField_UserPW").GetComponent<TMP_InputField>().text)
+        });
 
+        if (dataTable.Rows.Count == 0)
+        {
+            Debug.Log("계정이 존재하지않습니다");
+            GameObject.Find("InputField_UserID").GetComponent<TMP_InputField>().text = "";
+            GameObject.Find("InputField_UserPW").GetComponent<TMP_InputField>().text = "";
+        }
+        else
+        {
+            PlayerManager.SaveTempPlayerData(dataTable);
+            Debug.Log("로그인 되었습니다");
+            SceneManager.LoadScene("Scene_Home");
         }
     }
-    
-    public void Insert()
+
+
+    public void Button_Register_Click()
+    {
+        SceneManager.LoadScene("Scene_Registration");
+    }
+
+    public static bool Insert(string insertQuery)
     {
         MySqlConnection mySqlConnection = new MySqlConnection(string.Format("Server={0};Port={1};Database={2};Uid={3};Pwd={4}", "plus2048.cb8k6mln4cv6.ap-northeast-2.rds.amazonaws.com", "3306", "plus2048", "admin", "dbjunohshin"));
+        bool check = true;
+
+       // "INSERT INTO users(id,password,nickname) VALUES('" + id + "','" + pw"','" + nickname + "')"
 
         try
         {
             mySqlConnection.Open();
             Debug.Log("Connected");
 
-            string insertQuery = "INSERT INTO users(id,password) VALUES('18tester','1234')";
+            //string insertQuery = "INSERT INTO users(id,password) VALUES('18tester','1234')";
             try
             {
                 MySqlCommand command = new MySqlCommand(insertQuery, mySqlConnection);
@@ -55,10 +67,12 @@ public class MysqlTest : MonoBehaviour
                 if (command.ExecuteNonQuery() == 1)
                 {
                     Debug.Log("Insert Success");
+                    check = true;
                 }
                 else
                 {
                     Debug.Log("Insert Failure");
+                    check = false;
                 }
 
             }
@@ -74,9 +88,10 @@ public class MysqlTest : MonoBehaviour
         {
             Debug.Log(ex.ToString());
         }
+        return check;
     }
 
-    public void Update()
+    public static void Update(string updateQuery)
     {
         MySqlConnection mySqlConnection = new MySqlConnection(string.Format("Server={0};Port={1};Database={2};Uid={3};Pwd={4}", "plus2048.cb8k6mln4cv6.ap-northeast-2.rds.amazonaws.com", "3306", "plus2048", "admin", "dbjunohshin"));
 
@@ -85,7 +100,7 @@ public class MysqlTest : MonoBehaviour
             mySqlConnection.Open();
             Debug.Log("Connected");
 
-            string updateQuery = "UPDATE users SET password='2345' WHERE id='18tester'";
+            //string updateQuery = "UPDATE users SET password='2345' WHERE id='18tester'";
             try
             {
                 MySqlCommand command = new MySqlCommand(updateQuery, mySqlConnection);
@@ -114,7 +129,7 @@ public class MysqlTest : MonoBehaviour
         }
     }
 
-    public DataTable Select()
+    public static DataTable Select(string selectQuery)
     {
         MySqlConnection mySqlConnection = new MySqlConnection(string.Format("Server={0};Port={1};Database={2};Uid={3};Pwd={4}", "plus2048.cb8k6mln4cv6.ap-northeast-2.rds.amazonaws.com", "3306", "plus2048", "admin", "dbjunohshin"));
         DataTable dt = new DataTable();
@@ -124,12 +139,12 @@ public class MysqlTest : MonoBehaviour
             mySqlConnection.Open();
             Debug.Log("Connected");
 
-            string selectQuery = "SELECT * FROM users";
+            //string selectQuery = "SELECT * FROM users";
             try
             {
                 MySqlDataAdapter adapter = new MySqlDataAdapter(selectQuery, mySqlConnection);
                 adapter.Fill(dt);
-      
+
             }
             catch (Exception ex)
             {
@@ -144,5 +159,5 @@ public class MysqlTest : MonoBehaviour
             Debug.Log(ex.ToString());
         }
         return dt;
-    }*/
+    }
 }
