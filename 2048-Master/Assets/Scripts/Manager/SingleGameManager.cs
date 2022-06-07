@@ -35,15 +35,13 @@ public class SingleGameState
         return true;
     }
 
-    public string GetJson() => JsonManager.GetJson(this);
+    public string GetJson() => JsonManager.Serialize(this);
 }
 
 
 [System.Serializable]
 public class SingleGameStateList
 {
-    public int highestScore = 0;
-    public int highestBlock = 0;
     public List<SingleGameState> mainState = new List<SingleGameState>();
     public List<SingleGameState> subState = new List<SingleGameState>();
 
@@ -88,42 +86,45 @@ public class SingleGameManager
 
 
     //------------------- Game State Management -------------------//
-    private static Dictionary<SINGLE_GAME_MODE, string> ModeNameToSqlSaveAtrribute = new Dictionary<SINGLE_GAME_MODE, string>
+    private static void SaveGameState(SingleGameStateList gameStateList, SingleBoard gameBoard)
     {
-        { SINGLE_GAME_MODE.CLASSIC, "saveclassicmode" },
-        { SINGLE_GAME_MODE.CHALLENGE, "savechallengemode" },
-        { SINGLE_GAME_MODE.PRACTICE, "savepracticemode" }
-    };
+        var player = PlayerManager.Instance;
+        var mode = SingleGameManager.GetGameMode().index;
 
-    private static void SaveGameState(SingleGameStateList gameStateList)
-    {
-        var gameData = SingleGameManager.GetGameMode();
-        var player = PlayerManager.LoadTempPlayerData();
-     
+        // Challenge Mode일 때 기록 갱신
+        if (mode == SINGLE_GAME_MODE.CHALLENGE)
+        {
+            DatabaseManager.Update(new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>(DatabaseManager.GetDBAttribute(DatabaseManager.ATTRIBUTE.HIGHESTSCORE), Math.Max(player.highestScore, gameBoard.highestScore).ToString()),
+                new KeyValuePair<string, string>(DatabaseManager.GetDBAttribute(DatabaseManager.ATTRIBUTE.HIGHESTBLOCK), Math.Max(player.highestBlock, gameBoard.highestBlock).ToString()),
+            }, player.id);
+        }
+        
+        // Game State Update
         DatabaseManager.Update(new List<KeyValuePair<string, string>>
         {
-            new KeyValuePair<string, string>("highestscore", gameStateList.highestScore.ToString()),
-            new KeyValuePair<string, string>("highestblock", gameStateList.highestBlock.ToString()),
-            new KeyValuePair<string, string>(ModeNameToSqlSaveAtrribute[gameData.index], JsonManager.GetJson(gameStateList))
+            new KeyValuePair<string, string>(
+                DatabaseManager.GetDBAttribute(new Dictionary<SINGLE_GAME_MODE, DatabaseManager.ATTRIBUTE>
+                {
+                    { SINGLE_GAME_MODE.CLASSIC, DatabaseManager.ATTRIBUTE.SAVECLASSICMODE },
+                    { SINGLE_GAME_MODE.CHALLENGE, DatabaseManager.ATTRIBUTE.SAVECHALLENGEMODE },
+                    { SINGLE_GAME_MODE.PRACTICE, DatabaseManager.ATTRIBUTE.SAVEPRACTICEMODE }
+                }[mode]), JsonManager.Serialize(gameStateList))
         }, player.id);
+
+        PlayerManager.Instance.Update();
     }
 
     private static SingleGameStateList LoadGameState()
     {
-        var gameData = SingleGameManager.GetGameMode();
-        var gameStateList = JsonUtility.FromJson<SingleGameStateList>(PlayerManager.ReloadPlayerData(PlayerManager.LoadTempPlayerData().id).singleModeData[(int)gameData.index]);
+        var gameStateList = JsonManager.Deserialize<SingleGameStateList>(PlayerManager.Instance.singleModeData[SingleGameManager.GetGameMode().index]);      
         return gameStateList == null ? new SingleGameStateList() : gameStateList;
     }
 
     public static void ClearGameState(SingleBoard board)
     {
-        var gameStateList = new SingleGameStateList();
-        if (SingleGameManager.GetGameMode().index == SINGLE_GAME_MODE.CHALLENGE)
-        {
-            gameStateList.highestScore = Mathf.Max(gameStateList.highestScore, board.highestScore);
-            gameStateList.highestBlock = Mathf.Max(gameStateList.highestBlock, board.highestBlock);
-        }
-        SaveGameState(gameStateList);
+        SaveGameState(new SingleGameStateList(), board);
     }
 
     public static void AddGameState(SingleBoard board)
@@ -141,20 +142,13 @@ public class SingleGameManager
         if (gameStateList.mainState.Count > undoSize + 1) gameStateList.mainState.RemoveAt(0);
         gameStateList.subState.Clear();
 
-        if (SingleGameManager.GetGameMode().index == SINGLE_GAME_MODE.CHALLENGE)
-        {
-            gameStateList.highestScore = Mathf.Max(gameStateList.highestScore, board.highestScore);
-            gameStateList.highestBlock = Mathf.Max(gameStateList.highestBlock, board.highestBlock);
-        }
-        SaveGameState(gameStateList);
+        SaveGameState(gameStateList, board);
     }
 
     public static SingleGameState GetGameState()
     {
         var gameStateList = LoadGameState();
-        var gameState = gameStateList.mainState.Count == 0 ? new SingleGameState() : gameStateList.mainState[gameStateList.mainState.Count - 1];
-        gameState.highestScore = gameStateList.highestScore;
-        return gameState;
+        return gameStateList.Empty() ? new SingleGameState() : gameStateList.mainState[gameStateList.mainState.Count - 1];
     }
 
     public static void Undo(SingleBoard board)
@@ -167,12 +161,7 @@ public class SingleGameManager
             gameStateList.mainState.RemoveAt(gameStateList.mainState.Count - 1);
         }
 
-        if (SingleGameManager.GetGameMode().index == SINGLE_GAME_MODE.CHALLENGE)
-        {
-            gameStateList.highestScore = Mathf.Max(gameStateList.highestScore, board.highestScore);
-            gameStateList.highestBlock = Mathf.Max(gameStateList.highestBlock, board.highestBlock);
-        }
-        SaveGameState(gameStateList);
+        SaveGameState(gameStateList, board);
     }
 
     public static void Redo(SingleBoard board)
@@ -185,11 +174,6 @@ public class SingleGameManager
             gameStateList.subState.RemoveAt(gameStateList.subState.Count - 1);
         }
 
-        if (SingleGameManager.GetGameMode().index == SINGLE_GAME_MODE.CHALLENGE)
-        {
-            gameStateList.highestScore = Mathf.Max(gameStateList.highestScore, board.highestScore);
-            gameStateList.highestBlock = Mathf.Max(gameStateList.highestBlock, board.highestBlock);
-        }
-        SaveGameState(gameStateList);
+        SaveGameState(gameStateList, board);
     }
 }

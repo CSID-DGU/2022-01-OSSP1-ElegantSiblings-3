@@ -7,9 +7,10 @@ using System.Data;
 using System.IO;
 
 
-[System.Serializable]
-public class Player
+public class PlayerManager : MonoBehaviour
 {
+    public static PlayerManager Instance;
+
     public string id = "";
     public string passWord = "";
     public string nickName = "";
@@ -19,79 +20,53 @@ public class Player
     public int win = 0;
     public int lose = 0;
     public int exp = 0;
-    public List<string> singleModeData = new List<string>();
-}
+    public Dictionary<SINGLE_GAME_MODE, string> singleModeData = new Dictionary<SINGLE_GAME_MODE, string>();
 
-
-public class PlayerManager
-{
-    private static int StringToInt(string str)
+    private void Awake()
     {
-        return str == "" ? 0 : int.Parse(str);
-    }
-
-    /// <summary>
-    /// Player Data 임시 저장
-    /// </summary>
-    public static void SaveTempPlayerData(DataTable playerData)
-    {
-        Player player = new Player
+        if (Instance != null)
         {
-            id = playerData.Rows[0][0].ToString(),
-            passWord = playerData.Rows[0][1].ToString(),
-            nickName = playerData.Rows[0][3].ToString(),
-            highestScore = StringToInt(playerData.Rows[0][4].ToString()),
-            highestBlock = StringToInt(playerData.Rows[0][5].ToString()),
-            games = StringToInt(playerData.Rows[0][6].ToString()),
-            win = StringToInt(playerData.Rows[0][7].ToString()),
-            lose = StringToInt(playerData.Rows[0][8].ToString()),
-            exp = StringToInt(playerData.Rows[0][9].ToString()),
-            singleModeData = new List<string> { playerData.Rows[0][10].ToString(), playerData.Rows[0][11].ToString(), playerData.Rows[0][12].ToString() }
-        };
-
-        JsonManager.Write(Path.Combine(Application.persistentDataPath, "SaveTempPlayerData.json"), player);
-    }
-
-
-    public static Player ReloadPlayerData(string id)
-    {
-        DataTable dataTable = DatabaseManager.Select(new List<KeyValuePair<string, string>>
-        {
-             new KeyValuePair<string, string>("id", id)
-        });
-
-        Player player = new Player();
-
-        if (dataTable.Rows.Count != 0)
-        {
-            player = new Player
-            {
-                id = dataTable.Rows[0][0].ToString(),
-                passWord = dataTable.Rows[0][1].ToString(),
-                nickName = dataTable.Rows[0][3].ToString(),
-                highestScore = StringToInt(dataTable.Rows[0][4].ToString()),
-                highestBlock = StringToInt(dataTable.Rows[0][5].ToString()),
-                games = StringToInt(dataTable.Rows[0][6].ToString()),
-                win = StringToInt(dataTable.Rows[0][7].ToString()),
-                lose = StringToInt(dataTable.Rows[0][8].ToString()),
-                exp = StringToInt(dataTable.Rows[0][9].ToString()),
-                singleModeData = new List<string> { dataTable.Rows[0][10].ToString(), dataTable.Rows[0][11].ToString(), dataTable.Rows[0][12].ToString() }
-            };
+            Destroy(gameObject);
+            return;
         }
-
-        JsonManager.Write(Path.Combine(Application.persistentDataPath, "SaveTempPlayerData.json"), player);
-
-        return player;
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
-
-    public static Player LoadTempPlayerData()
+    public void Initialize(string id)
     {
-        return JsonManager.Read<Player>(Path.Combine(Application.persistentDataPath, "SaveTempPlayerData.json"));
+        this.id = id;
+        Construct();
     }
 
-    public static void ClearTempPlayerData()
+    public void Update()
     {
-        JsonManager.Delete(Path.Combine(Application.persistentDataPath, "SaveTempPlayerData.json"));
+        Construct();
     }
+
+    private void Construct()
+    {
+        var playerData = DatabaseManager.Select(new List<KeyValuePair<string, string>>
+        {
+            new KeyValuePair<string, string>(DatabaseManager.GetDBAttribute(DatabaseManager.ATTRIBUTE.ID), this.id),
+        }).Rows[0];
+
+        this.id = playerData[(int)DatabaseManager.ATTRIBUTE.ID].ToString();
+        this.passWord = playerData[(int)DatabaseManager.ATTRIBUTE.PASSWORD].ToString();
+        this.nickName = playerData[(int)DatabaseManager.ATTRIBUTE.NICKNAME].ToString();
+        this.highestScore = StrToInt(playerData[(int)DatabaseManager.ATTRIBUTE.HIGHESTSCORE].ToString());
+        this.highestBlock = StrToInt(playerData[(int)DatabaseManager.ATTRIBUTE.HIGHESTBLOCK].ToString());
+        this.games = StrToInt(playerData[(int)DatabaseManager.ATTRIBUTE.GAMES].ToString());
+        this.win = StrToInt(playerData[(int)DatabaseManager.ATTRIBUTE.WIN].ToString());
+        this.lose = StrToInt(playerData[(int)DatabaseManager.ATTRIBUTE.LOSE].ToString());
+        this.exp = StrToInt(playerData[(int)DatabaseManager.ATTRIBUTE.EXP].ToString());
+        this.singleModeData = new Dictionary<SINGLE_GAME_MODE, string>
+        {
+            { SINGLE_GAME_MODE.CLASSIC, playerData[(int)DatabaseManager.ATTRIBUTE.SAVECLASSICMODE].ToString() },
+            { SINGLE_GAME_MODE.CHALLENGE, playerData[(int)DatabaseManager.ATTRIBUTE.SAVECHALLENGEMODE].ToString() },
+            { SINGLE_GAME_MODE.PRACTICE, playerData[(int)DatabaseManager.ATTRIBUTE.SAVEPRACTICEMODE].ToString() },
+        };
+    }
+
+    private static int StrToInt(string str) => str == "" ? 0 : int.Parse(str);
 }

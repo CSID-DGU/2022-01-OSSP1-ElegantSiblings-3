@@ -13,6 +13,33 @@ using UnityEngine.SceneManagement;
 
 public class DatabaseManager
 {
+    public enum ATTRIBUTE
+    {
+        ID, PASSWORD, INDATE, NICKNAME, HIGHESTSCORE, HIGHESTBLOCK, GAMES, WIN, LOSE, EXP, SAVECLASSICMODE, SAVECHALLENGEMODE, SAVEPRACTICEMODE
+    }
+
+    public static string GetDBAttribute(DatabaseManager.ATTRIBUTE attribute)
+    {
+        var dictionary = new Dictionary<ATTRIBUTE, string>
+        {
+            { DatabaseManager.ATTRIBUTE.ID, "id" },
+            { DatabaseManager.ATTRIBUTE.PASSWORD, "password" },
+            { DatabaseManager.ATTRIBUTE.NICKNAME, "nickname" },
+            { DatabaseManager.ATTRIBUTE.HIGHESTSCORE, "highestscore" },
+            { DatabaseManager.ATTRIBUTE.HIGHESTBLOCK, "highestblock" },
+            { DatabaseManager.ATTRIBUTE.GAMES, "pvpplaynum" },
+            { DatabaseManager.ATTRIBUTE.WIN, "pvpvictorynum" },
+            { DatabaseManager.ATTRIBUTE.LOSE, "pvpdefeatnum" },
+            { DatabaseManager.ATTRIBUTE.EXP, "xp" },
+            { DatabaseManager.ATTRIBUTE.SAVECLASSICMODE, "saveclassicmode" },
+            { DatabaseManager.ATTRIBUTE.SAVECHALLENGEMODE, "savechallengemode" },
+            { DatabaseManager.ATTRIBUTE.SAVEPRACTICEMODE, "savepracticemode" },
+        };
+
+        return dictionary.ContainsKey(attribute) ? dictionary[attribute] : "";
+    }
+
+
     public static bool Insert(List<KeyValuePair<string, string>> inputList)
     {
         string insertQuery = "INSERT INTO";

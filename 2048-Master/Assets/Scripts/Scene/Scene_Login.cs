@@ -13,39 +13,55 @@ using UnityEngine.SceneManagement;
 
 public class Scene_Login : MonoBehaviour
 {
+    TMP_InputField inputField_UserID;
+    TMP_InputField inputField_UserPW;
+
     private void Awake()
     {
-        GameObject.Find("InputField_UserID").GetComponent<TMP_InputField>().text = "";
-        GameObject.Find("InputField_UserPW").GetComponent<TMP_InputField>().text = "";
+        inputField_UserID = GameObject.Find("InputField_UserID").GetComponent<TMP_InputField>();
+        inputField_UserPW = GameObject.Find("InputField_UserPW").GetComponent<TMP_InputField>();
     }
 
+
+
+    // ----------------------- Button Click Event -------------------------//
     public void Button_Login_Click()
     {
-        DataTable dataTable = DatabaseManager.Select(new List<KeyValuePair<string, string>>
-        {
-             new KeyValuePair<string, string>("id", GameObject.Find("InputField_UserID").GetComponent<TMP_InputField>().text),
-             new KeyValuePair<string, string>("password", GameObject.Find("InputField_UserPW").GetComponent<TMP_InputField>().text)
-        });
-
-        if (dataTable.Rows.Count == 0)
-        {
-            Debug.Log("계정이 존재하지않습니다");
-            GameObject.Find("InputField_UserID").GetComponent<TMP_InputField>().text = "";
-            GameObject.Find("InputField_UserPW").GetComponent<TMP_InputField>().text = "";
+        if (inputField_UserID.text == "" || inputField_UserPW.text == "")
+        {   
+            // TODO: Messagebox
+            Debug.Log("빈칸이 있습니다.");
         }
         else
         {
-            PlayerManager.SaveTempPlayerData(dataTable);
-            Debug.Log("로그인 되었습니다");
-            SceneManager.LoadScene("Scene_Home");
+            DataTable dataTable = DatabaseManager.Select(new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>("id", inputField_UserID.text),
+                new KeyValuePair<string, string>("password", inputField_UserPW.text)
+            });
+
+            if (dataTable.Rows.Count == 0)
+            {
+                // TODO: Messagebox
+                Debug.Log("계정이 존재하지않습니다");
+                inputField_UserID.text = "";
+                inputField_UserPW.text = "";
+            }
+            else
+            {
+                // TODO: Messagebox
+                Debug.Log("로그인 되었습니다");
+                PlayerManager.Instance.Initialize(dataTable.Rows[0][(int)DatabaseManager.ATTRIBUTE.ID].ToString());
+                SceneManager.LoadScene("Scene_Home");
+            }
         }
     }
-
 
     public void Button_Register_Click()
     {
         SceneManager.LoadScene("Scene_Registration");
     }
+}
 
 
 
@@ -56,9 +72,7 @@ public class Scene_Login : MonoBehaviour
 
 
 
-
-
-
+/*
 
     public static bool Insert(string insertQuery)
     {
@@ -175,4 +189,4 @@ public class Scene_Login : MonoBehaviour
         }
         return dt;
     }
-}
+}*/

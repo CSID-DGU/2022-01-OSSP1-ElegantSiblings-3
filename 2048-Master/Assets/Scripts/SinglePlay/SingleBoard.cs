@@ -75,7 +75,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         if (gameStart)
         {
-            SaveGame();
+            //SaveGame();
             SceneManager.LoadScene("Scene_SinglePlay");
         }
     }
@@ -83,7 +83,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         if (gameStart)
         {
-            SaveGame();
+            //SaveGame();
             SceneManager.LoadScene("Scene_Home");
         }
     }
@@ -154,15 +154,22 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
 
         // initialize score screen 
-        GameObject.Find("Textbox_CurrentScore").GetComponent<TextMeshProUGUI>().text = gameState.currentScore.ToString();
-        GameObject.Find("Textbox_HighestScore").GetComponent<TextMeshProUGUI>().text = gameState.highestScore.ToString();
+        GameObject.Find("Textbox_HighestScore").SetActive(gameMode.index == SINGLE_GAME_MODE.CHALLENGE ? true : false);      
         GameObject.Find("Textbox_TargetNumber").GetComponent<TextMeshProUGUI>().text = new List<string> { "2048", "Infinity", "16" }[(int)gameMode.index];
         GameObject.Find("Message_Result").GetComponent<Image>().gameObject.SetActive(false);
         GameObject.Find("Button_GameEnd").GetComponent<Image>().gameObject.SetActive(false);
-
+       
 
         // 게임 보드 생성
         CreateGameBoard(gameState);
+        UpdateScoreBoard(gameState.currentScore, gameState.highestScore);
+    }
+
+    private void UpdateScoreBoard(int currentScore, int highestScore)
+    {
+        GameObject.Find("Textbox_CurrentScore").GetComponent<TextMeshProUGUI>().text = currentScore.ToString();
+        if (SingleGameManager.GetGameMode().index == SINGLE_GAME_MODE.CHALLENGE) 
+            GameObject.Find("Textbox_HighestScore").GetComponent<TextMeshProUGUI>().text = highestScore.ToString();       
     }
 
 
@@ -306,9 +313,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         highestScore = Mathf.Max(highestScore, currentScore);
         highestBlock = Mathf.Max(highestBlock, new_block_value);
 
-        GameObject.Find("Textbox_CurrentScore").GetComponent<TextMeshProUGUI>().text = currentScore.ToString();
-        GameObject.Find("Textbox_HighestScore").GetComponent<TextMeshProUGUI>().text = highestScore.ToString();
-
+        UpdateScoreBoard(currentScore, highestScore);
         CheckGameState();
     }
 
@@ -548,10 +553,10 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
         if (state == State.END)
         {
-            nodeList.ForEach(x => x.combined = false);
-            state = State.WAIT;
+            nodeList.ForEach(x => x.combined = false);  
             CreateRandomBlock();
             SaveGame();
+            state = State.WAIT;
         }
     }
 

@@ -7,8 +7,9 @@ using System.IO;
 
 public class JsonManager
 {
-    public static string GetJson<T>(T obj) => JsonUtility.ToJson(obj, true);
-    
+    public static string Serialize<T>(T obj) => JsonUtility.ToJson(obj, true);
+    public static T Deserialize<T>(string serializedObj) => JsonUtility.FromJson<T>(serializedObj);
+
     public static void Write<T>(string path, T obj)
     {
         File.WriteAllText(path, JsonUtility.ToJson(obj, true));
