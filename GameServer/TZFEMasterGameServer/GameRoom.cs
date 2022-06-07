@@ -136,12 +136,10 @@ namespace TZFEMasterGameServer
 		{
 			// 게임 시작 메시지 전송.
 			CPacket msg = CPacket.create((short)PROTOCOL.GAME_START);
-
 			msg.push((byte)this.players.Count);
-			msg.push("Game Start!!");
-
 			broadcast(msg);
 		}
+
 
 
 		/// <summary>
@@ -248,6 +246,14 @@ namespace TZFEMasterGameServer
 			if (is_game_over) return;
 			sender.Give_Up();
 			Game_Rule(sender, Get_Rival(sender), (short)PROTOCOL.GIVE_UP_GAME);
+		}
+
+		public void On_Exchange_NickName(Player sender, string nickName)
+        {
+			if (is_game_over) return;
+			CPacket msg = CPacket.create((short)PROTOCOL.EXCHANGE_NICKNAME);
+			msg.push(nickName);
+			Get_Rival(sender).send(msg);
 		}
 	}
 }

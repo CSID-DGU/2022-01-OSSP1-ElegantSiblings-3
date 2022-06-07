@@ -100,10 +100,11 @@ public class SingleGameManager
                 new KeyValuePair<string, string>(DatabaseManager.GetDBAttribute(DatabaseManager.ATTRIBUTE.HIGHESTBLOCK), Math.Max(player.highestBlock, gameBoard.highestBlock).ToString()),
             }, player.id);
         }
-        
+
         // Game State Update
         DatabaseManager.Update(new List<KeyValuePair<string, string>>
         {
+            new KeyValuePair<string, string>(DatabaseManager.GetDBAttribute(DatabaseManager.ATTRIBUTE.EXP), (player.exp + gameBoard.expCount).ToString()),
             new KeyValuePair<string, string>(
                 DatabaseManager.GetDBAttribute(new Dictionary<SINGLE_GAME_MODE, DatabaseManager.ATTRIBUTE>
                 {
@@ -113,7 +114,7 @@ public class SingleGameManager
                 }[mode]), JsonManager.Serialize(gameStateList))
         }, player.id);
 
-        PlayerManager.Instance.Update();
+        PlayerManager.Instance.UpdatePlayer();
     }
 
     private static SingleGameStateList LoadGameState()

@@ -53,6 +53,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public int currentScore;
     public int highestScore;
     public int highestBlock;
+    public int expCount = 0;
 
     // Touch Event
     public Vector2 vectorS = new Vector2();
@@ -139,7 +140,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         var gameMode = SingleGameManager.GetGameMode();
         var gameState = SingleGameManager.GetGameState();
         currentScore = gameState.currentScore;
-        highestScore = gameState.highestScore;
+        highestScore = PlayerManager.Instance.highestScore; //gameState.highestScore;
         highestBlock = gameState.highestBlock;
         targetNumber = new List<int> { 2048, 1073741824, 16 }[(int)gameMode.index];
 
@@ -162,7 +163,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
         // 게임 보드 생성
         CreateGameBoard(gameState);
-        UpdateScoreBoard(gameState.currentScore, gameState.highestScore);
+        UpdateScoreBoard(currentScore, highestScore);
     }
 
     private void UpdateScoreBoard(int currentScore, int highestScore)
@@ -308,10 +309,13 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             to.combined = true;
         }
 
-        int new_block_value = to.value.GetValueOrDefault();
-        currentScore += new_block_value;
+        int newBlockValue = to.value.GetValueOrDefault();
+        currentScore += newBlockValue;
         highestScore = Mathf.Max(highestScore, currentScore);
-        highestBlock = Mathf.Max(highestBlock, new_block_value);
+        highestBlock = Mathf.Max(highestBlock, newBlockValue);
+
+        // 테스트용으로 8마다 경험치 획득
+        if (newBlockValue == 8) expCount++;
 
         UpdateScoreBoard(currentScore, highestScore);
         CheckGameState();

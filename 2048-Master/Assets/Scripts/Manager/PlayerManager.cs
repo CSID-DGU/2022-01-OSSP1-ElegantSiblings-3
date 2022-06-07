@@ -39,7 +39,7 @@ public class PlayerManager : MonoBehaviour
         Construct();
     }
 
-    public void Update()
+    public void UpdatePlayer()
     {
         Construct();
     }

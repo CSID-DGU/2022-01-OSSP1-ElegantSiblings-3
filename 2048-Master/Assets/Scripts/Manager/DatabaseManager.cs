@@ -30,7 +30,7 @@ public class DatabaseManager
             { DatabaseManager.ATTRIBUTE.GAMES, "pvpplaynum" },
             { DatabaseManager.ATTRIBUTE.WIN, "pvpvictorynum" },
             { DatabaseManager.ATTRIBUTE.LOSE, "pvpdefeatnum" },
-            { DatabaseManager.ATTRIBUTE.EXP, "xp" },
+            { DatabaseManager.ATTRIBUTE.EXP, "exp" },
             { DatabaseManager.ATTRIBUTE.SAVECLASSICMODE, "saveclassicmode" },
             { DatabaseManager.ATTRIBUTE.SAVECHALLENGEMODE, "savechallengemode" },
             { DatabaseManager.ATTRIBUTE.SAVEPRACTICEMODE, "savepracticemode" },

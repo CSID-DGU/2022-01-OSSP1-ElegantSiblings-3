@@ -38,5 +38,8 @@ public enum PROTOCOL : short
 	// 게임룸 입장 요청
 	ENTER_GAME_ROOM_REQ = 10,
 
+	// 닉네임 교환
+	EXCHANGE_NICKNAME = 11,
+
 	END
 }

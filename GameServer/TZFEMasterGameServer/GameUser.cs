@@ -66,6 +66,11 @@ namespace TZFEMasterGameServer
 					this.battle_room.loading_complete(player);
 					break;
 
+				case PROTOCOL.EXCHANGE_NICKNAME:
+					string nickName = msg.pop_string();
+					this.battle_room.On_Exchange_NickName(player, nickName);
+					break;
+
 				case PROTOCOL.MODIFIED_SCORE:
 					int curr = msg.pop_int32();
 					int highest = msg.pop_int32();

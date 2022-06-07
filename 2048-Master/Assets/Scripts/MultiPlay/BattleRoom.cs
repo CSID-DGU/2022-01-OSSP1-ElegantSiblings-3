@@ -93,6 +93,10 @@ public class BattleRoom : MonoBehaviour
 				On_Game_Start(msg);
 				break;
 
+			case PROTOCOL.EXCHANGE_NICKNAME:
+
+				break;
+
 			case PROTOCOL.MOVED_NODE:
 				On_Moved_Node(msg);
 				break;
@@ -110,12 +114,23 @@ public class BattleRoom : MonoBehaviour
 	private void On_Game_Start(CPacket msg)  // 게임 시작
 	{
 		StartCoroutine(Game_Ready());
-
 		this.game_state = GAME_STATE.STARTED;
-		board_player.On_Game_Start();		
+
+		CPacket nickNameMsg = CPacket.create((short)PROTOCOL.EXCHANGE_NICKNAME);
+		msg.push(PlayerManager.Instance.nickName);
+		this.On_Send(nickNameMsg);
+
+		board_player.On_Game_Start();
 	}
 
-	private void On_Moved_Node(CPacket msg)  
+	private void On_Exchange_NickName(CPacket msg)
+    {
+        string rivalNickName = msg.pop_string();
+		GameObject.Find("Text_RivalNickName").GetComponent<TextMeshProUGUI>().text = rivalNickName;
+		GameObject.Find("Text_PlayerNickName").GetComponent<TextMeshProUGUI>().text = PlayerManager.Instance.nickName;
+	}
+
+    private void On_Moved_Node(CPacket msg)  
 	{
 		board_rival.recv_game_event.Receive_Moved_Direction(msg);
 	}

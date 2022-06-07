@@ -13,7 +13,7 @@ public class Scene_Home : MonoBehaviour
         // TODO: theme ¼³Á¤
 
         GameObject.Find("Text_NickName").GetComponent<TextMeshProUGUI>().text = PlayerManager.Instance.nickName;
-        GameObject.Find("Text_Level").GetComponent<TextMeshProUGUI>().text = ((PlayerManager.Instance.exp / 5) + 1).ToString();
+        GameObject.Find("Text_Level").GetComponent<TextMeshProUGUI>().text = "Lv. " + ((PlayerManager.Instance.exp / 10) + 1).ToString();
         GameObject.Find("Text_HighestScore").GetComponent<TextMeshProUGUI>().text = PlayerManager.Instance.highestScore.ToString();
         GameObject.Find("Text_HighestBlock").GetComponent<TextMeshProUGUI>().text = PlayerManager.Instance.highestBlock.ToString();
         GameObject.Find("Text_Games").GetComponent<TextMeshProUGUI>().text = PlayerManager.Instance.games.ToString();
