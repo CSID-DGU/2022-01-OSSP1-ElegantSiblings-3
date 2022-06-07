@@ -16,8 +16,11 @@ public class Scene_Login : MonoBehaviour
     TMP_InputField inputField_UserID;
     TMP_InputField inputField_UserPW;
 
+
     private void Awake()
     {
+        GameObject.Find("BackGround").transform.Find("Messagebox_LoginFail").gameObject.SetActive(false);
+        GameObject.Find("BackGround").transform.Find("Button_LoginFail").gameObject.SetActive(false);
         inputField_UserID = GameObject.Find("InputField_UserID").GetComponent<TMP_InputField>();
         inputField_UserPW = GameObject.Find("InputField_UserPW").GetComponent<TMP_InputField>();
     }
@@ -44,6 +47,8 @@ public class Scene_Login : MonoBehaviour
             {
                 // TODO: Messagebox
                 Debug.Log("계정이 존재하지않습니다");
+                GameObject.Find("BackGround").transform.Find("Messagebox_LoginFail").gameObject.SetActive(true);
+                GameObject.Find("BackGround").transform.Find("Button_LoginFail").gameObject.SetActive(true);
                 inputField_UserID.text = "";
                 inputField_UserPW.text = "";
             }
@@ -55,6 +60,12 @@ public class Scene_Login : MonoBehaviour
                 SceneManager.LoadScene("Scene_Home");
             }
         }
+    }
+
+    public void Button_LoginFail_Click()
+    {
+        GameObject.Find("BackGround").transform.Find("Messagebox_LoginFail").gameObject.SetActive(false);
+        GameObject.Find("BackGround").transform.Find("Button_LoginFail").gameObject.SetActive(false);
     }
 
     public void Button_Register_Click()

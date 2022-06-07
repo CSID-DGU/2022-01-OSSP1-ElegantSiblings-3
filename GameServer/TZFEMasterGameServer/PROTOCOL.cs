@@ -46,8 +46,8 @@ namespace TZFEMasterGameServer
 		// 게임룸 입장 요청
 		ENTER_GAME_ROOM_REQ = 10,
 
-		// 게임룸 입장 요청
-		EXCHANGE_NICKNAME,
+		// 닉네임 교환
+		EXCHANGE_NICKNAME = 11,
 
 		END
 	}

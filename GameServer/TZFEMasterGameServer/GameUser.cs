@@ -67,7 +67,9 @@ namespace TZFEMasterGameServer
 					break;
 
 				case PROTOCOL.EXCHANGE_NICKNAME:
+
 					string nickName = msg.pop_string();
+					Console.WriteLine("Recv NickName : " + nickName);
 					this.battle_room.On_Exchange_NickName(player, nickName);
 					break;
 

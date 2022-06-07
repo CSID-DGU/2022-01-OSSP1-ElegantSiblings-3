@@ -14,6 +14,10 @@ public class Scene_Registration : MonoBehaviour
 
     private void Awake()
     {
+        GameObject.Find("BackGround").transform.Find("Messagebox_AlreadyExistsID").gameObject.SetActive(false);
+        GameObject.Find("BackGround").transform.Find("Button_AlreadyExistsID").gameObject.SetActive(false);
+        GameObject.Find("BackGround").transform.Find("Messagebox_ExistBlank").gameObject.SetActive(false);
+        GameObject.Find("BackGround").transform.Find("Button_ExistBlank").gameObject.SetActive(false);
         inputField_ID = GameObject.Find("InputField_ID").GetComponent<TMP_InputField>();
         inputField_PW = GameObject.Find("InputField_PW").GetComponent<TMP_InputField>();
         inputField_NK = GameObject.Find("InputField_NK").GetComponent<TMP_InputField>();
@@ -24,6 +28,8 @@ public class Scene_Registration : MonoBehaviour
         if (inputField_ID.text == "" || inputField_PW.text == "" || inputField_NK.text == "")
         {
             Debug.Log("빈칸이 있습니다!");
+            GameObject.Find("BackGround").transform.Find("Messagebox_ExistBlank").gameObject.SetActive(true);
+            GameObject.Find("BackGround").transform.Find("Button_ExistBlank").gameObject.SetActive(true);
             return;
         }
 
@@ -56,8 +62,22 @@ public class Scene_Registration : MonoBehaviour
         }
         else
         {
-            Debug.Log("해당 아이디가 이미 존재합니다.");
+            GameObject.Find("BackGround").transform.Find("Messagebox_AlreadyExistsID").gameObject.SetActive(true);
+            GameObject.Find("BackGround").transform.Find("Button_AlreadyExistsID").gameObject.SetActive(true);
+            inputField_ID = GameObject.Find("InputField_ID").GetComponent<TMP_InputField>();
             inputField_ID.text = "";
         }
+    }
+    
+    public void Button_AlreadyExistsID_Click()
+    {
+        GameObject.Find("BackGround").transform.Find("Messagebox_AlreadyExistsID").gameObject.SetActive(false);
+        GameObject.Find("BackGround").transform.Find("Button_AlreadyExistsID").gameObject.SetActive(false);
+    }
+
+    public void Button_ExistBlank_Click()
+    {
+        GameObject.Find("BackGround").transform.Find("Messagebox_ExistBlank").gameObject.SetActive(false);
+        GameObject.Find("BackGround").transform.Find("Button_ExistBlank").gameObject.SetActive(false);
     }
 }

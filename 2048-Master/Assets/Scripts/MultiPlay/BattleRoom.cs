@@ -34,6 +34,8 @@ public class BattleRoom : MonoBehaviour
     {
 		GameObject.Find("BackGround").transform.Find("Messagebox_Result").gameObject.SetActive(false);
 		GameObject.Find("BackGround").transform.Find("Messagebox_Start").gameObject.SetActive(false);
+		GameObject.Find("Text_RivalNickName").GetComponent<TextMeshProUGUI>().text = "";
+		GameObject.Find("Text_PlayerNickName").GetComponent<TextMeshProUGUI>().text = "";
 
 		this.network_manager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
 		this.game_state = GAME_STATE.READY;
@@ -74,6 +76,7 @@ public class BattleRoom : MonoBehaviour
 		// 게임이 시작된 상태에서만 게임 이벤트 발생
 		if (this.game_state == GAME_STATE.STARTED)
 		{
+
 			this.network_manager.send(msg);
 		}
 	}
@@ -94,7 +97,7 @@ public class BattleRoom : MonoBehaviour
 				break;
 
 			case PROTOCOL.EXCHANGE_NICKNAME:
-
+				On_Exchange_NickName(msg);
 				break;
 
 			case PROTOCOL.MOVED_NODE:
@@ -111,16 +114,16 @@ public class BattleRoom : MonoBehaviour
 		}
 	}
 
-	private void On_Game_Start(CPacket msg)  // 게임 시작
+	private void On_Game_Start(CPacket msg)  // 게임 시작 
 	{
 		StartCoroutine(Game_Ready());
+
 		this.game_state = GAME_STATE.STARTED;
-
-		CPacket nickNameMsg = CPacket.create((short)PROTOCOL.EXCHANGE_NICKNAME);
-		msg.push(PlayerManager.Instance.nickName);
-		this.On_Send(nickNameMsg);
-
 		board_player.On_Game_Start();
+
+		CPacket nickName = CPacket.create((short)PROTOCOL.EXCHANGE_NICKNAME);
+		nickName.push(PlayerManager.Instance.nickName);
+		On_Send(nickName);
 	}
 
 	private void On_Exchange_NickName(CPacket msg)
@@ -140,12 +143,33 @@ public class BattleRoom : MonoBehaviour
 		board_rival.recv_game_event.Receive_Created_Node_Location(msg);
 	}
 
-	private void On_Game_Over(CPacket msg)  // 게임 결과 및 종료
+	private void On_Game_Over(CPacket msg)  // 게임 결과 및 종료 (1:Win, 2:Lose, 3:Draw)
 	{
 		int result = msg.pop_int32();
 
 		if (result != 0)
 		{
+			var player = PlayerManager.Instance;
+			var query = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>(DatabaseManager.GetDBAttribute(DatabaseManager.ATTRIBUTE.GAMES), (player.games + 1).ToString()) };
+
+			if (result == 1)
+			{
+				query.Add(new KeyValuePair<string, string>(DatabaseManager.GetDBAttribute(DatabaseManager.ATTRIBUTE.WIN), (player.win + 1).ToString()));
+				query.Add(new KeyValuePair<string, string>(DatabaseManager.GetDBAttribute(DatabaseManager.ATTRIBUTE.EXP), (player.exp + 2).ToString()));
+			}
+			else if (result == 2)
+			{
+				query.Add(new KeyValuePair<string, string>(DatabaseManager.GetDBAttribute(DatabaseManager.ATTRIBUTE.LOSE), (player.lose + 1).ToString()));
+				query.Add(new KeyValuePair<string, string>(DatabaseManager.GetDBAttribute(DatabaseManager.ATTRIBUTE.EXP), (player.exp + 1).ToString()));
+			}
+			else if(result == 3)
+            {
+				query.Add(new KeyValuePair<string, string>(DatabaseManager.GetDBAttribute(DatabaseManager.ATTRIBUTE.EXP), (player.exp + 1).ToString()));
+			}
+
+			DatabaseManager.Update(query, player.id);
+			PlayerManager.Instance.UpdatePlayer();
+
 			board_player.game_start = false;
 			StartCoroutine(Destroy_Room(result));
 		}
