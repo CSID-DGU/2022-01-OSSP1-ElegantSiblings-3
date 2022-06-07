@@ -142,7 +142,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         currentScore = gameState.currentScore;
         highestScore = PlayerManager.Instance.highestScore; //gameState.highestScore;
         highestBlock = gameState.highestBlock;
-        targetNumber = new List<int> { 2048, 1073741824, 16 }[(int)gameMode.index];
+        targetNumber = new List<int> { 2048, 1073741824, 128 }[(int)gameMode.index];
 
 
         // load theme
@@ -156,7 +156,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
         // initialize score screen 
         GameObject.Find("Textbox_HighestScore").SetActive(gameMode.index == SINGLE_GAME_MODE.CHALLENGE ? true : false);      
-        GameObject.Find("Textbox_TargetNumber").GetComponent<TextMeshProUGUI>().text = new List<string> { "2048", "Infinity", "16" }[(int)gameMode.index];
+        GameObject.Find("Textbox_TargetNumber").GetComponent<TextMeshProUGUI>().text = new List<string> { "2048", "Infinity", "128" }[(int)gameMode.index];
         GameObject.Find("Message_Result").GetComponent<Image>().gameObject.SetActive(false);
         GameObject.Find("Button_GameEnd").GetComponent<Image>().gameObject.SetActive(false);
        
@@ -315,7 +315,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         highestBlock = Mathf.Max(highestBlock, newBlockValue);
 
         // 테스트용으로 8마다 경험치 획득
-        if (newBlockValue == 8) expCount++;
+        if (newBlockValue == 32) expCount++;
 
         UpdateScoreBoard(currentScore, highestScore);
         CheckGameState();

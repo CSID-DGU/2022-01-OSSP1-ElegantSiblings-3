@@ -68,7 +68,13 @@ public class Scene_Registration : MonoBehaviour
             inputField_ID.text = "";
         }
     }
-    
+
+    public void Button_Cancel_Click()
+    {
+        SceneManager.LoadScene("Scene_Login");
+    }
+
+
     public void Button_AlreadyExistsID_Click()
     {
         GameObject.Find("BackGround").transform.Find("Messagebox_AlreadyExistsID").gameObject.SetActive(false);

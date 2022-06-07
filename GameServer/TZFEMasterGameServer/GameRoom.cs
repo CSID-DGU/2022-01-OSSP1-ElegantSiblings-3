@@ -149,7 +149,7 @@ namespace TZFEMasterGameServer
 		{
 			if (protocol == (short)PROTOCOL.MODIFIED_SCORE)
 			{
-				int check_highest = 16;//2048;
+				int check_highest = 128;//2048;
 
 				if (player1.highest_node_value >= check_highest || player2.highest_node_value >= check_highest)
 				{
