@@ -7,17 +7,28 @@
 |컴퓨터공학과|신준오|
 |컴퓨터공학과|장유진|
 
-### 실시간 대전과 다양한 모드를 지원하는 2048-Master 개발
 
-# 2048-Master
-2048-Master source code written in Unity 2022.05-05 (c#) 
+### 실시간 PVP대전과 다양한 모드 있는 2048-Master 개발
 
-# How to Play
- - Touch Drag  
 
-# 기술 스택
- - Unity
- - C#
+# 지원하는 OS
+ - Android Mobile
+ - Windows 
 
-# 실시간 멀티 서버
-![Server](https://user-images.githubusercontent.com/102275981/170844189-2483265b-d98d-4586-8456-99399209692e.png)
+
+# 개발환경
+ - Game Client: Unity (2021.3.1f1 LTS)
+ - Game Server: C# (.NET Framework 3.5)
+ - Database: Amazon RDS MySQL
+
+
+# Demo버전 플레이 화면
+ - TODO: Add gif file 
+
+
+# Realtime Multiplayer Server 개발 방식
+ - 실시간 게임 서버로 Photon Engine 또는 Amazon GameLift를 사용하려고 했으나 
+   교수님의 피드백을 받고 직접 서버를 구현하게 되었다
+
+ - TODO: Wrtie Server-Client Logic
+
