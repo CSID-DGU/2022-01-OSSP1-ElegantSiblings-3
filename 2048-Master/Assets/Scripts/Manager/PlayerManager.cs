@@ -1,10 +1,5 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//
-using System.Data;
-using System.IO;
 
 
 public class PlayerManager : MonoBehaviour
@@ -12,7 +7,6 @@ public class PlayerManager : MonoBehaviour
     public static PlayerManager Instance;
 
     public string id = "";
-    public string passWord = "";
     public string nickName = "";
     public int highestScore = 0;
     public int highestBlock = 0;
@@ -20,7 +14,6 @@ public class PlayerManager : MonoBehaviour
     public int win = 0;
     public int lose = 0;
     public int exp = 0;
-    public Dictionary<SINGLE_GAME_MODE, string> singleModeData = new Dictionary<SINGLE_GAME_MODE, string>();
 
     private void Awake()
     {
@@ -36,36 +29,29 @@ public class PlayerManager : MonoBehaviour
     public void Initialize(string id)
     {
         this.id = id;
-        Construct();
+        LoadPlayerData();
     }
 
-    public void UpdatePlayer()
+    public void LoadPlayerData()
     {
-        Construct();
-    }
-
-    private void Construct()
-    {
-        var playerData = DatabaseManager.Select(new List<KeyValuePair<string, string>>
+        var data = DatabaseManager.Select(new List<DatabaseManager.ATTRIBUTE>
         {
-            new KeyValuePair<string, string>(DatabaseManager.GetDBAttribute(DatabaseManager.ATTRIBUTE.ID), this.id),
-        }).Rows[0];
+            DatabaseManager.ATTRIBUTE.nickname,
+            DatabaseManager.ATTRIBUTE.highestscore,
+            DatabaseManager.ATTRIBUTE.highestblock,
+            DatabaseManager.ATTRIBUTE.games,
+            DatabaseManager.ATTRIBUTE.win,
+            DatabaseManager.ATTRIBUTE.lose,
+            DatabaseManager.ATTRIBUTE.exp
+        }, this.id).Rows[0];
 
-        this.id = playerData[(int)DatabaseManager.ATTRIBUTE.ID].ToString();
-        this.passWord = playerData[(int)DatabaseManager.ATTRIBUTE.PASSWORD].ToString();
-        this.nickName = playerData[(int)DatabaseManager.ATTRIBUTE.NICKNAME].ToString();
-        this.highestScore = StrToInt(playerData[(int)DatabaseManager.ATTRIBUTE.HIGHESTSCORE].ToString());
-        this.highestBlock = StrToInt(playerData[(int)DatabaseManager.ATTRIBUTE.HIGHESTBLOCK].ToString());
-        this.games = StrToInt(playerData[(int)DatabaseManager.ATTRIBUTE.GAMES].ToString());
-        this.win = StrToInt(playerData[(int)DatabaseManager.ATTRIBUTE.WIN].ToString());
-        this.lose = StrToInt(playerData[(int)DatabaseManager.ATTRIBUTE.LOSE].ToString());
-        this.exp = StrToInt(playerData[(int)DatabaseManager.ATTRIBUTE.EXP].ToString());
-        this.singleModeData = new Dictionary<SINGLE_GAME_MODE, string>
-        {
-            { SINGLE_GAME_MODE.CLASSIC, playerData[(int)DatabaseManager.ATTRIBUTE.SAVECLASSICMODE].ToString() },
-            { SINGLE_GAME_MODE.CHALLENGE, playerData[(int)DatabaseManager.ATTRIBUTE.SAVECHALLENGEMODE].ToString() },
-            { SINGLE_GAME_MODE.PRACTICE, playerData[(int)DatabaseManager.ATTRIBUTE.SAVEPRACTICEMODE].ToString() },
-        };
+        nickName = data[0].ToString();
+        highestScore = StrToInt(data[1].ToString());
+        highestBlock = StrToInt(data[2].ToString());
+        games = StrToInt(data[3].ToString());
+        win = StrToInt(data[4].ToString());
+        lose = StrToInt(data[5].ToString());
+        exp = StrToInt(data[6].ToString());
     }
 
     private static int StrToInt(string str) => str == "" ? 0 : int.Parse(str);

@@ -150,26 +150,24 @@ public class BattleRoom : MonoBehaviour
 		if (result != 0)
 		{
 			var player = PlayerManager.Instance;
-			var query = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>(DatabaseManager.GetDBAttribute(DatabaseManager.ATTRIBUTE.GAMES), (player.games + 1).ToString()) };
+			var query = new List<KeyValuePair<DatabaseManager.ATTRIBUTE, string>> { new KeyValuePair<DatabaseManager.ATTRIBUTE, string>(DatabaseManager.ATTRIBUTE.games, (player.games + 1).ToString()) };
 
 			if (result == 1)
 			{
-				query.Add(new KeyValuePair<string, string>(DatabaseManager.GetDBAttribute(DatabaseManager.ATTRIBUTE.WIN), (player.win + 1).ToString()));
-				query.Add(new KeyValuePair<string, string>(DatabaseManager.GetDBAttribute(DatabaseManager.ATTRIBUTE.EXP), (player.exp + 2).ToString()));
+				query.Add(new KeyValuePair<DatabaseManager.ATTRIBUTE, string>(DatabaseManager.ATTRIBUTE.win, (player.win + 1).ToString()));
+				query.Add(new KeyValuePair<DatabaseManager.ATTRIBUTE, string>(DatabaseManager.ATTRIBUTE.exp, (player.exp + 2).ToString()));
 			}
 			else if (result == 2)
 			{
-				query.Add(new KeyValuePair<string, string>(DatabaseManager.GetDBAttribute(DatabaseManager.ATTRIBUTE.LOSE), (player.lose + 1).ToString()));
-				query.Add(new KeyValuePair<string, string>(DatabaseManager.GetDBAttribute(DatabaseManager.ATTRIBUTE.EXP), (player.exp + 1).ToString()));
+				query.Add(new KeyValuePair<DatabaseManager.ATTRIBUTE, string>(DatabaseManager.ATTRIBUTE.lose, (player.lose + 1).ToString()));
+				query.Add(new KeyValuePair<DatabaseManager.ATTRIBUTE, string>(DatabaseManager.ATTRIBUTE.exp, (player.exp + 1).ToString()));
 			}
 			else if(result == 3)
             {
-				query.Add(new KeyValuePair<string, string>(DatabaseManager.GetDBAttribute(DatabaseManager.ATTRIBUTE.EXP), (player.exp + 1).ToString()));
+				query.Add(new KeyValuePair<DatabaseManager.ATTRIBUTE, string>(DatabaseManager.ATTRIBUTE.exp, (player.exp + 1).ToString()));
 			}
 
 			DatabaseManager.Update(query, player.id);
-			PlayerManager.Instance.UpdatePlayer();
-
 			board_player.game_start = false;
 			StartCoroutine(Destroy_Room(result));
 		}

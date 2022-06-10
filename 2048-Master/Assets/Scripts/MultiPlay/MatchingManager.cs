@@ -28,6 +28,11 @@ public class MatchingManager : MonoBehaviour
 	List<Texture> waiting_img;
 	int waiting_count;
 
+	// Touch Event
+	public Vector2 vectorS = new Vector2();
+	public Vector2 vectorE = new Vector2();
+	public Vector2 vectorM = new Vector2();
+
 
 	// Use this for initialization
 	void Start()
@@ -49,8 +54,8 @@ public class MatchingManager : MonoBehaviour
 			Resources.Load("theme3/Scene_GameRoom_Message_Waiting2" + theme_name) as Texture,
 			Resources.Load("theme3/Scene_GameRoom_Message_Waiting3" + theme_name) as Texture
 		};
-		this.waiting_count = 0;
 
+		this.waiting_count = 0;
 		this.user_state = USER_STATE.NOT_CONNECTED;
 		enter();
 	}
@@ -95,6 +100,7 @@ public class MatchingManager : MonoBehaviour
 		}
 	}
 
+
 	void OnGUI()
 	{
 		switch (this.user_state)
@@ -108,11 +114,9 @@ public class MatchingManager : MonoBehaviour
 
 			case USER_STATE.WAITING_MATCHING:				
 				GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), this.matching_bg);
-				//GUI.DrawTexture(new Rect(Screen.width / 2 - 100, Screen.height / 2 - 50, 200, 82), this.waiting_img[(waiting_count / 10) % 4]);
 				GUI.DrawTexture(new Rect(Screen.width / 2 - (Screen.width / 4.35f / 2), Screen.height / 2 - (Screen.height / 6f / 2), Screen.width / 4.35f, Screen.height / 6f), this.waiting_img[(waiting_count / 10) % 4]);				
 				if (++waiting_count >= 2000) waiting_count = 0;
 				Thread.Sleep(50);
-
 				break;
 		}
 	}
@@ -158,9 +162,34 @@ public class MatchingManager : MonoBehaviour
 
 	private void Update()
 	{
+		SlideTouching();
 		if (Input.GetKeyUp(KeyCode.Backspace)) Cancel_Matching();
+		if (Application.platform == RuntimePlatform.Android && Input.GetKey(KeyCode.Escape)) Cancel_Matching();
+	}
 
-		if (Application.platform == RuntimePlatform.Android)
-			if (Input.GetKey(KeyCode.Escape)) Cancel_Matching();
+	private void SlideTouching()
+    {
+		if (Input.touchCount > 0)
+		{
+			Touch touch = Input.GetTouch(0);
+
+			if (touch.phase == TouchPhase.Began)
+			{
+				vectorS = touch.position;
+			}
+			else if (touch.phase == TouchPhase.Ended)
+			{
+				vectorE = touch.position;
+				vectorM = new Vector2(vectorE.x - vectorS.x, vectorE.y - vectorS.y);
+
+				if (Mathf.Abs(vectorM.x) > Mathf.Abs(vectorM.y))
+				{
+					if (vectorM.x > (float)Screen.width / 4f)
+					{
+						Cancel_Matching();
+					}
+				}
+			}
+		}
 	}
 }

@@ -15,6 +15,8 @@ public class Scene_Home : MonoBehaviour
         GameObject.Find("BackGround").transform.Find("Button_LogOutYes").gameObject.SetActive(false);
         GameObject.Find("BackGround").transform.Find("Button_LogOutNo").gameObject.SetActive(false);
 
+        PlayerManager.Instance.LoadPlayerData();
+
         GameObject.Find("Text_NickName").GetComponent<TextMeshProUGUI>().text = PlayerManager.Instance.nickName;
         GameObject.Find("Text_Level").GetComponent<TextMeshProUGUI>().text = "Lv. " + ((PlayerManager.Instance.exp / 10) + 1).ToString();
         GameObject.Find("Text_HighestScore").GetComponent<TextMeshProUGUI>().text = PlayerManager.Instance.highestScore.ToString();

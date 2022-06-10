@@ -1,180 +1,215 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-//
-using System;
-using System.IO;
-
-
-[System.Serializable]
-public class Block
-{
-    [SerializeField] private int value = -1;
-    [SerializeField] private Vector2Int point = new Vector2Int();
-
-    public Block() { }
-    public Block(int? v, Vector2Int p) { value = (v == null ? -1 : v.GetValueOrDefault()); point = new Vector2Int(p.x, p.y); }
-
-    public int? GetValue() => (value == -1 ? null : value);
-    public Vector2Int GetPoint() => new Vector2Int(point.x, point.y);
-}
-
-
-[System.Serializable]
-public class SingleGameState
-{
-    public int currentScore = 0;
-    public int highestScore = 0;
-    public int highestBlock = 0;
-    public List<Block> blockList = new List<Block>();
-
-    public bool Empty()
-    {
-        foreach (var block in blockList)
-            if (block.GetValue() != null) return false;
-        return true;
-    }
-
-    public string GetJson() => JsonManager.Serialize(this);
-}
-
-
-[System.Serializable]
-public class SingleGameStateList
-{
-    public List<SingleGameState> mainState = new List<SingleGameState>();
-    public List<SingleGameState> subState = new List<SingleGameState>();
-
-    public bool Empty() => mainState.Count == 0 ? true : false;
-
-    public string GetJson() => JsonUtility.ToJson(this, true);
-}
-
-
-public enum SINGLE_GAME_MODE
-{
-    CLASSIC, CHALLENGE, PRACTICE
-}
-
-[System.Serializable]
-public class SingleGameMode
-{
-    public SINGLE_GAME_MODE index = SINGLE_GAME_MODE.CLASSIC;
-    public string name = "Classic";
-}
 
 
 
 /// <summary>
 /// Single Game을 관리하는 클래스. Mode, Game State를 관리한다
 /// </summary>
-public class SingleGameManager
+public class SingleGameManager : MonoBehaviour
 {
-    //------------------- Mode Management -------------------//
-    public static void SetGameMode(SINGLE_GAME_MODE mode)
+
+    [System.Serializable]
+    public class Block
     {
-        JsonManager.Write(Path.Combine(Application.persistentDataPath, "SingleMode.json"),
-            new SingleGameMode { index = mode, name = new List<string> { "Classic", "Challenge", "Practice" }[(int)mode] });
+        [SerializeField] private int value = -1;
+        [SerializeField] private Vector2Int point = new Vector2Int();
+
+        public Block() { }
+        public Block(int? v, Vector2Int p) { value = (v == null ? -1 : v.GetValueOrDefault()); point = new Vector2Int(p.x, p.y); }
+
+        public int? GetValue() => (value == -1 ? null : value);
+        public Vector2Int GetPoint() => new Vector2Int(point.x, point.y);
     }
 
-    public static SingleGameMode GetGameMode()
+
+
+    [System.Serializable]
+    public class BlockT
     {
-        SingleGameMode mode = JsonManager.Read<SingleGameMode>(Path.Combine(Application.persistentDataPath, "SingleMode.json"));
-        return mode == null ? new SingleGameMode() : mode;
+        [SerializeField] private int value = -1;
+        [SerializeField] private Vector2Int point = new Vector2Int();
+
+        public BlockT() { }
+        public BlockT(int? v, Vector2Int p) { value = (v == null ? -1 : v.GetValueOrDefault()); point = new Vector2Int(p.x, p.y); }
+
+        public int? GetValue() => (value == -1 ? null : value);
+        public Vector2Int GetPoint() => new Vector2Int(point.x, point.y);
+    }
+
+
+    [System.Serializable]
+    public class GameState
+    {
+        [SerializeField] private bool empty = true;
+        public int currentScore = 0;
+        public int highestBlock = 0;
+        public List<BlockT> blockList = new List<BlockT>();
+
+        public GameState() { }
+        public GameState(int currentScore, int highestBlock, List<Node> nodeList)
+        {
+            this.currentScore = currentScore;
+            this.highestBlock = highestBlock;
+            nodeList.ForEach(node => { if (node.value != null) { this.empty = false; } this.blockList.Add(new BlockT(node.value, new Vector2Int(node.point.x, node.point.y))); });
+        }
+
+        public bool Empty() => empty;
     }
 
 
 
-    //------------------- Game State Management -------------------//
-    private static void SaveGameState(SingleGameStateList gameStateList, SingleBoard gameBoard)
+    [System.Serializable]
+    public class GameStateList
+    {
+        public List<GameState> mainState = new List<GameState>();
+        public List<GameState> tempState = new List<GameState>();
+
+        public bool Empty() => mainState.Count == 0 ? true : false;
+    }
+
+
+
+    //------------------------------ 선언부 ----------------------------//
+    public static SingleGameManager Instance;
+
+    public bool isReady = false;
+    public int highestScore = 0;
+    public int highestBlock = 0;
+    public int exp = 0;
+    public GameStateList gameStateList;// = new GameStateList();
+
+
+    private void Awake()
+    {
+        Instance = this;
+        LoadFromDB();
+    }
+
+
+
+    // ------------------------------ Game Data Management ------------------------------- //
+    private void SaveToDB()
     {
         var player = PlayerManager.Instance;
-        var mode = SingleGameManager.GetGameMode().index;
-
+        var mode = SingleGameModeManager.Instance;
+  
         // Challenge Mode일 때 기록 갱신
-        if (mode == SINGLE_GAME_MODE.CHALLENGE)
+        if (mode.GetMode() == SingleGameModeManager.MODE.CHALLENGE)
         {
-            DatabaseManager.Update(new List<KeyValuePair<string, string>>
+            DatabaseManager.Update(new List<KeyValuePair<DatabaseManager.ATTRIBUTE, string>>
             {
-                new KeyValuePair<string, string>(DatabaseManager.GetDBAttribute(DatabaseManager.ATTRIBUTE.HIGHESTSCORE), Math.Max(player.highestScore, gameBoard.highestScore).ToString()),
-                new KeyValuePair<string, string>(DatabaseManager.GetDBAttribute(DatabaseManager.ATTRIBUTE.HIGHESTBLOCK), Math.Max(player.highestBlock, gameBoard.highestBlock).ToString()),
+                new KeyValuePair<DatabaseManager.ATTRIBUTE, string>(DatabaseManager.ATTRIBUTE.highestscore, this.highestScore.ToString()),
+                new KeyValuePair<DatabaseManager.ATTRIBUTE, string>(DatabaseManager.ATTRIBUTE.highestblock, this.highestBlock.ToString()),
             }, player.id);
         }
 
         // Game State Update
-        DatabaseManager.Update(new List<KeyValuePair<string, string>>
+        DatabaseManager.Update(new List<KeyValuePair<DatabaseManager.ATTRIBUTE, string>>
         {
-            new KeyValuePair<string, string>(DatabaseManager.GetDBAttribute(DatabaseManager.ATTRIBUTE.EXP), (player.exp + gameBoard.expCount).ToString()),
-            new KeyValuePair<string, string>(
-                DatabaseManager.GetDBAttribute(new Dictionary<SINGLE_GAME_MODE, DatabaseManager.ATTRIBUTE>
+            new KeyValuePair<DatabaseManager.ATTRIBUTE, string>(DatabaseManager.ATTRIBUTE.exp, exp.ToString()),
+            new KeyValuePair<DatabaseManager.ATTRIBUTE, string>(
+                new Dictionary<SingleGameModeManager.MODE, DatabaseManager.ATTRIBUTE>
                 {
-                    { SINGLE_GAME_MODE.CLASSIC, DatabaseManager.ATTRIBUTE.SAVECLASSICMODE },
-                    { SINGLE_GAME_MODE.CHALLENGE, DatabaseManager.ATTRIBUTE.SAVECHALLENGEMODE },
-                    { SINGLE_GAME_MODE.PRACTICE, DatabaseManager.ATTRIBUTE.SAVEPRACTICEMODE }
-                }[mode]), JsonManager.Serialize(gameStateList))
+                    { SingleGameModeManager.MODE.CLASSIC, DatabaseManager.ATTRIBUTE.saveclassicmode },
+                    { SingleGameModeManager.MODE.CHALLENGE, DatabaseManager.ATTRIBUTE.savechallengemode },
+                    { SingleGameModeManager.MODE.PRACTICE, DatabaseManager.ATTRIBUTE.savepracticemode }
+                }[mode.GetMode()], JsonManager.Serialize(gameStateList))
         }, player.id);
+    }
+    
+    private void LoadFromDB()
+    {
+        var player = PlayerManager.Instance;
+        var mode = SingleGameModeManager.Instance;
+        var data = new System.Data.DataTable().Rows;
 
-        PlayerManager.Instance.UpdatePlayer();
+        if (mode.GetMode() == SingleGameModeManager.MODE.CLASSIC)
+        {
+            data = DatabaseManager.Select(new List<DatabaseManager.ATTRIBUTE>
+            {
+                DatabaseManager.ATTRIBUTE.highestscore, DatabaseManager.ATTRIBUTE.highestblock, DatabaseManager.ATTRIBUTE.exp, DatabaseManager.ATTRIBUTE.saveclassicmode
+            }, player.id).Rows;
+        }
+        else if (mode.GetMode() == SingleGameModeManager.MODE.CHALLENGE)
+        {
+            data = DatabaseManager.Select(new List<DatabaseManager.ATTRIBUTE>
+            {
+                DatabaseManager.ATTRIBUTE.highestscore, DatabaseManager.ATTRIBUTE.highestblock, DatabaseManager.ATTRIBUTE.exp,DatabaseManager.ATTRIBUTE.savechallengemode
+            }, player.id).Rows;
+        }
+        else if (mode.GetMode() == SingleGameModeManager.MODE.PRACTICE)
+        {
+            data = DatabaseManager.Select(new List<DatabaseManager.ATTRIBUTE>
+            {
+                DatabaseManager.ATTRIBUTE.highestscore, DatabaseManager.ATTRIBUTE.highestblock, DatabaseManager.ATTRIBUTE.exp,DatabaseManager.ATTRIBUTE.savepracticemode
+            }, player.id).Rows;
+        }
+
+        this.highestScore = (data[0][0].ToString() == "" ? 0 : int.Parse(data[0][0].ToString()));
+        this.highestBlock = (data[0][1].ToString() == "" ? 0 : int.Parse(data[0][1].ToString()));
+        this.exp = (data[0][2].ToString() == "" ? 0 : int.Parse(data[0][2].ToString()));
+        this.gameStateList = (data[0][3].ToString() == "" ? new GameStateList() : JsonManager.Deserialize<GameStateList>(data[0][3].ToString()));
+
+        isReady = true;
     }
 
-    private static SingleGameStateList LoadGameState()
+
+
+    // ------------------------------ Game Play Management ------------------------------- //
+    public GameState LoadGame()
     {
-        var gameStateList = JsonManager.Deserialize<SingleGameStateList>(PlayerManager.Instance.singleModeData[SingleGameManager.GetGameMode().index]);      
-        return gameStateList == null ? new SingleGameStateList() : gameStateList;
+        return gameStateList.Empty() ? new GameState() : gameStateList.mainState[gameStateList.mainState.Count - 1];
     }
 
-    public static void ClearGameState(SingleBoard board)
+    public void UpdateGame()
     {
-        SaveGameState(new SingleGameStateList(), board);
+        var board = SingleBoard.Instance;
+        var mode = SingleGameModeManager.Instance;
+        var undoSize = new List<int> { 1, 1, 10 }[(int)mode.GetMode()];
+
+        if (gameStateList.mainState.Count > undoSize) gameStateList.mainState.RemoveAt(0);
+
+        this.highestScore = Math.Max(highestScore, board.highestScore);
+        this.highestBlock = Math.Max(highestBlock, board.highestBlock);
+        this.exp = board.exp;
+        this.gameStateList.mainState.Add(new GameState(board.currentScore, board.highestBlock, board.nodeList));
+        this.gameStateList.tempState.Clear();
     }
 
-    public static void AddGameState(SingleBoard board)
+    public void SaveGame()
     {
-        var gameStateList = LoadGameState();
-        var gameState = new SingleGameState();
-
-        gameState.currentScore = board.currentScore;
-        gameState.highestScore = board.highestScore;
-        gameState.highestBlock = board.highestBlock;
-        foreach (var node in board.nodeList) gameState.blockList.Add(new Block(node.value, new Vector2Int(node.point.x, node.point.y)));
-
-        int undoSize = new List<int> { 1, 1, 10 }[(int)GetGameMode().index];
-        gameStateList.mainState.Add(gameState);
-        if (gameStateList.mainState.Count > undoSize + 1) gameStateList.mainState.RemoveAt(0);
-        gameStateList.subState.Clear();
-
-        SaveGameState(gameStateList, board);
+        SaveToDB();
     }
 
-    public static SingleGameState GetGameState()
+    public void ClearGame()
     {
-        var gameStateList = LoadGameState();
-        return gameStateList.Empty() ? new SingleGameState() : gameStateList.mainState[gameStateList.mainState.Count - 1];
+        this.gameStateList = new GameStateList();
+        SaveToDB();
     }
 
-    public static void Undo(SingleBoard board)
+    public bool UndoGame()
     {
-        var gameStateList = LoadGameState();
-
         if (gameStateList.mainState.Count >= 2)
         {
-            gameStateList.subState.Add(gameStateList.mainState[gameStateList.mainState.Count - 1]);
+            gameStateList.tempState.Add(gameStateList.mainState[gameStateList.mainState.Count - 1]);
             gameStateList.mainState.RemoveAt(gameStateList.mainState.Count - 1);
+            SaveToDB();
+            return true;
         }
-
-        SaveGameState(gameStateList, board);
+        return false;
     }
 
-    public static void Redo(SingleBoard board)
+    public bool RedoGame()
     {
-        var gameStateList = LoadGameState();
-
-        if (gameStateList.subState.Count >= 1)
+        if (gameStateList.tempState.Count >= 1)
         {
-            gameStateList.mainState.Add(gameStateList.subState[gameStateList.subState.Count - 1]);
-            gameStateList.subState.RemoveAt(gameStateList.subState.Count - 1);
+            gameStateList.mainState.Add(gameStateList.tempState[gameStateList.tempState.Count - 1]);
+            gameStateList.tempState.RemoveAt(gameStateList.tempState.Count - 1);
+            SaveToDB();
+            return true;
         }
-
-        SaveGameState(gameStateList, board);
+        return false;
     }
 }

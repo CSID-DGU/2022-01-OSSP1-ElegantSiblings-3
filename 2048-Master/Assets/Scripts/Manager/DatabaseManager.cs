@@ -13,52 +13,21 @@ using UnityEngine.SceneManagement;
 
 public class DatabaseManager
 {
-    public enum ATTRIBUTE
-    {
-        ID, PASSWORD, INDATE, NICKNAME, HIGHESTSCORE, HIGHESTBLOCK, GAMES, WIN, LOSE, EXP, SAVECLASSICMODE, SAVECHALLENGEMODE, SAVEPRACTICEMODE
-    }
+    public enum ATTRIBUTE { id, password, in_date, nickname, highestscore, highestblock, games, win, lose, exp, saveclassicmode, savechallengemode, savepracticemode }
 
-    public static string GetDBAttribute(DatabaseManager.ATTRIBUTE attribute)
+    public static bool Insert(List<KeyValuePair<ATTRIBUTE, string>> dataList)
     {
-        var dictionary = new Dictionary<ATTRIBUTE, string>
+        string attributes = "";
+        string values = "";
+
+        foreach (var data in dataList)
         {
-            { DatabaseManager.ATTRIBUTE.ID, "id" },
-            { DatabaseManager.ATTRIBUTE.PASSWORD, "password" },
-            { DatabaseManager.ATTRIBUTE.NICKNAME, "nickname" },
-            { DatabaseManager.ATTRIBUTE.HIGHESTSCORE, "highestscore" },
-            { DatabaseManager.ATTRIBUTE.HIGHESTBLOCK, "highestblock" },
-            { DatabaseManager.ATTRIBUTE.GAMES, "games" },
-            { DatabaseManager.ATTRIBUTE.WIN, "win" },
-            { DatabaseManager.ATTRIBUTE.LOSE, "lose" },
-            { DatabaseManager.ATTRIBUTE.EXP, "exp" },
-            { DatabaseManager.ATTRIBUTE.SAVECLASSICMODE, "saveclassicmode" },
-            { DatabaseManager.ATTRIBUTE.SAVECHALLENGEMODE, "savechallengemode" },
-            { DatabaseManager.ATTRIBUTE.SAVEPRACTICEMODE, "savepracticemode" },
-        };
-
-        return dictionary.ContainsKey(attribute) ? dictionary[attribute] : "";
-    }
-
-
-    public static bool Insert(List<KeyValuePair<string, string>> inputList)
-    {
-        string insertQuery = "INSERT INTO";
-
-        insertQuery += " users(";
-        for (int i = 0; i < inputList.Count; i++)
-        {
-            if (i != 0) insertQuery += ",";
-            insertQuery += inputList[i].Key;
+            attributes += (attributes.Length == 0 ? data.Key : ", " + data.Key);
+            values += (values.Length == 0 ? "'" + data.Value + "'" : ", " + "'" + data.Value + "'");
         }
-        insertQuery += ")";
 
-        insertQuery += " VALUES(";
-        for (int i = 0; i < inputList.Count; i++)
-        {
-            if (i != 0) insertQuery += ",";
-            insertQuery += "'" + inputList[i].Value + "'";
-        }
-        insertQuery += ")";
+        string insertQuery = $"INSERT INTO users({attributes}) VALUES({values})";
+        //Debug.Log(insertQuery);
 
 
         MySqlConnection mySqlConnection = new MySqlConnection(string.Format("Server={0};Port={1};Database={2};Uid={3};Pwd={4}", "plus2048.cb8k6mln4cv6.ap-northeast-2.rds.amazonaws.com", "3306", "plus2048", "admin", "dbjunohshin"));
@@ -66,7 +35,7 @@ public class DatabaseManager
         try
         {
             mySqlConnection.Open();
-            Debug.Log("Connected");
+            //Debug.Log("Connected");
 
             try
             {
@@ -74,12 +43,12 @@ public class DatabaseManager
 
                 if (command.ExecuteNonQuery() == 1)
                 {
-                    Debug.Log("Insert Success");
+                    //Debug.Log("Insert Success");
                     return true;
                 }
                 else
                 {
-                    Debug.Log("Insert Failure");
+                    //Debug.Log("Insert Failure");
                 }
 
             }
@@ -99,15 +68,13 @@ public class DatabaseManager
         return false;
     }
 
-
-    public static DataTable Select(List<KeyValuePair<string, string>> attributeList)
+    public static DataTable Select(List<ATTRIBUTE> dataList, string id)
     {
-        string selectQuery = "SELECT * FROM users WHERE ";
-        for (int i = 0; i < attributeList.Count; i++)
-        {
-            if (i != 0) selectQuery += " AND ";
-            selectQuery += attributeList[i].Key + "='" + attributeList[i].Value + "'";
-        }
+        string attributes = dataList.Count == 0 ? "*" : "";
+        dataList.ForEach(column => { attributes += (attributes.Length == 0 ? column : ", " + column); });
+
+        string selectQuery = $"SELECT {attributes} FROM users WHERE {ATTRIBUTE.id} = '{id}'";
+        //Debug.Log(selectQuery);
 
         MySqlConnection mySqlConnection = new MySqlConnection(string.Format("Server={0};Port={1};Database={2};Uid={3};Pwd={4}", "plus2048.cb8k6mln4cv6.ap-northeast-2.rds.amazonaws.com", "3306", "plus2048", "admin", "dbjunohshin"));
         DataTable dataTable = new DataTable();
@@ -115,7 +82,7 @@ public class DatabaseManager
         try
         {
             mySqlConnection.Open();
-            Debug.Log("Connected");
+            //Debug.Log("Connected");
 
             try
             {
@@ -138,16 +105,13 @@ public class DatabaseManager
         return dataTable;
     }
 
-
-    public static void Update(List<KeyValuePair<string, string>> inputList, string id)
+    public static void Update(List<KeyValuePair<ATTRIBUTE, string>> dataList, string id)
     {
-        string updateQuery = "UPDATE users SET ";
-        for (int i = 0; i < inputList.Count; i++)
-        {
-            if (i != 0) updateQuery += ", ";
-            updateQuery += inputList[i].Key + "='" + inputList[i].Value + "'";
-        }
-        updateQuery += " WHERE id" + "='" + id + "'";
+        string values = "";
+        dataList.ForEach(data => { values += ((values.Length == 0 ? "" : ", ") + data.Key + $"='{data.Value}'"); });
+
+        string updateQuery = $"UPDATE users SET {values} WHERE {ATTRIBUTE.id} = '{id}'";
+        //Debug.Log(updateQuery);
 
 
         MySqlConnection mySqlConnection = new MySqlConnection(string.Format("Server={0};Port={1};Database={2};Uid={3};Pwd={4}", "plus2048.cb8k6mln4cv6.ap-northeast-2.rds.amazonaws.com", "3306", "plus2048", "admin", "dbjunohshin"));
@@ -155,7 +119,7 @@ public class DatabaseManager
         try
         {
             mySqlConnection.Open();
-            Debug.Log("Connected");
+            //Debug.Log("Connected");
 
             try
             {
@@ -163,11 +127,11 @@ public class DatabaseManager
 
                 if (command.ExecuteNonQuery() == 1)
                 {
-                    Debug.Log("Update Success");
+                    //Debug.Log("Update Success");
                 }
                 else
                 {
-                    Debug.Log("Update Failure");
+                    //Debug.Log("Update Failure");
                 }
 
             }

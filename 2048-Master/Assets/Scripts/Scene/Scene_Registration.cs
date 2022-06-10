@@ -27,34 +27,31 @@ public class Scene_Registration : MonoBehaviour
     {
         if (inputField_ID.text == "" || inputField_PW.text == "" || inputField_NK.text == "")
         {
-            Debug.Log("빈칸이 있습니다!");
+            //Debug.Log("빈칸이 있습니다!");
             GameObject.Find("BackGround").transform.Find("Messagebox_ExistBlank").gameObject.SetActive(true);
             GameObject.Find("BackGround").transform.Find("Button_ExistBlank").gameObject.SetActive(true);
             return;
         }
 
-        var dataTable = DatabaseManager.Select(new List<KeyValuePair<string, string>>
-        { 
-            new KeyValuePair<string, string>(DatabaseManager.GetDBAttribute(DatabaseManager.ATTRIBUTE.ID), inputField_ID.text)
-        });
+        var dataTable = DatabaseManager.Select(new List<DatabaseManager.ATTRIBUTE> { DatabaseManager.ATTRIBUTE.id }, inputField_ID.text);
 
         if (dataTable.Rows.Count == 0)
-        {
-            var isInsert = DatabaseManager.Insert(new List<KeyValuePair<string, string>>
+        {      
+            var isInsert = DatabaseManager.Insert(new List<KeyValuePair<DatabaseManager.ATTRIBUTE, string>>
             {
-                new KeyValuePair<string, string>(DatabaseManager.GetDBAttribute(DatabaseManager.ATTRIBUTE.ID),inputField_ID.text),
-                new KeyValuePair<string, string>(DatabaseManager.GetDBAttribute(DatabaseManager.ATTRIBUTE.PASSWORD), inputField_PW.text),
-                new KeyValuePair<string, string>(DatabaseManager.GetDBAttribute(DatabaseManager.ATTRIBUTE.NICKNAME), inputField_NK.text)
+                new KeyValuePair<DatabaseManager.ATTRIBUTE, string>(DatabaseManager.ATTRIBUTE.id, inputField_ID.text),
+                new KeyValuePair<DatabaseManager.ATTRIBUTE, string>(DatabaseManager.ATTRIBUTE.password, inputField_PW.text),
+                new KeyValuePair<DatabaseManager.ATTRIBUTE, string>(DatabaseManager.ATTRIBUTE.nickname, inputField_NK.text)
             });
 
             if (isInsert)
             {
-                Debug.Log("가입이 완료되었습니다.");
+                //Debug.Log("가입이 완료되었습니다.");
                 SceneManager.LoadScene("Scene_Login");
             }
             else
             {
-                Debug.Log("가입 실패했습니다. 다시 입력해주세요.");
+                //Debug.Log("가입 실패했습니다. 다시 입력해주세요.");
                 inputField_ID.text = "";
                 inputField_PW.text = "";
                 inputField_NK.text = "";

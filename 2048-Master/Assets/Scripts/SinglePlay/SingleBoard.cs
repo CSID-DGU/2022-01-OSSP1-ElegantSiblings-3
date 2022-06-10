@@ -1,17 +1,11 @@
-﻿using System;
+﻿using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
-using System.Net.Mime;
-using DG.Tweening;
-using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.UI;
-using Random = System.Random;
-
-using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine;
 using UnityEngine.EventSystems;
-using System.IO;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 
 
@@ -53,7 +47,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public int currentScore;
     public int highestScore;
     public int highestBlock;
-    public int expCount = 0;
+    public int exp = 0;
 
     // Touch Event
     public Vector2 vectorS = new Vector2();
@@ -64,10 +58,26 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     private void Awake()
     {
-        LoadGameData();
+        StartCoroutine(LoadGameManager());
     }
 
-    public void OnApplicationQuit() { }
+    private IEnumerator LoadGameManager()
+    {
+        WaitForSeconds wait = new WaitForSeconds(0.05f);
+
+        while (SingleGameManager.Instance == null || !SingleGameManager.Instance.isReady)
+        {
+            Debug.Log("Not Ready");
+            yield return wait;
+        }
+
+        LoadGame();
+    }
+
+    public void OnApplicationQuit() 
+    {
+        SingleGameManager.Instance.SaveGame();
+    }
 
 
 
@@ -76,7 +86,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         if (gameStart)
         {
-            //SaveGame();
+            SingleGameManager.Instance.SaveGame();
             SceneManager.LoadScene("Scene_SinglePlay");
         }
     }
@@ -84,7 +94,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         if (gameStart)
         {
-            //SaveGame();
+            SingleGameManager.Instance.SaveGame();
             SceneManager.LoadScene("Scene_Home");
         }
     }
@@ -92,23 +102,21 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         if (gameStart)
         {
-            ResetGame();
+            SingleGameManager.Instance.ClearGame();
             SceneManager.LoadScene("Scene_SingleGame");
         }
     }
     public void Button_Undo_Click()
     {
-        if (gameStart)
+        if (gameStart && SingleGameManager.Instance.UndoGame())
         {
-            UndoGame();
             SceneManager.LoadScene("Scene_SingleGame");
         }
     }
     public void Button_Redo_Click()
     {
-        if (gameStart)
+        if (gameStart && SingleGameManager.Instance.RedoGame())
         {
-            RedoGame();
             SceneManager.LoadScene("Scene_SingleGame");
         }
     }
@@ -116,47 +124,42 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         if (!gameStart)
         {
-            ResetGame();
+            SingleGameManager.Instance.ClearGame();
             SceneManager.LoadScene("Scene_SinglePlay");
         }
     }
 
 
-
-    //============================== Game Data Handler ==============================//
-    private void SaveGame() { SingleGameManager.AddGameState(this); }
-    private void ResetGame() { SingleGameManager.ClearGameState(this); }
-    private void UndoGame() { SingleGameManager.Undo(this); }
-    private void RedoGame() { SingleGameManager.Redo(this); }
-
-
-
     //============================== Game Data Method ==============================//
-    private void LoadGameData()
+    private void LoadGame()
     {
         gameStart = false;
 
+
         // load saved game data
-        var gameMode = SingleGameManager.GetGameMode();
-        var gameState = SingleGameManager.GetGameState();
+        var mode = SingleGameModeManager.Instance;
+        var gameState = SingleGameManager.Instance.LoadGame();
+
+
+        targetNumber = new List<int> { 2048, 1073741824, 32 }[(int)mode.GetMode()];
         currentScore = gameState.currentScore;
-        highestScore = PlayerManager.Instance.highestScore; //gameState.highestScore;
+        highestScore = SingleGameManager.Instance.highestScore;
         highestBlock = gameState.highestBlock;
-        targetNumber = new List<int> { 2048, 1073741824, 128 }[(int)gameMode.index];
+        exp = SingleGameManager.Instance.exp;
 
 
         // load theme
-        GameObject.Find("BackGround").GetComponent<Image>().sprite = Theme.GetImage("GameBoard_Single" + "_" + gameMode.name);
-        GameObject.Find("Button_NewGame").GetComponent<Image>().sprite = Theme.GetImage("Button_NewGame" + "_" + gameMode.name);
-        GameObject.Find("Button_Undo").GetComponent<Image>().sprite = Theme.GetImage("Button_Undo" + "_" + gameMode.name);
-        GameObject.Find("Button_Redo").GetComponent<Image>().sprite = Theme.GetImage("Button_Redo" + "_" + gameMode.name);
+        GameObject.Find("BackGround").GetComponent<Image>().sprite = Theme.GetImage("GameBoard_Single" + "_" + mode.GetModeName());
+        GameObject.Find("Button_NewGame").GetComponent<Image>().sprite = Theme.GetImage("Button_NewGame" + "_" + mode.GetModeName());
+        GameObject.Find("Button_Undo").GetComponent<Image>().sprite = Theme.GetImage("Button_Undo" + "_" + mode.GetModeName());
+        GameObject.Find("Button_Redo").GetComponent<Image>().sprite = Theme.GetImage("Button_Redo" + "_" + mode.GetModeName());
         GameObject.Find("Button_Back").GetComponent<Image>().sprite = Theme.GetImage("Button_Back");
         GameObject.Find("Button_Home").GetComponent<Image>().sprite = Theme.GetImage("Button_Home");
 
 
         // initialize score screen 
-        GameObject.Find("Textbox_HighestScore").SetActive(gameMode.index == SINGLE_GAME_MODE.CHALLENGE ? true : false);      
-        GameObject.Find("Textbox_TargetNumber").GetComponent<TextMeshProUGUI>().text = new List<string> { "2048", "Infinity", "128" }[(int)gameMode.index];
+        GameObject.Find("Textbox_HighestScore").SetActive(mode.GetMode() == SingleGameModeManager.MODE.CHALLENGE ? true : false);      
+        GameObject.Find("Textbox_TargetNumber").GetComponent<TextMeshProUGUI>().text = new List<string> { "2048", "Infinity", "32" }[(int)mode.GetMode()];
         GameObject.Find("Message_Result").GetComponent<Image>().gameObject.SetActive(false);
         GameObject.Find("Button_GameEnd").GetComponent<Image>().gameObject.SetActive(false);
        
@@ -169,7 +172,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private void UpdateScoreBoard(int currentScore, int highestScore)
     {
         GameObject.Find("Textbox_CurrentScore").GetComponent<TextMeshProUGUI>().text = currentScore.ToString();
-        if (SingleGameManager.GetGameMode().index == SINGLE_GAME_MODE.CHALLENGE) 
+        if (SingleGameModeManager.Instance.GetMode() == SingleGameModeManager.MODE.CHALLENGE) 
             GameObject.Find("Textbox_HighestScore").GetComponent<TextMeshProUGUI>().text = highestScore.ToString();       
     }
 
@@ -177,7 +180,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     //============================== Create Game Board ==============================//
 
-    private void CreateGameBoard(SingleGameState gameData)
+    private void CreateGameBoard(SingleGameManager.GameState gameState)
     {
         realNodeList.Clear();
         nodeMap.Clear();
@@ -207,7 +210,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                 Node node = new Node(v);
                 node.point = point;
                 node.nodeRectObj = instantiatePrefab;
-                node.value = gameData.Empty() ? null : gameData.blockList[i * 4 + j].GetValue();
+                node.value = gameState.Empty() ? null : gameState.blockList[i * 4 + j].GetValue();
                 nodeList.Add(node);
                 instantiatePrefab.name = node.point.ToString();
                 this.nodeMap.Add(point, node);
@@ -218,8 +221,12 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         foreach (var node in nodeList)
             node.position = node.nodeRectObj.GetComponent<RectTransform>().localPosition;
 
-        if (gameData.Empty()) FirstBlock();
-        else StartCoroutine(LoadSavedBlock(gameData));
+        if (gameState.Empty())
+        {
+            FirstBlock();
+            SingleGameManager.Instance.UpdateGame();
+        }
+        else StartCoroutine(LoadSavedBlock(gameState));
     }
 
     private void FirstBlock()
@@ -228,11 +235,11 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         gameStart = true;      
     }
 
-    private IEnumerator LoadSavedBlock(SingleGameState gameData)
+    private IEnumerator LoadSavedBlock(SingleGameManager.GameState gameState)
     {
         WaitForSeconds wait = new WaitForSeconds(0.01f);
 
-        foreach (var block in gameData.blockList)
+        foreach (var block in gameState.blockList)
         {
             if (block.GetValue() >= 2)
             {
@@ -315,7 +322,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         highestBlock = Mathf.Max(highestBlock, newBlockValue);
 
         // 테스트용으로 8마다 경험치 획득
-        if (newBlockValue == 32) expCount++;
+        if (newBlockValue == 8) exp++;
 
         UpdateScoreBoard(currentScore, highestScore);
         CheckGameState();
@@ -479,13 +486,13 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
             if (isGameEnd)  // game clear
             {
-                GameObject.Find("Message_Result").GetComponent<Image>().sprite = Theme.GetImage("Scene_SingleGame_Message_GameClear" + "_" + SingleGameManager.GetGameMode().name);
-                GameObject.Find("Button_GameEnd").GetComponent<Image>().sprite = Theme.GetImage("Scene_SingleGame_Button_GameEnd" + "_" + SingleGameManager.GetGameMode().name);
+                GameObject.Find("Message_Result").GetComponent<Image>().sprite = Theme.GetImage("Scene_SingleGame_Message_GameClear" + "_" + SingleGameModeManager.Instance.GetModeName());
+                GameObject.Find("Button_GameEnd").GetComponent<Image>().sprite = Theme.GetImage("Scene_SingleGame_Button_GameEnd" + "_" + SingleGameModeManager.Instance.GetModeName());
             }
             else if (isGameOver)  // game over
             {
-                GameObject.Find("Message_Result").GetComponent<Image>().sprite = Theme.GetImage("Scene_SingleGame_Message_GameOver" + "_" + SingleGameManager.GetGameMode().name);
-                GameObject.Find("Button_GameEnd").GetComponent<Image>().sprite = Theme.GetImage("Scene_SingleGame_Button_GameEnd" + "_" + SingleGameManager.GetGameMode().name);
+                GameObject.Find("Message_Result").GetComponent<Image>().sprite = Theme.GetImage("Scene_SingleGame_Message_GameOver" + "_" + SingleGameModeManager.Instance.GetModeName());
+                GameObject.Find("Button_GameEnd").GetComponent<Image>().sprite = Theme.GetImage("Scene_SingleGame_Button_GameEnd" + "_" + SingleGameModeManager.Instance.GetModeName());
             }
         }
     }
@@ -559,19 +566,29 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         {
             nodeList.ForEach(x => x.combined = false);  
             CreateRandomBlock();
-            SaveGame();
+
+            SingleGameManager.Instance.UpdateGame();
             state = State.WAIT;
         }
     }
 
     private void Update()
     {
+        StartCoroutine(LazyUpdate());
+    }
+
+    private IEnumerator LazyUpdate()
+    {
+        WaitForSeconds wait = new WaitForSeconds(0.05f);
+
         if (gameStart)
         {
             UpdateState();
             UpdateByKeyboard();
             UpdateByTouchscreen();
         }
+
+        yield return wait;
     }
 
 

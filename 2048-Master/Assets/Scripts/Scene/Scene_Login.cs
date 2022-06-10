@@ -30,6 +30,9 @@ public class Scene_Login : MonoBehaviour
     // ----------------------- Button Click Event -------------------------//
     public void Button_Login_Click()
     {
+        //inputField_UserID.text = "tester100";
+        //inputField_UserPW.text = "1234";
+
         if (inputField_UserID.text == "" || inputField_UserPW.text == "")
         {   
             // TODO: Messagebox
@@ -37,15 +40,10 @@ public class Scene_Login : MonoBehaviour
         }
         else
         {
-            DataTable dataTable = DatabaseManager.Select(new List<KeyValuePair<string, string>>
-            {
-                new KeyValuePair<string, string>("id", inputField_UserID.text),
-                new KeyValuePair<string, string>("password", inputField_UserPW.text)
-            });
+            var dataTable = DatabaseManager.Select(new List<DatabaseManager.ATTRIBUTE> { DatabaseManager.ATTRIBUTE.id, DatabaseManager.ATTRIBUTE.password }, inputField_UserID.text);
 
-            if (dataTable.Rows.Count == 0)
+            if (dataTable.Rows.Count == 0 || (dataTable.Rows[0][1].ToString() != inputField_UserPW.text))
             {
-                // TODO: Messagebox
                 Debug.Log("계정이 존재하지않습니다");
                 GameObject.Find("BackGround").transform.Find("Messagebox_LoginFail").gameObject.SetActive(true);
                 GameObject.Find("BackGround").transform.Find("Button_LoginFail").gameObject.SetActive(true);
@@ -54,9 +52,8 @@ public class Scene_Login : MonoBehaviour
             }
             else
             {
-                // TODO: Messagebox
                 Debug.Log("로그인 되었습니다");
-                PlayerManager.Instance.Initialize(dataTable.Rows[0][(int)DatabaseManager.ATTRIBUTE.ID].ToString());
+                PlayerManager.Instance.Initialize(dataTable.Rows[0][(int)DatabaseManager.ATTRIBUTE.id].ToString());
                 SceneManager.LoadScene("Scene_Home");
             }
         }
