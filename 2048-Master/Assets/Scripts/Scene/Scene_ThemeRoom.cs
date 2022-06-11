@@ -34,4 +34,9 @@ public class Scene_ThemeRoom : MonoBehaviour
         Theme.SetTheme(THEME_LIST.THEME1);
     }
 
+    public void Button_theme4()
+    {
+        Theme.SetTheme(THEME_LIST.THEME4);
+    }
+
 }

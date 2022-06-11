@@ -1607,7 +1607,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 56275562}
         m_TargetAssemblyTypeName: Scene_ThemeRoom, Assembly-CSharp
-        m_MethodName: Button_theme0
+        m_MethodName: Button_theme4
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1637,7 +1637,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: e3fcfd04352cc1d4c9023cf5e732d77e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f01488c971c591f4cac43e79b7735ecf, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
