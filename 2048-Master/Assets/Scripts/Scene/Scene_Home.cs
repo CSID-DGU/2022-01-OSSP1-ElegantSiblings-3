@@ -10,7 +10,7 @@ public class Scene_Home : MonoBehaviour
 {
     public void Awake()
     {
-        // TODO: theme ¼³Á¤
+        // TODO: theme ï¿½ï¿½ï¿½ï¿½
         GameObject.Find("BackGround").transform.Find("Messagebox_LogOut").gameObject.SetActive(false);
         GameObject.Find("BackGround").transform.Find("Button_LogOutYes").gameObject.SetActive(false);
         GameObject.Find("BackGround").transform.Find("Button_LogOutNo").gameObject.SetActive(false);
@@ -51,8 +51,8 @@ public class Scene_Home : MonoBehaviour
         SceneManager.LoadScene("Scene_GamePlay");
     }
 
-    public void Button_ThemeRoom()
+    public void Button_ThemeRoom_Click()
     {
-
+        SceneManager.LoadScene("Scene_ThemeRoom");
     }
 }
