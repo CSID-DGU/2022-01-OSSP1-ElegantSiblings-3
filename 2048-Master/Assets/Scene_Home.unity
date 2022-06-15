@@ -579,9 +579,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 500634206}
+      - m_Target: {fileID: 500634211}
         m_TargetAssemblyTypeName: Scene_Home, Assembly-CSharp
-        m_MethodName: 
+        m_MethodName: Button_ThemeRoom_Click
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
