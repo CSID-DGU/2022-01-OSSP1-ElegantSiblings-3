@@ -30,8 +30,8 @@ public class Scene_Login : MonoBehaviour
     // ----------------------- Button Click Event -------------------------//
     public void Button_Login_Click()
     {
-        //inputField_UserID.text = "tester100";
-        //inputField_UserPW.text = "1234";
+        inputField_UserID.text = "tester0";
+        inputField_UserPW.text = "1234";
 
         if (inputField_UserID.text == "" || inputField_UserPW.text == "")
         {   

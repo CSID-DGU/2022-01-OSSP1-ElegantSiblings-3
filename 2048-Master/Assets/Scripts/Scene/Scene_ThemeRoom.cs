@@ -34,7 +34,17 @@ public class Scene_ThemeRoom : MonoBehaviour
         Theme.SetTheme(THEME_LIST.THEME1);
     }
 
-    public void Button_theme4()
+    public void Button_theme2()
+    {
+        Theme.SetTheme(THEME_LIST.THEME2);
+    }
+
+    public void Button_theme3()
+    {
+        Theme.SetTheme(THEME_LIST.THEME3);
+    }
+
+    public void Button_theme4() // 파스텔 테마
     {
         Theme.SetTheme(THEME_LIST.THEME4);
     }

@@ -18,6 +18,9 @@ EditorBuildSettings:
     path: Assets/Scene_Home.unity
     guid: 61ffb3ecc37807b409df4ba400bb671c
   - enabled: 1
+    path: Assets/Scene_ThemeRoom.unity
+    guid: 5c23775a4a2ecef41bcd85cbc21fdb9d
+  - enabled: 1
     path: Assets/Scene_GamePlay.unity
     guid: e1c11a6795a6f664a97716ea65d2a0b8
   - enabled: 1
