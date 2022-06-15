@@ -83,7 +83,15 @@ public class SingleGameManager : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
         Instance = this;
+        DontDestroyOnLoad(gameObject);
+
+        Debug.Log("SingleGameManager Awake!!");
         LoadFromDB();
     }
 
@@ -195,7 +203,6 @@ public class SingleGameManager : MonoBehaviour
         {
             gameStateList.tempState.Add(gameStateList.mainState[gameStateList.mainState.Count - 1]);
             gameStateList.mainState.RemoveAt(gameStateList.mainState.Count - 1);
-            SaveToDB();
             return true;
         }
         return false;
@@ -207,7 +214,6 @@ public class SingleGameManager : MonoBehaviour
         {
             gameStateList.mainState.Add(gameStateList.tempState[gameStateList.tempState.Count - 1]);
             gameStateList.tempState.RemoveAt(gameStateList.tempState.Count - 1);
-            SaveToDB();
             return true;
         }
         return false;

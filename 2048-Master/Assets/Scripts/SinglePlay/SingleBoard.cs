@@ -8,7 +8,6 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 
-
 public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public enum State
@@ -42,6 +41,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public RectTransform realNodeRect;
 
     // Game Data
+    public bool reqReload = false;
     public bool gameStart = false;
     public int targetNumber;
     public int currentScore;
@@ -76,7 +76,11 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     public void OnApplicationQuit() 
     {
-        SingleGameManager.Instance.SaveGame();
+        if(!reqReload)
+        {
+            SingleGameManager.Instance.SaveGame();
+            Destroy(GameObject.Find("SingleGameManager"));
+        }
     }
 
 
@@ -87,6 +91,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         if (gameStart)
         {
             SingleGameManager.Instance.SaveGame();
+            Destroy(GameObject.Find("SingleGameManager"));
             SceneManager.LoadScene("Scene_SinglePlay");
         }
     }
@@ -95,6 +100,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         if (gameStart)
         {
             SingleGameManager.Instance.SaveGame();
+            Destroy(GameObject.Find("SingleGameManager"));
             SceneManager.LoadScene("Scene_Home");
         }
     }
@@ -103,6 +109,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         if (gameStart)
         {
             SingleGameManager.Instance.ClearGame();
+            Destroy(GameObject.Find("SingleGameManager"));
             SceneManager.LoadScene("Scene_SingleGame");
         }
     }
@@ -110,6 +117,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         if (gameStart && SingleGameManager.Instance.UndoGame())
         {
+            reqReload = true;
             SceneManager.LoadScene("Scene_SingleGame");
         }
     }
@@ -117,6 +125,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         if (gameStart && SingleGameManager.Instance.RedoGame())
         {
+            reqReload = true;
             SceneManager.LoadScene("Scene_SingleGame");
         }
     }
@@ -125,6 +134,7 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         if (!gameStart)
         {
             SingleGameManager.Instance.ClearGame();
+            Destroy(GameObject.Find("SingleGameManager"));
             SceneManager.LoadScene("Scene_SinglePlay");
         }
     }
@@ -134,7 +144,6 @@ public class SingleBoard : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private void LoadGame()
     {
         gameStart = false;
-
 
         // load saved game data
         var mode = SingleGameModeManager.Instance;

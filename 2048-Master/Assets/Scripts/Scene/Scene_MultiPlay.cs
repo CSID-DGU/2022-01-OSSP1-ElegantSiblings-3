@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 //
 using UnityEngine.SceneManagement;
-using System.IO;
+using UnityEngine.UI;
 
 
 public class Scene_MultiPlay : MonoBehaviour
 {
     public void Awake()
     {
-        // TODO: theme ¼³Á¤
+        // Theme Road
+        GameObject.Find("BackGround").GetComponent<Image>().sprite = Theme.GetImage("Scene_MultiPlay");
+        GameObject.Find("Button_Back").GetComponent<Image>().sprite = Theme.GetImage("Button_Back");
+        GameObject.Find("Button_Home").GetComponent<Image>().sprite = Theme.GetImage("Button_Home");
+        GameObject.Find("Button_Matching").GetComponent<Image>().sprite = Theme.GetImage("Button_Matching");
     }
 
     public void Button_Back_Click()

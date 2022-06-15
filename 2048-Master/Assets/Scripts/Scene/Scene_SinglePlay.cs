@@ -4,14 +4,19 @@ using UnityEngine;
 //
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System.IO;
 
 
 public class Scene_SinglePlay : MonoBehaviour
 {
     public void Awake()
     {
+        // Theme Road
         GameObject.Find("BackGround").GetComponent<Image>().sprite = Theme.GetImage("Scene_SinglePlay");
+        GameObject.Find("Button_Back").GetComponent<Image>().sprite = Theme.GetImage("Button_Back");
+        GameObject.Find("Button_Home").GetComponent<Image>().sprite = Theme.GetImage("Button_Home");
+        GameObject.Find("Button_Classic").GetComponent<Image>().sprite = Theme.GetImage("Button_ClassicMode");
+        GameObject.Find("Button_Challenge").GetComponent<Image>().sprite = Theme.GetImage("Button_ChallengeMode");
+        GameObject.Find("Button_Practice").GetComponent<Image>().sprite = Theme.GetImage("Button_PracticeMode");
     }
 
     public void Button_Back_Click()

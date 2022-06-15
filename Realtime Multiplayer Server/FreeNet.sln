@@ -5,10 +5,6 @@ VisualStudioVersion = 17.2.32516.85
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeNet", "FreeNet\FreeNet.csproj", "{90786D2B-F7A9-4A90-A073-838EF232BA6A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSampleServer", "CSampleServer\CSampleServer.csproj", "{C1F5AA4B-069D-4E63-BBFC-5FCEDD182C6E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSampleClient", "CSampleClient\CSampleClient.csproj", "{3ECD16DA-BD8E-44D3-B7A1-E9F687B9B84E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TZFEMasterGameServer", "TZFEMasterGameServer\TZFEMasterGameServer.csproj", "{1328C74B-63E1-412E-8791-DD62483805DE}"
 EndProject
 Global
@@ -21,14 +17,6 @@ Global
 		{90786D2B-F7A9-4A90-A073-838EF232BA6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90786D2B-F7A9-4A90-A073-838EF232BA6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90786D2B-F7A9-4A90-A073-838EF232BA6A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C1F5AA4B-069D-4E63-BBFC-5FCEDD182C6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C1F5AA4B-069D-4E63-BBFC-5FCEDD182C6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C1F5AA4B-069D-4E63-BBFC-5FCEDD182C6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C1F5AA4B-069D-4E63-BBFC-5FCEDD182C6E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3ECD16DA-BD8E-44D3-B7A1-E9F687B9B84E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3ECD16DA-BD8E-44D3-B7A1-E9F687B9B84E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3ECD16DA-BD8E-44D3-B7A1-E9F687B9B84E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3ECD16DA-BD8E-44D3-B7A1-E9F687B9B84E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1328C74B-63E1-412E-8791-DD62483805DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1328C74B-63E1-412E-8791-DD62483805DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1328C74B-63E1-412E-8791-DD62483805DE}.Release|Any CPU.ActiveCfg = Release|Any CPU

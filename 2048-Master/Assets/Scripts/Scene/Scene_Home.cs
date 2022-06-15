@@ -10,6 +10,7 @@ public class Scene_Home : MonoBehaviour
 {
     public void Awake()
     {
+        // Theme Road
         GameObject.Find("BackGround").GetComponent<Image>().sprite = Theme.GetImage("Scene_Home");
         GameObject.Find("Button_GamePlay").GetComponent<Image>().sprite = Theme.GetImage("Button_GamePlay");
         GameObject.Find("Button_ThemeRoom").GetComponent<Image>().sprite = Theme.GetImage("Button_ThemeRoom");
@@ -18,7 +19,7 @@ public class Scene_Home : MonoBehaviour
         GameObject.Find("Button_LogOutYes").GetComponent<Image>().sprite = Theme.GetImage("Button_LogOutYes");
         GameObject.Find("Button_LogOutNo").GetComponent<Image>().sprite = Theme.GetImage("Button_LogOutNo");
 
-        // TODO: theme
+        // Initialize
         GameObject.Find("BackGround").transform.Find("Messagebox_LogOut").gameObject.SetActive(false);
         GameObject.Find("BackGround").transform.Find("Button_LogOutYes").gameObject.SetActive(false);
         GameObject.Find("BackGround").transform.Find("Button_LogOutNo").gameObject.SetActive(false);

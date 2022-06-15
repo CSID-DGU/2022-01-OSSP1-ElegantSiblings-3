@@ -32,6 +32,15 @@ public class BattleRoom : MonoBehaviour
 
 	private void Awake()
     {
+		// Theme Road
+		GameObject.Find("BackGround").GetComponent<Image>().sprite = Theme.GetImage("GameBoard_PVP2048");
+		GameObject.Find("Button_GiveUp").GetComponent<Image>().sprite = Theme.GetImage("Button_GiveUp");
+		//GameObject.Find("Messagebox_GiveUp").GetComponent<Image>().sprite = Theme.GetImage("Messagebox_GiveUp");
+		//GameObject.Find("Button_GiveUp_Yes").GetComponent<Image>().sprite = Theme.GetImage("Button_GiveUp_Yes");
+		//GameObject.Find("Button_GiveUp_No").GetComponent<Image>().sprite = Theme.GetImage("Button_GiveUp_No");
+
+
+		// Initialize
 		GameObject.Find("BackGround").transform.Find("Messagebox_Result").gameObject.SetActive(false);
 		GameObject.Find("BackGround").transform.Find("Messagebox_Start").gameObject.SetActive(false);
 		GameObject.Find("Text_RivalNickName").GetComponent<TextMeshProUGUI>().text = "";
@@ -180,16 +189,14 @@ public class BattleRoom : MonoBehaviour
 		WaitForSeconds wait = new WaitForSeconds(1f);
 
 		GameObject.Find("BackGround").transform.Find("Messagebox_Start").gameObject.SetActive(true);
-		string theme = "_Theme3";
-
 		for (int i = 3; i > 0; i--)
-		{	
-			GameObject.Find("Messagebox_Start").GetComponent<Image>().sprite
-				= Resources.Load<Sprite>("theme3/Scene_GameRoom_Message_Start" + i.ToString() + theme);
+		{
+			//GameObject.Find("Messagebox_Start").GetComponent<Image>().sprite = Theme.GetImage("Scene_GameRoom_Message_Start" + i.ToString());
+			GameObject.Find("Messagebox_Start").GetComponent<Image>().sprite = Resources.Load<Sprite>("theme3/Scene_GameRoom_Message_Start" + i.ToString() + "_Theme3");
 			yield return wait;
 		}
-
 		GameObject.Find("BackGround").transform.Find("Messagebox_Start").gameObject.SetActive(false);
+
 		board_player.game_start = true;
 	}
 
@@ -199,21 +206,23 @@ public class BattleRoom : MonoBehaviour
 
 		GameObject.Find("BackGround").transform.Find("Messagebox_Result").gameObject.SetActive(true);
 		Sprite sprite = null;
-		string theme = "_Theme3";
 
 		for (int i = 3; i > 0; i--)
 		{
 			if (game_result == 1)
 			{
-				sprite = Resources.Load<Sprite>("theme3/Scene_GameRoom_Message_Victory" + i.ToString() + theme);
+				//sprite = Theme.GetImage("Scene_GameRoom_Message_Victory" + i.ToString());
+				sprite = Resources.Load<Sprite>("theme3/Scene_GameRoom_Message_Victory" + i.ToString() + "_Theme3");
 			}
 			else if (game_result == 2)
 			{
-				sprite = Resources.Load<Sprite>("theme3/Scene_GameRoom_Message_Defeated" + i.ToString() + theme);
+				//sprite = Theme.GetImage("Scene_GameRoom_Message_Defeated" + i.ToString());
+				sprite = Resources.Load<Sprite>("theme3/Scene_GameRoom_Message_Defeated" + i.ToString() + "_Theme3");
 			}
 			else if (game_result == 3)
 			{
-				sprite = Resources.Load<Sprite>("theme3/Scene_GameRoom_Message_Draw" + i.ToString() + theme);
+				//sprite = Theme.GetImage("Scene_GameRoom_Message_Draw" + i.ToString());
+				sprite = Resources.Load<Sprite>("theme3/Scene_GameRoom_Message_Draw" + i.ToString() + "_Theme3");
 			}
 
 			GameObject.Find("Messagebox_Result").GetComponent<Image>().sprite = sprite;
