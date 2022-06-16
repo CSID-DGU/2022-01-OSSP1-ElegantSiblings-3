@@ -43,10 +43,10 @@ public class MatchingManager : MonoBehaviour
 		this.battle_room = GameObject.Find("BattleRoom").GetComponent<BattleRoom>();
 		this.battle_room.gameObject.SetActive(false);
 
-		// TODO: theme_name load
 		theme_name = "_Theme3";
+		//this.matching_bg = Resources.Load("theme3/Scene_GameRoom_Background_Matching" + theme_name) as Texture;
+		this.matching_bg = Resources.Load("theme3/Scene_GameRoom_Background_Matching_APK" + theme_name) as Texture;
 
-		this.matching_bg = Resources.Load("theme3/Scene_GameRoom_Background_Matching" + theme_name) as Texture;
 		this.waiting_img = new List<Texture>
 		{
 			Resources.Load("theme3/Scene_GameRoom_Message_Waiting0" + theme_name) as Texture,
@@ -64,7 +64,7 @@ public class MatchingManager : MonoBehaviour
 	public void enter()
 	{
 		StopCoroutine("after_connected");
-
+			
 		this.network_manager.message_receiver = this;
 
 		if (!this.network_manager.is_connected())

@@ -30,13 +30,17 @@ public class Scene_Login : MonoBehaviour
     // ----------------------- Button Click Event -------------------------//
     public void Button_Login_Click()
     {
-        inputField_UserID.text = "tester0";
-        inputField_UserPW.text = "1234";
+        //inputField_UserID.text = "tester1";
+        //inputField_UserPW.text = "1234";
 
         if (inputField_UserID.text == "" || inputField_UserPW.text == "")
         {   
             // TODO: Messagebox
             Debug.Log("∫Ûƒ≠¿Ã ¿÷Ω¿¥œ¥Ÿ.");
+            GameObject.Find("BackGround").transform.Find("Messagebox_LoginFail").gameObject.SetActive(true);
+            GameObject.Find("BackGround").transform.Find("Button_LoginFail").gameObject.SetActive(true);
+            inputField_UserID.text = "";
+            inputField_UserPW.text = "";
         }
         else
         {

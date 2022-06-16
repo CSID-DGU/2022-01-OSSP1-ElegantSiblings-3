@@ -9,7 +9,6 @@ using UnityEngine;
 /// </summary>
 public class SingleGameManager : MonoBehaviour
 {
-
     [System.Serializable]
     public class Block
     {
@@ -24,40 +23,24 @@ public class SingleGameManager : MonoBehaviour
     }
 
 
-
-    [System.Serializable]
-    public class BlockT
-    {
-        [SerializeField] private int value = -1;
-        [SerializeField] private Vector2Int point = new Vector2Int();
-
-        public BlockT() { }
-        public BlockT(int? v, Vector2Int p) { value = (v == null ? -1 : v.GetValueOrDefault()); point = new Vector2Int(p.x, p.y); }
-
-        public int? GetValue() => (value == -1 ? null : value);
-        public Vector2Int GetPoint() => new Vector2Int(point.x, point.y);
-    }
-
-
     [System.Serializable]
     public class GameState
     {
         [SerializeField] private bool empty = true;
         public int currentScore = 0;
         public int highestBlock = 0;
-        public List<BlockT> blockList = new List<BlockT>();
+        public List<Block> blockList = new List<Block>();
 
         public GameState() { }
         public GameState(int currentScore, int highestBlock, List<Node> nodeList)
         {
             this.currentScore = currentScore;
             this.highestBlock = highestBlock;
-            nodeList.ForEach(node => { if (node.value != null) { this.empty = false; } this.blockList.Add(new BlockT(node.value, new Vector2Int(node.point.x, node.point.y))); });
+            nodeList.ForEach(node => { if (node.value != null) { this.empty = false; } this.blockList.Add(new Block(node.value, new Vector2Int(node.point.x, node.point.y))); });
         }
 
         public bool Empty() => empty;
     }
-
 
 
     [System.Serializable]
@@ -68,7 +51,6 @@ public class SingleGameManager : MonoBehaviour
 
         public bool Empty() => mainState.Count == 0 ? true : false;
     }
-
 
 
     //------------------------------ ¼±¾ðºÎ ----------------------------//
@@ -94,7 +76,6 @@ public class SingleGameManager : MonoBehaviour
         Debug.Log("SingleGameManager Awake!!");
         LoadFromDB();
     }
-
 
 
     // ------------------------------ Game Data Management ------------------------------- //
