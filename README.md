@@ -29,6 +29,9 @@
 * **Realtime Multiplayer Server (실시간 PVP대전 서버)**
   * Photon Engine, Amazon GameLift를 사용하거나 API를 가져다 쓰려고 했으나<br>
     교수님의 의견을 반영하여 자체 서버를 직접 구현하게 되었다
+  
+  ![image](https://github.com/CSID-DGU/2022-01-OSSP1-ElegantSiblings-3/blob/main/Image/Server_Logic1.png)
+  
 <br>
 
 * **User Account System (유저 계정 시스템)**
