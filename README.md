@@ -10,7 +10,7 @@
 
 # 실시간 PVP대전과 다양한 모드를 지원하는 2048-Master 개발
 
-* 지원하는 OS
+* *지원하는 OS*
   * Android Mobile
   * Windows
   
