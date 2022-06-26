@@ -1,14 +1,14 @@
 # 2022-01-OSSP1-ElegantSiblings-3
 
 |학과|팀원|
-|------|---|
-|컴퓨터공학과|문정훈|
-|경영정보학과|김혜연|
-|컴퓨터공학과|신준오|
-|컴퓨터공학과|장유진|
+|------|---|---|
+|컴퓨터공학과|문정훈|팀장|
+|경영정보학과|김혜연|팀원|
+|컴퓨터공학과|신준오|팀원|
+|컴퓨터공학과|장유진|팀원|
 
 
-### 실시간 PVP대전과 다양한 모드 있는 2048-Master 개발
+### 실시간 PVP대전과 다양한 모드를 지원하는 2048-Master 개발
 
 
 # 지원하는 OS
@@ -23,12 +23,11 @@
 
 
 # Demo버전 플레이 화면
- - TODO: Add gif file 
 
 
-# Realtime Multiplayer Server 개발 방식
- - 실시간 게임 서버로 Photon Engine 또는 Amazon GameLift를 사용하려고 했으나 
-   교수님의 피드백을 받고 직접 서버를 구현하게 되었다
+# Realtime Multiplayer Server (실시간 PVP대전 서버)
+ - Photon Engine, Amazon GameLift를 사용하거나 API를 가져다 쓰려고 했으나
+   교수님의 의견을 반영하여 자체 서버를 직접 구현하게 되었다
 
- - TODO: Wrtie Server-Client Logic
 
+# User Account System (유저 계정 시스템)
