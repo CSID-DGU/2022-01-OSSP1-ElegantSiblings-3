@@ -16,14 +16,17 @@
   * Android Mobile
   * Windows
 <br>
+<br>
 
 * **개발환경**
   * Game Client: Unity (2021.3.1f1 LTS)
   * Game Server: C# (.NET Framework 3.5)
   * Database: Amazon RDS MySQL  
 <br>
+<br>
 
 * **Demo버전 플레이 화면**
+<br>
 <br>
 
 * **Realtime Multiplayer Server (실시간 PVP대전 서버)**
@@ -34,6 +37,7 @@
   <img src="https://github.com/CSID-DGU/2022-01-OSSP1-ElegantSiblings-3/blob/main/Image/Server_Logic3.png" width="711" height="400"/>
   <img src="https://github.com/CSID-DGU/2022-01-OSSP1-ElegantSiblings-3/blob/main/Image/Server_Logic4.png" width="711" height="400"/>
 <br>
+<br>
 
 * **User Account System (유저 계정 시스템)**
   * DB(Mysql)로 유저 계정관리
@@ -41,4 +45,5 @@
   <br><img src="https://github.com/CSID-DGU/2022-01-OSSP1-ElegantSiblings-3/blob/main/Image/User_Account1.png" width="711" height="400"/>
   <img src="https://github.com/CSID-DGU/2022-01-OSSP1-ElegantSiblings-3/blob/main/Image/User_Account2.png" width="711" height="400"/>
 
+<br>
 <br>
