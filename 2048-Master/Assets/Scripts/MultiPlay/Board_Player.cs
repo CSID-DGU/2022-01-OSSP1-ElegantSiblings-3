@@ -1,18 +1,10 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Net.Mime;
 using DG.Tweening;
-using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.UI;
-using Random = System.Random;
-//
-using UnityEngine.SceneManagement;
+using GameNetwork;
+using System.Collections.Generic;
 using TMPro;
+using UnityEngine;
 using UnityEngine.EventSystems;
-using System.IO;
-using FreeNet;
+using UnityEngine.UI;
 
 public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
@@ -50,10 +42,10 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
 
 
     // 데이터 통신
-    public SendGameEvent sned_game_event;
-    public int curr_score;
-    public int highest_node_value;
-    public bool game_start = true;
+    public SendGameEvent snedGameEvent;
+    public bool gameStart = true;
+    public int currentScore;
+    public int highestBlock;
 
 
     // Touch Event
@@ -72,7 +64,7 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
     //============================== Button Object Event ==============================//
     public void Button_GiveUp_Click()
     {
-        if (game_start)
+        if (gameStart)
         {
             GameObject.Find("BackGround").transform.Find("Messagebox_GiveUp").gameObject.SetActive(true);
             GameObject.Find("BackGround").transform.Find("Button_GiveUp_Yes").gameObject.SetActive(true);
@@ -85,9 +77,9 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
         GameObject.Find("Messagebox_GiveUp").GetComponent<Image>().gameObject.SetActive(false);
         GameObject.Find("Button_GiveUp_Yes").GetComponent<Button>().gameObject.SetActive(false);
         GameObject.Find("Button_GiveUp_No").GetComponent<Button>().gameObject.SetActive(false);
-        if (game_start)
+        if (gameStart)
         {
-            sned_game_event.GiveUp();
+            snedGameEvent.GiveUp();
         }
     }
 
@@ -114,46 +106,46 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
 
         public SendGameEvent(BattleRoom _battle_room) { battle_room = _battle_room; }
 
-        public void Modified_Score(int curr, int highest)
+        public void ModifiedScore(int curr, int highest)
         {
-            CPacket msg = CPacket.create((short)PROTOCOL.MODIFIED_SCORE);
-            msg.push(curr);
-            msg.push(highest);
-            battle_room.On_Send(msg);
+            Packet msg = Packet.Create((short)PROTOCOL.MODIFIED_SCORE);
+            msg.Push(curr);
+            msg.Push(highest);
+            battle_room.OnSend(msg);
         }
 
-        public void Moved_Node(Node2.Direction dir)
+        public void MovedNode(Node2.Direction dir)
         {
-            CPacket msg = CPacket.create((short)PROTOCOL.MOVED_NODE);
-            msg.push((int)dir);
-            battle_room.On_Send(msg);
+            Packet msg = Packet.Create((short)PROTOCOL.MOVED_NODE);
+            msg.Push((int)dir);
+            battle_room.OnSend(msg);
         }
 
-        public void Create_Random_Node(Vector2Int loc)
+        public void CreateRandomNode(Vector2Int loc)
         {
-            CPacket msg = CPacket.create((short)PROTOCOL.CREATED_NEW_NODE);
-            msg.push((int)loc.x);
-            msg.push((int)loc.y);
-            battle_room.On_Send(msg);
+            Packet msg = Packet.Create((short)PROTOCOL.CREATED_NEW_NODE);
+            msg.Push((int)loc.x);
+            msg.Push((int)loc.y);
+            battle_room.OnSend(msg);
         }
 
         public void GiveUp()
         {
-            CPacket msg = CPacket.create((short)PROTOCOL.GIVE_UP_GAME);
-            battle_room.On_Send(msg);
+            Packet msg = Packet.Create((short)PROTOCOL.GIVE_UP_GAME);
+            battle_room.OnSend(msg);
         }
     }
 
 
     //============================== Update Screen ==============================//
-    private void Update_Score_Screen()
+    private void UpdateScoreScreen()
     {
-        GameObject.Find("CurrScore_Player").GetComponent<TextMeshProUGUI>().text = curr_score.ToString();
-        GameObject.Find("HighestNodeValue_Player").GetComponent<TextMeshProUGUI>().text = highest_node_value.ToString();
+        GameObject.Find("CurrScore_Player").GetComponent<TextMeshProUGUI>().text = currentScore.ToString();
+        GameObject.Find("HighestNodeValue_Player").GetComponent<TextMeshProUGUI>().text = highestBlock.ToString();
 
         Color color = new Color(1f, 0.42f, 0.42f);
 
-        switch (highest_node_value)
+        switch (highestBlock)
         {
             case 2:
                 color = Color.black;
@@ -202,17 +194,17 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
 
     private void CreateGameBoard()
     {
-        game_start = false;
+        gameStart = false;
 
         GameObject.Find("Messagebox_GiveUp").GetComponent<Image>().gameObject.SetActive(false);
         GameObject.Find("Button_GiveUp_Yes").GetComponent<Button>().gameObject.SetActive(false);
         GameObject.Find("Button_GiveUp_No").GetComponent<Button>().gameObject.SetActive(false);
 
         /* 게임 데이터 송/수신 */
-        sned_game_event = new SendGameEvent(GameObject.Find("BattleRoom").GetComponent<BattleRoom>());
-        curr_score = 0;
-        highest_node_value = 2;
-        Update_Score_Screen();    
+        snedGameEvent = new SendGameEvent(GameObject.Find("BattleRoom").GetComponent<BattleRoom>());
+        currentScore = 0;
+        highestBlock = 2;
+        UpdateScoreScreen();    
 
 
         /* initialize empty Node rect */
@@ -256,7 +248,7 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
             data.position = data.nodeRectObj.GetComponent<RectTransform>().localPosition;
     }
 
-    public void On_Game_Start()
+    public void OnGameStart()
     {
         CreateRandom();
     }
@@ -278,7 +270,7 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
         if (nodeMap[loc].realNodeObj != null) return;
 
         // 생성된 Node 위치 Send
-        sned_game_event.Create_Random_Node(loc);
+        snedGameEvent.CreateRandomNode(loc);
 
         GameObject realNodeObj = Instantiate(nodePrefab, realNodeRect.transform, false);
         var node = nodeMap[loc];
@@ -311,17 +303,16 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
         }
 
         // TODO: Update Score
-        curr_score += to.value.GetValueOrDefault();
-        highest_node_value = Mathf.Max(highest_node_value, to.value.GetValueOrDefault());
-        sned_game_event.Modified_Score(curr_score, highest_node_value);
-        Update_Score_Screen();
+        currentScore += to.value.GetValueOrDefault();
+        highestBlock = Mathf.Max(highestBlock, to.value.GetValueOrDefault());
+        snedGameEvent.ModifiedScore(currentScore, highestBlock);
+        UpdateScoreScreen();
     }
 
 
 
     public void Move(Node2 from, Node2 to)
     {
-        //        Debug.Log($"TRY MOVE {from.point} , {to.point}");
         to.value = from.value;
         from.value = null;
         if (from.realNodeObj != null)
@@ -331,18 +322,13 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
             {
                 to.realNodeObj = from.realNodeObj;
                 from.realNodeObj = null;
-                //Debug.Log(to.realNodeObj != null);
             }
         }
     }
 
-
-    /// <summary>
-    /// Move Blocks by User Input
-    /// </summary>
     public void MoveTo(Node2.Direction dir)
     {
-        sned_game_event.Moved_Node(dir);
+        snedGameEvent.MovedNode(dir);
 
         if (dir == Node2.Direction.RIGHT)
         {
@@ -465,18 +451,12 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
             }
         }
 
-        Show();
-
         if (IsGameOver())
         {
-            OnGameOver();
+            // TODO: GameOver Event
         }
     }
 
-    /// <summary>
-    /// if can't combine anymore then game over!!!!
-    /// </summary>
-    /// <returns></returns>
     public bool IsGameOver()
     {
         bool gameOver = true;
@@ -507,7 +487,7 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
         {
             if (IsGameOver())
             {
-                OnGameOver();
+                // TODO: GameOver Event
             }
         }
         else
@@ -518,15 +498,6 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
         }
     }
 
-    public void OnGameOver()
-    {
-        Debug.Log("Game Over!!!!");
-    }
-
-    public void OnGameEnd()
-    {
-        Debug.Log("Congratulations!!!!");
-    }
 
     public void UpdateState()
     {
@@ -567,27 +538,6 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
         }
     }
 
-    private void Show()
-    {
-        string v = null;
-        for (int i = col - 1; i >= 0; i--)
-        {
-            for (int j = 0; j < row; j++)
-            {
-                var p = nodeMap[new Vector2Int(j, i)].value;
-                string t = p.ToString();
-                if (p.HasValue == false)
-                {
-                    t = "N";
-                }
-                if (p == 0) t = "0";
-
-                v += t + " ";
-            }
-            v += "\n";
-        }
-    }
-
 
     //---------------------------------------------------------------------//
     //---------------------------- Touch Event ----------------------------//
@@ -595,7 +545,7 @@ public class Board_Player : MonoBehaviour, IPointerDownHandler, IPointerUpHandle
 
     private void Update()
     {
-        if (game_start)
+        if (gameStart)
         {
             UpdateState();
             UpdateByKeyboard();

@@ -1,0 +1,27 @@
+C:\Users\user\Desktop\새 폴더\Realtime Multiplayer Server\TZFEMasterGameServer\bin\Debug\RealtimeGameServer.exe
+C:\Users\user\Desktop\새 폴더\Realtime Multiplayer Server\TZFEMasterGameServer\bin\Debug\RealtimeGameServer.pdb
+C:\Users\user\Desktop\새 폴더\Realtime Multiplayer Server\TZFEMasterGameServer\bin\Debug\GameNetwork.dll
+C:\Users\user\Desktop\새 폴더\Realtime Multiplayer Server\TZFEMasterGameServer\bin\Debug\GameNetwork.pdb
+C:\Users\user\Desktop\새 폴더\Realtime Multiplayer Server\TZFEMasterGameServer\obj\Debug\RealtimeGameServer.csproj.AssemblyReference.cache
+C:\Users\user\Desktop\새 폴더\Realtime Multiplayer Server\TZFEMasterGameServer\obj\Debug\RealtimeGameServer.csproj.CoreCompileInputs.cache
+C:\Users\user\Desktop\새 폴더\Realtime Multiplayer Server\TZFEMasterGameServer\obj\Debug\RealtimeGameServer.csproj.CopyComplete
+C:\Users\user\Desktop\새 폴더\Realtime Multiplayer Server\TZFEMasterGameServer\obj\Debug\RealtimeGameServer.exe
+C:\Users\user\Desktop\새 폴더\Realtime Multiplayer Server\TZFEMasterGameServer\obj\Debug\RealtimeGameServer.pdb
+C:\Users\user\Desktop\새 폴더\Realtime Multiplayer Server\RealtimeGameServer\bin\Debug\RealtimeGameServer.exe
+C:\Users\user\Desktop\새 폴더\Realtime Multiplayer Server\RealtimeGameServer\bin\Debug\RealtimeGameServer.pdb
+C:\Users\user\Desktop\새 폴더\Realtime Multiplayer Server\RealtimeGameServer\bin\Debug\GameNetwork.dll
+C:\Users\user\Desktop\새 폴더\Realtime Multiplayer Server\RealtimeGameServer\bin\Debug\GameNetwork.pdb
+C:\Users\user\Desktop\새 폴더\Realtime Multiplayer Server\RealtimeGameServer\obj\Debug\RealtimeGameServer.csproj.AssemblyReference.cache
+C:\Users\user\Desktop\새 폴더\Realtime Multiplayer Server\RealtimeGameServer\obj\Debug\RealtimeGameServer.csproj.CoreCompileInputs.cache
+C:\Users\user\Desktop\새 폴더\Realtime Multiplayer Server\RealtimeGameServer\obj\Debug\RealtimeGameServer.csproj.CopyComplete
+C:\Users\user\Desktop\새 폴더\Realtime Multiplayer Server\RealtimeGameServer\obj\Debug\RealtimeGameServer.exe
+C:\Users\user\Desktop\새 폴더\Realtime Multiplayer Server\RealtimeGameServer\obj\Debug\RealtimeGameServer.pdb
+C:\Users\user\Desktop\Final-Demo\Realtime Multiplayer Server\RealtimeGameServer\bin\Debug\RealtimeGameServer.exe
+C:\Users\user\Desktop\Final-Demo\Realtime Multiplayer Server\RealtimeGameServer\bin\Debug\RealtimeGameServer.pdb
+C:\Users\user\Desktop\Final-Demo\Realtime Multiplayer Server\RealtimeGameServer\bin\Debug\GameNetwork.dll
+C:\Users\user\Desktop\Final-Demo\Realtime Multiplayer Server\RealtimeGameServer\bin\Debug\GameNetwork.pdb
+C:\Users\user\Desktop\Final-Demo\Realtime Multiplayer Server\RealtimeGameServer\obj\Debug\RealtimeGameServer.csproj.AssemblyReference.cache
+C:\Users\user\Desktop\Final-Demo\Realtime Multiplayer Server\RealtimeGameServer\obj\Debug\RealtimeGameServer.csproj.CoreCompileInputs.cache
+C:\Users\user\Desktop\Final-Demo\Realtime Multiplayer Server\RealtimeGameServer\obj\Debug\RealtimeGameServer.csproj.CopyComplete
+C:\Users\user\Desktop\Final-Demo\Realtime Multiplayer Server\RealtimeGameServer\obj\Debug\RealtimeGameServer.exe
+C:\Users\user\Desktop\Final-Demo\Realtime Multiplayer Server\RealtimeGameServer\obj\Debug\RealtimeGameServer.pdb

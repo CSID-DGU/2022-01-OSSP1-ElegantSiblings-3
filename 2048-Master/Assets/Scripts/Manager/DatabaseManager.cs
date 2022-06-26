@@ -1,14 +1,8 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-//
 using MySql.Data.MySqlClient;
-using TMPro;
-using UnityEngine.UI;
+using System;
+using System.Collections.Generic;
 using System.Data;
-using MySql.Data;
-using UnityEngine.SceneManagement;
+using UnityEngine;
 
 
 public class DatabaseManager

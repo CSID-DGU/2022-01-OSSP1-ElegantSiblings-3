@@ -1,9 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using System.IO;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Scene_ThemeRoom : MonoBehaviour
 {

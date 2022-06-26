@@ -1,18 +1,9 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Net.Mime;
 using DG.Tweening;
-using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.UI;
-using Random = System.Random;
-//
-using UnityEngine.SceneManagement;
+using GameNetwork;
+using System.Collections.Generic;
 using TMPro;
-using UnityEngine.EventSystems;
-using System.IO;
-using FreeNet;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class Board_Rival : MonoBehaviour
 {
@@ -50,10 +41,10 @@ public class Board_Rival : MonoBehaviour
 
 
     // 데이터 통신
-    public RecvGameEvent recv_game_event;
-    public bool first_load;
-    public int curr_score;
-    public int highest_node_value;
+    public RecvGameEvent recvGameEvent;
+    public bool firstLoad;
+    public int currentScore;
+    public int highestBlock;
 
 
     // Touch Event
@@ -64,40 +55,16 @@ public class Board_Rival : MonoBehaviour
 
     private void Awake()
     {
-        ThemeRoad();
         CreateGameBoard();
     }
 
-    public void OnApplicationQuit()
-    {
-
-    }
+    public void OnApplicationQuit() { }
 
     private void Start() { }
 
 
 
-
-
-    //============================== Button Object Event ==============================//
-    public void ReturnPrevPageButton()
-    {
-        //   SaveGame();
-        // SaveToJson();
-        //   SceneManager.LoadScene("SinglePlayPage");
-    }
-
-
-    //============================== Game Data Method ==============================//
-
-    private void ThemeRoad()
-    {
-
-    }
-
-
     //============================== Send Game Data ==============================//
-
     public class RecvGameEvent
     {
         private enum GameEvent : int
@@ -116,17 +83,17 @@ public class Board_Rival : MonoBehaviour
             created_node_location = new Queue<Vector2Int?>();
         }
 
-        public void Receive_Moved_Direction(CPacket msg)
+        public void Receive_MovedDirection(Packet msg)
         {
-            moved_direction.Enqueue(msg.pop_int32());
+            moved_direction.Enqueue(msg.PopInt32());
         }
 
-        public void Receive_Created_Node_Location(CPacket msg)
+        public void Receive_CreatedNodeLocation(Packet msg)
         {
-            created_node_location.Enqueue(new Vector2Int(msg.pop_int32(), msg.pop_int32()));
+            created_node_location.Enqueue(new Vector2Int(msg.PopInt32(), msg.PopInt32()));
         }
 
-        public int? Moved_Direction()
+        public int? MovedDirection()
         {
             if ((prev_event == GameEvent.MOVE_BLOCK || prev_event == GameEvent.CREATE_BLOCK) && moved_direction.Count > 0)
             {
@@ -138,12 +105,12 @@ public class Board_Rival : MonoBehaviour
             return null;
         }
 
-        public void Changed_Block_State()
+        public void ChangedBlockState()
         {
             prev_event = GameEvent.CHANGED_BLOCK_STATE;
         }
 
-        public Vector2Int? Created_Node_Location()
+        public Vector2Int? CreatedNodeLocation()
         {
             if ((prev_event == GameEvent.FIRST_LOAD || prev_event == GameEvent.CHANGED_BLOCK_STATE) && created_node_location.Count > 0)
             {
@@ -160,12 +127,12 @@ public class Board_Rival : MonoBehaviour
     //============================== Update Screen ==============================//
     private void Update_Score_Screen()
     {
-        GameObject.Find("CurrScore_Rival").GetComponent<TextMeshProUGUI>().text = curr_score.ToString();
-        GameObject.Find("HighestNodeValue_Rival").GetComponent<TextMeshProUGUI>().text = highest_node_value.ToString();
+        GameObject.Find("CurrScore_Rival").GetComponent<TextMeshProUGUI>().text = currentScore.ToString();
+        GameObject.Find("HighestNodeValue_Rival").GetComponent<TextMeshProUGUI>().text = highestBlock.ToString();
 
         Color color = new Color(1f, 0.42f, 0.42f);
 
-        switch (highest_node_value)
+        switch (highestBlock)
         {
             case 2:
                 color = Color.black;
@@ -213,10 +180,10 @@ public class Board_Rival : MonoBehaviour
     private void CreateGameBoard()
     {
         /* first initialize Score Board */
-        recv_game_event = new RecvGameEvent();
-        first_load = true;
-        curr_score = 0;
-        highest_node_value = 2;
+        recvGameEvent = new RecvGameEvent();
+        firstLoad = true;
+        currentScore = 0;
+        highestBlock = 2;
         Update_Score_Screen();
 
 
@@ -307,14 +274,13 @@ public class Board_Rival : MonoBehaviour
         }
 
         // Update Score
-        curr_score += to.value.GetValueOrDefault();
-        highest_node_value = Mathf.Max(highest_node_value, to.value.GetValueOrDefault());
+        currentScore += to.value.GetValueOrDefault();
+        highestBlock = Mathf.Max(highestBlock, to.value.GetValueOrDefault());
         Update_Score_Screen();
     }
 
     public void Move(Node2 from, Node2 to)
     {
-        //        Debug.Log($"TRY MOVE {from.point} , {to.point}");
         to.value = from.value;
         from.value = null;
         if (from.realNodeObj != null)
@@ -324,15 +290,11 @@ public class Board_Rival : MonoBehaviour
             {
                 to.realNodeObj = from.realNodeObj;
                 from.realNodeObj = null;
-                //Debug.Log(to.realNodeObj != null);
             }
         }
     }
 
-    /// <summary>
-    /// Move Blocks by User Input.
-    /// </summary>
-    /// <param name="dir"></param>
+
     public void MoveTo(Node2.Direction dir)
     {
         if (dir == Node2.Direction.RIGHT)
@@ -451,56 +413,13 @@ public class Board_Rival : MonoBehaviour
         {
             if (data.target != null)
             {
-                recv_game_event.Changed_Block_State();
+                recvGameEvent.ChangedBlockState();
                 state = State.PROCESSING;
                 data.StartMoveAnimation();
             }
         }
-
-        Show();
-
-        if (IsGameOver())
-        {
-            OnGameOver();
-        }
     }
 
-    /// <summary>
-    /// if can't combine anymore then game over!!!!
-    /// </summary>
-    /// <returns></returns>
-    public bool IsGameOver()
-    {
-        bool gameOver = true;
-        nodeData.ForEach(x =>
-        {
-            for (int i = 0; i < x.linkedNode.Length; i++)
-            {
-                if (x.realNodeObj == null) gameOver = false;
-                if (x.linkedNode[i] == null)
-                    continue;
-
-                var nearNode = nodeMap[x.linkedNode[i].Value];
-                if (x.value != null && nearNode.value != null)
-                    if (x.value == nearNode.value)
-                    {
-                        gameOver = false;
-                    }
-            }
-        });
-
-        return gameOver;
-    }
-
-    public void OnGameOver()
-    {
-        Debug.Log("Game Over!!!!");
-    }
-
-    public void OnGameEnd()
-    {
-        Debug.Log("Congratulations!!!!");
-    }
 
     public void UpdateState()
     {
@@ -534,14 +453,14 @@ public class Board_Rival : MonoBehaviour
         }
 
 
-        if (state == State.END || first_load == true)
+        if (state == State.END || firstLoad == true)
         {
-            Vector2Int? loc = recv_game_event.Created_Node_Location();
+            Vector2Int? loc = recvGameEvent.CreatedNodeLocation();
 
             if (loc != null)
             {
                 nodeData.ForEach(x => x.combined = false);
-                first_load = false;
+                firstLoad = false;
                 state = State.WAIT;
                 CreateBlock_By_Event(loc.GetValueOrDefault());
             }
@@ -559,29 +478,7 @@ public class Board_Rival : MonoBehaviour
     }
 
 
-    private void Show()
-    {
-        string v = null;
-        for (int i = col - 1; i >= 0; i--)
-        {
-            for (int j = 0; j < row; j++)
-            {
-                var p = nodeMap[new Vector2Int(j, i)].value;
-                string t = p.ToString();
-                if (p.HasValue == false)
-                {
-                    t = "N";
-                }
-                if (p == 0) t = "0";
-
-                v += t + " ";
-            }
-            v += "\n";
-        }
-    }
-
     // Update
-
     private void Update()
     {
         UpdateState();
@@ -592,7 +489,7 @@ public class Board_Rival : MonoBehaviour
     {
         if(state == State.WAIT)
         {
-            int? dir = recv_game_event.Moved_Direction();
+            int? dir = recvGameEvent.MovedDirection();
 
             if (dir != null)
             {

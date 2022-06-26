@@ -1,55 +1,51 @@
-using System.Collections;
-using System.Collections.Generic;
+using GameNetwork;
 using UnityEngine;
-//
-using System;
-using System.Net;
-using System.Net.Sockets;
-using FreeNet;
 using UnityEngine.SceneManagement;
+
 
 public class NetworkManager : MonoBehaviour
 {
-	CFreeNetUnityService gameserver;
-	string received_msg;
+	UnityGameNetworkService gameServer;
+	string receivedMsg;
 
-	public MonoBehaviour message_receiver;
+	public MonoBehaviour messageReceiver;
 
 	void Awake()
 	{
-		this.received_msg = "";
+		this.receivedMsg = "";
 
 		// 네트워크 통신을 위해 CFreeNetUnityService객체 추가
-		this.gameserver = gameObject.AddComponent<CFreeNetUnityService>();
+		this.gameServer = gameObject.AddComponent<UnityGameNetworkService>();
 
 		// 상태 변화(접속, 끊김등)를 통보 받을 델리게이트
-		this.gameserver.appcallback_on_status_changed += on_status_changed;
+		this.gameServer.appcallbackOnStatusChanged += OnStatusChanged;
 
 		// 패킷 수신 델리게이트
-		this.gameserver.appcallback_on_message += on_message;
+		this.gameServer.appcallbackOnMessage += OnMessage;
 	}
 
 
-	public void connect()
+	public void Connect()
 	{
-		this.gameserver.connect("220.116.117.78", 7979);
+		// 서버 컴퓨터의 주소와 포트 번호를 입력 (최종 발표 이후 주소와 포트는 제거하고 아무 값을 넣음)
+		this.gameServer.Connect("123.456.789.12", 1234);
 	}
 
-	public bool is_connected()
+	public bool IsConnected()
 	{
-		return this.gameserver.is_connected();
+		return this.gameServer.IsConnected();
 	}
 
 	public void Disconnect()
     {
-		this.gameserver.Disconnect();
+		this.gameServer.Disconnect();
 		SceneManager.LoadScene("Scene_MultiPlay");
 	}
 
 	/// <summary>
-	/// 네트워크 상태 변경시 호출될 콜백 매소드.
+	/// 네트워크 상태 변경시 호출되는 콜백 매소드
 	/// </summary>
-	void on_status_changed(NETWORK_EVENT status)
+	void OnStatusChanged(NETWORK_EVENT status)
 	{
 		switch (status)
 		{
@@ -57,26 +53,26 @@ public class NetworkManager : MonoBehaviour
 			case NETWORK_EVENT.connected:
 				{
 					LogManager.log("on connected");
-					this.received_msg += "on connected\n";
-					GameObject.Find("MatchingManager").GetComponent<MatchingManager>().on_connected();
+					this.receivedMsg += "on connected\n";
+					GameObject.Find("MatchingManager").GetComponent<MatchingManager>().OnConnected();
 				}
 				break;
 
 			// 연결 끊김
 			case NETWORK_EVENT.disconnected:
 				LogManager.log("disconnected");
-				this.received_msg += "disconnected\n";
+				this.receivedMsg += "disconnected\n";
 				break;
 		}
 	}
 
-	void on_message(CPacket msg)
+	void OnMessage(Packet msg)
 	{
-		this.message_receiver.SendMessage("on_recv", msg);
+		this.messageReceiver.SendMessage("OnRecv", msg);
 	}
 
-	public void send(CPacket msg)
+	public void Send(Packet msg)
 	{
-		this.gameserver.send(msg);
+		this.gameServer.send(msg);
 	}
 }

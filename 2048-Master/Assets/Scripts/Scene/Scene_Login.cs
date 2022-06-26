@@ -1,13 +1,6 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-//
-using MySql.Data.MySqlClient;
 using TMPro;
-using UnityEngine.UI;
-using System.Data;
-using MySql.Data;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 
