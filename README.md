@@ -12,8 +12,8 @@
 
 * 지원하는 OS
   * Android Mobile
-  * Windows  
-
+  * Windows
+  
 * 개발환경
   * Game Client: Unity (2021.3.1f1 LTS)
   * Game Server: C# (.NET Framework 3.5)
