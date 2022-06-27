@@ -26,6 +26,11 @@
 <br>
 
 * **Demo버전 플레이 화면**
+  * PVP 대전
+  <br><img src="https://github.com/CSID-DGU/2022-01-OSSP1-ElegantSiblings-3/blob/main/Presentation/GIF_PVP.gif" width="622" height="350"/><br>
+  
+  * Single Play (Challenge Mode)
+  <br><img src="https://github.com/CSID-DGU/2022-01-OSSP1-ElegantSiblings-3/blob/main/Presentation/GIF_Challenge.gif" width="622" height="350"/><br>
 <br>
 <br>
 
