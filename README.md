@@ -26,10 +26,10 @@
 <br>
 
 * **Demo버전 플레이 화면**
-  * PVP 대전
+  * 멀티플레이(PVP 대전): 시연용 Demo 버전이므로 2048->128로 간소화
   <br><img src="https://github.com/CSID-DGU/2022-01-OSSP1-ElegantSiblings-3/blob/main/Presentation/GIF_PVP.gif" width="622" height="350"/><br>
   
-  * Single Play (Challenge Mode)
+  * 싱글플레이(Challenge Mode)
   <br><img src="https://github.com/CSID-DGU/2022-01-OSSP1-ElegantSiblings-3/blob/main/Presentation/GIF_Challenge.gif" width="622" height="350"/><br>
 <br>
 <br>
