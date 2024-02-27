@@ -1,11 +1,23 @@
 ## 2022-01-OSSP1-ElegantSiblings-3
+- 주제: 실시간 PVP대전과 다양한 모드를 지원하는 '2048 Master'<br>
+<br>
+<br>
 
-|학과|이름||
-|------|---|---|
-|컴퓨터공학과|문정훈|팀장|
-|경영정보학과|김혜연|팀원|
-|컴퓨터공학과|신준오|팀원|
-|컴퓨터공학과|장유진|팀원|
+
+## 팀원 역할
+|학과|이름|역할|담당 기술|
+|-------|-----|-----|-----|
+|컴퓨터공학과|문정훈|팀장|게임 클라이언트(Unity), 실시간 멀티플레이 서버(C# TCP/IP Socket)|
+|경영정보학과|김혜연|팀원|게임 디자인(Adobe Illustrator), Database(RDS, MySQL)|
+|컴퓨터공학과|신준오|팀원|Database(RDS, MySQL)|
+|컴퓨터공학과|장유진|팀원|게임 디자인(Adobe Illustrator)|
+<br>
+<br>
+
+
+## 2022 1학기 공개SW프로젝트 A+
+<img src="https://github.com/Dice15/2022-01-OSSP1-2048-Master/assets/102275981/24a3a20f-54fd-46a5-857d-e471d5bcc267" width="100%">
+<br>
 <br>
 <br>
 
